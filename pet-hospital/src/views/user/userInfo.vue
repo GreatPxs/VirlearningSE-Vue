@@ -1,13 +1,14 @@
 <script setup lang="ts">
 //导入类型说明
-import { FormInstance, FormRules } from 'element-plus'
-import axios from 'axios'
+import { FormInstance } from 'element-plus'
+import { changeUserInfo } from '@/api/users/changeUserInfo'
+import md5 from 'md5'
 
 //暂用表格form数据
 const form = reactive({
   avatar: '', // 用户头像的URL
   avatarList: [], // 用于显示已选择的文件列表
-  name: '',
+  nickName: window.localStorage.getItem('nickName') || '我',
   password: ''
 })
 
@@ -37,8 +38,28 @@ const handleExceed = (files, fileList) => {
   console.error('选择的文件超过了限制!')
 }
 
+// 使用 md5 库
+let passwordMd5 = window.localStorage.getItem('passwordMd5')
+if (form.password === '') {
+  passwordMd5 = md5(form.password)
+}
+
+//提交修改的用户信息
 const onSubmit = async () => {
-  console.log('登录成功')
+  passwordMd5 = md5(form.password)
+  const data = await changeUserInfo(form.nickName, passwordMd5, '').then((res) => {
+    //修改失败
+    if (res.data.resultCode === 500) {
+      ElMessage.error('修改失败')
+      throw new Error('修改失败')
+    }
+    //修改成功
+    return res.data
+  })
+
+  window.localStorage.setItem('nickName', form.nickName)
+  window.localStorage.setItem('passwordMd5', passwordMd5)
+  ElMessage.success('修改成功')
 }
 </script>
 
@@ -70,11 +91,15 @@ const onSubmit = async () => {
         </el-form-item>
 
         <el-form-item label="昵称">
-          <el-input type="text" v-model="form.name" />
+          <el-input type="text" v-model="form.nickName" />
         </el-form-item>
 
         <el-form-item label="密码">
-          <el-input type="text" v-model="form.password" />
+          <el-input
+            type="text"
+            v-model="form.password"
+            placeholder="********************************"
+          />
         </el-form-item>
 
         <el-form-item>

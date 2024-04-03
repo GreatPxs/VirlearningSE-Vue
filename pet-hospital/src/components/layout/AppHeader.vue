@@ -1,6 +1,36 @@
 <script setup lang="ts">
+import { adminLogout } from '@/api/adminUser/adminLogout.js'
+import { useTokenAndRoleStore } from '@/stores/tokenAndRole'
+import { useRouter } from 'vue-router'
 //导入侧边栏折叠状态
 import { isCollapse } from './collapse'
+
+const router = useRouter()
+
+const nickName = window.localStorage.getItem('nickName')
+
+//退出处理事件
+const handleLogout = async () => {
+  // 退出-弹窗确认  点确认:返回成功promise  点取消:返回失败promise
+  await ElMessageBox.confirm('是否确认退出?', '提示', {
+    confirmButtonText: '确认',
+    cancelButtonText: '取消',
+    type: 'warning'
+  }).catch(() => {
+    ElMessage.error('操作已取消')
+    return new Promise(() => {}) // 取消退出操作时,阻止代码向后执行
+  })
+
+  await adminLogout().catch(() => {})
+  ElMessage.success('管理员已登出')
+  useTokenAndRoleStore().saveTokenAndRole('', '') // 清空 token
+  // 清空用户信息
+  window.localStorage.setItem('nickName', '')
+  window.localStorage.setItem('loginName', '')
+  window.localStorage.setItem('introduceSign', '')
+  window.localStorage.setItem('passwordMd5', '')
+  router.push('/manage-login') // 跳转到登录页
+}
 </script>
 
 <template>
@@ -28,8 +58,8 @@ import { isCollapse } from './collapse'
       />
       <template #dropdown>
         <el-dropdown-menu>
-          <el-dropdown-item>用户姓名</el-dropdown-item>
-          <el-dropdown-item divided>退出</el-dropdown-item>
+          <el-dropdown-item>{{ nickName }}</el-dropdown-item>
+          <el-dropdown-item divided @click="handleLogout">退出</el-dropdown-item>
         </el-dropdown-menu>
       </template>
     </el-dropdown>

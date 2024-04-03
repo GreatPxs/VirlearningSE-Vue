@@ -1,36 +1,53 @@
 <script setup lang="ts">
-//导入类型说明
-import { FormInstance, FormRules } from 'element-plus'
+import { adminLogin } from '@/api/adminUser/adminLogin.js'
+import { useTokenAndRoleStore } from '@/stores/tokenAndRole'
+import { useRouter, useRoute } from 'vue-router'
+import md5 from 'md5'
+
+const store = useTokenAndRoleStore()
+const router = useRouter()
+const route = useRoute()
+
+//提交按钮状态
+const isLoading = ref(false)
 
 //暂用表格form数据
 const form = reactive({
-  account: '',
+  userName: '',
   password: ''
 })
 
-//为表单定义校验规则
-const rules = reactive<FormRules>({
-  account: [
-    { required: true, message: '请输入账号', trigger: 'blur' },
-    { min: 6, max: 18, message: '管理员账号长度为18位', trigger: 'blur' }
-  ],
-  password: [
-    { required: true, message: '请输入密码', trigger: 'change' },
-    { min: 6, max: 18, message: '密码长度为6~18位', trigger: 'blur' }
-  ]
-})
-
-//获取表单引用,通过formRef.value获取表单实例
-const formRef = ref<FormInstance>()
-
 const onSubmit = async () => {
-  //提交时校验是否满足rules规则
-  await formRef.value?.validate().catch((err) => {
-    ElMessage.error('表单校验失败..')
-    throw err
+  //开始请求,置为true
+  isLoading.value = true
+
+  // 使用 md5 库
+  const passwordMd5 = md5(form.password)
+
+  const data = await adminLogin(form.userName, passwordMd5).then((res) => {
+    //登录失败
+    if (res.data.resultCode === 500) {
+      ElMessage.error('登录信息有误')
+      //登录失败,置为false
+      isLoading.value = false
+      throw new Error('登录信息有误')
+    }
+    //登录成功
+    return res.data
   })
 
-  console.log('登录成功')
+  console.log(data)
+  //保存接口请求返回的token信息
+  store.saveTokenAndRole(data.data, data.message)
+  //保存md5
+  window.localStorage.setItem('passwordMd5', passwordMd5)
+
+  //结束请求,置为false
+  isLoading.value = false
+
+  //登录成功
+  ElMessage.success('登录成功')
+  router.push((route.query.redirect as string) || '/admin')
 }
 </script>
 
@@ -38,26 +55,18 @@ const onSubmit = async () => {
   <div class="login">
     <div class="form">
       <!-- 绑定校验规则rules, 添加引用标识formRef -->
-      <el-form
-        :model="form"
-        label-position="left"
-        label-width="60px"
-        size="large"
-        :rules="rules"
-        ref="formRef"
-      >
+      <el-form :model="form" label-position="left" label-width="60px" size="large">
         <div class="first-row">
           <img src="@/assets/hospital.svg" alt="" />
           <p>虚拟宠物医院后台管理系统</p>
         </div>
-        <!-- 使用account规则 -->
-        <el-form-item label="账号" prop="account">
-          <el-input type="text" v-model="form.account" />
+
+        <el-form-item label="账号">
+          <el-input type="text" v-model="form.userName" placeholder="请输入手机号" />
         </el-form-item>
 
-        <!-- 使用password规则 -->
-        <el-form-item label="密码" prop="password">
-          <el-input type="text" v-model="form.password" />
+        <el-form-item label="密码">
+          <el-input type="text" v-model="form.password" placeholder="请输入密码" />
         </el-form-item>
 
         <el-form-item>
@@ -119,3 +128,4 @@ const onSubmit = async () => {
   }
 }
 </style>
+@/stores/tokenAndRole @/api/users/adminLogin.js @/api/adminUser/adminLogin.js

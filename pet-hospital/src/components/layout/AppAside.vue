@@ -17,8 +17,8 @@ const router = useRouter()
           <h1>后台管理</h1>
         </a>
 
-        <el-menu-item>
-          <el-icon><IEpUser /></el-icon> <span>用户中心</span>
+        <el-menu-item @click="router.push({ name: 'adminUserInfo' })">
+          <el-icon><IEpUser /></el-icon> <span>个人中心</span>
         </el-menu-item>
 
         <el-menu-item @click="router.push({ name: 'users' })">
@@ -33,9 +33,15 @@ const router = useRouter()
           <template #title>
             <el-icon> <IEpSchool /> </el-icon> <span>医院管理</span>
           </template>
-          <el-menu-item> <span>科室管理</span> </el-menu-item>
-          <el-menu-item> <span>职能管理</span> </el-menu-item>
-          <el-menu-item> <span>药物管理</span> </el-menu-item>
+          <el-menu-item @click="router.push({ name: 'roomIndex' })">
+            <span>科室管理</span>
+          </el-menu-item>
+          <el-menu-item @click="router.push({ name: 'rolesIndex' })">
+            <span>员工管理</span>
+          </el-menu-item>
+          <el-menu-item @click="router.push({ name: 'drugIndex' })">
+            <span>药物管理</span>
+          </el-menu-item>
         </el-sub-menu>
 
         <el-sub-menu index="6">

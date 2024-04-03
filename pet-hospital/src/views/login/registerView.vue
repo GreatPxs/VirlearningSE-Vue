@@ -1,41 +1,57 @@
 <script setup lang="ts">
 //导入类型说明
 import { FormInstance, FormRules } from 'element-plus'
+import { register } from '@/api/users/register'
+import router from '@/router'
+
+//注册按钮状态
+const isLoading = ref(false)
 
 //暂用表格form数据
 const form = reactive({
-  account: '',
+  loginName: '',
   password: '',
   confirmedPassword: ''
-})
-
-//为表单定义校验规则
-const rules = reactive<FormRules>({
-  account: [
-    { required: true, message: '请输入账号', trigger: 'blur' },
-    { min: 6, max: 18, message: '账号长度为6~18位', trigger: 'blur' }
-  ],
-  password: [
-    { required: true, message: '请输入密码', trigger: 'change' },
-    { min: 6, max: 18, message: '密码长度为6~18位', trigger: 'blur' }
-  ],
-  confirmedPassword: [
-    { required: true, message: '请重复密码', trigger: 'change' },
-    { min: 6, max: 18, message: '密码长度为6~18位', trigger: 'blur' }
-  ]
 })
 
 //获取表单引用,通过formRef.value获取表单实例
 const formRef = ref<FormInstance>()
 
-const onSubmit = async () => {
-  //提交时校验是否满足rules规则
-  await formRef.value?.validate().catch((err) => {
-    ElMessage.error('表单校验失败..')
-    throw err
+const onRegister = async () => {
+  //开始请求,置为true
+  isLoading.value = true
+
+  //判断重复密码是否与密码相同
+  if (form.confirmedPassword !== form.password) {
+    ElMessage.error('重复密码错误')
+    //校验失败,置为false
+    isLoading.value = false
+    throw Error
+  }
+
+  //请求注册接口
+  const data = await register(form).then((res) => {
+    //注册失败
+    if (res.data.resultCode === 500) {
+      ElMessage.error('注册信息有误')
+      //注册失败,置为false
+      isLoading.value = false
+
+      //打印数据
+      console.log(res.data)
+
+      throw new Error('注册信息有误')
+    }
+    //注册成功
+    return res.data
   })
 
-  console.log('登录成功')
+  //注册成功,置为false
+  isLoading.value = false
+
+  //注册成功
+  ElMessage.success('注册成功')
+  router.push({ name: 'login' })
 }
 </script>
 
@@ -46,34 +62,30 @@ const onSubmit = async () => {
         <img src="@/assets/hospital.svg" alt="" />
       </div>
       <div class="form">
-        <!-- 绑定校验规则rules, 添加引用标识formRef -->
-        <el-form
-          :model="form"
-          label-position="left"
-          label-width="60px"
-          size="large"
-          :rules="rules"
-          ref="formRef"
-        >
+        <el-form :model="form" label-position="left" label-width="60px" size="large" ref="formRef">
           <div class="first-row">
             <p>账户注册</p>
           </div>
-          <!-- 使用account规则 -->
-          <el-form-item label="账号" prop="account" label-width="79px">
-            <el-input type="text" v-model="form.account" />
+          <el-form-item label="手机号" label-width="79px">
+            <el-input type="text" v-model="form.loginName" placeholder="请输入手机号" />
           </el-form-item>
 
-          <!-- 使用password规则 -->
-          <el-form-item label="密码" prop="password" label-width="79px">
-            <el-input type="text" v-model="form.password" />
+          <el-form-item label="密码" label-width="79px">
+            <el-input type="text" v-model="form.password" placeholder="数字、字母,长度8~20位" />
           </el-form-item>
 
-          <el-form-item label="确认密码" prop="confirmedPassword" label-width="79px">
-            <el-input type="text" v-model="form.confirmedPassword" />
+          <el-form-item label="确认密码" label-width="79px">
+            <el-input type="text" v-model="form.confirmedPassword" placeholder="重复密码" />
           </el-form-item>
 
           <el-form-item>
-            <el-button color="#67C23A" size="small" :round="true">
+            <el-button
+              color="#67C23A"
+              size="small"
+              :round="true"
+              :isLoading="isLoading"
+              @click="onRegister"
+            >
               <p>注册</p>
             </el-button>
           </el-form-item>

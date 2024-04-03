@@ -1,4 +1,5 @@
 import { createRouter, createWebHistory } from 'vue-router'
+import { useTokenAndRoleStore } from '@/stores/tokenAndRole'
 
 const router = createRouter({
   history: createWebHistory(import.meta.env.BASE_URL),
@@ -6,6 +7,10 @@ const router = createRouter({
     {
       path: '/',
       name: 'home',
+      meta: {
+        requiresAuth: true,
+        requiresUser: true
+      }, // 定义判断的具体路由
       component: () => import('../views/home/HomePage.vue'),
       children: [
         {
@@ -27,6 +32,31 @@ const router = createRouter({
           path: '/testPage',
           name: 'testPage',
           component: () => import('@/views/test/testPage.vue')
+        },
+        {
+          path: '/caseStudy',
+          name: 'caseStudy',
+          component: () => import('@/views/caseStudy/caseStudyIndex.vue')
+        },
+        {
+          path: '/caseList',
+          name: 'caseList',
+          component: () => import('@/views/caseStudy/caseList.vue')
+        },
+        {
+          path: '/casePage',
+          name: 'casePage',
+          component: () => import('@/views/caseStudy/CasePage.vue')
+        },
+        {
+          path: '/chooseRole',
+          name: 'chooseRole',
+          component: () => import('@/views/rolePlay/ChooseRole.vue')
+        },
+        {
+          path: '/rolePage',
+          name: 'rolePage',
+          component: () => import('@/views/rolePlay/RolePage.vue')
         }
       ]
     },
@@ -48,7 +78,16 @@ const router = createRouter({
     {
       path: '/admin',
       name: 'admin',
+      meta: {
+        requiresAuth: true,
+        requiresAdmin: true
+      }, // 定义判断的具体路由
       children: [
+        {
+          path: '/admin/adminUserInfo',
+          name: 'adminUserInfo',
+          component: () => import('@/views/adminUser/adminUserInfo.vue')
+        },
         {
           path: '/admin/users',
           name: 'users',
@@ -78,6 +117,21 @@ const router = createRouter({
           path: '/admin/test',
           name: 'testIndex',
           component: () => import('@/views/testManage/TestIndex.vue')
+        },
+        {
+          path: '/admin/drug',
+          name: 'drugIndex',
+          component: () => import('@/views/drug/drugIndex.vue')
+        },
+        {
+          path: '/admin/room',
+          name: 'roomIndex',
+          component: () => import('@/views/room/roomIndex.vue')
+        },
+        {
+          path: '/admin/roles',
+          name: 'rolesIndex',
+          component: () => import('@/views/roles/rolesIndex.vue')
         }
       ],
       component: () => import('@/components/layout/AppLayout.vue')
@@ -88,6 +142,38 @@ const router = createRouter({
       component: () => import('../views/AboutView.vue')
     }
   ]
+})
+
+router.beforeEach((to, from, next) => {
+  const store = useTokenAndRoleStore() // 获取存储状态
+  if (to.matched.some((r) => r.meta.requiresAuth)) {
+    if (store.tokenAndRole.token && store.tokenAndRole.token !== '') {
+      if (to.matched.some((r) => r.meta.requiresUser)) {
+        if (store.tokenAndRole.role === '0') {
+          next()
+        } else {
+          next(false)
+        }
+      }
+
+      if (to.matched.some((r) => r.meta.requiresAdmin)) {
+        if (store.tokenAndRole.role === '1' || store.tokenAndRole.role === '2') {
+          next()
+        } else {
+          next(false)
+        }
+      }
+
+      next()
+    } else {
+      if (to.matched.some((r) => r.name === 'admin')) {
+        next({ name: 'manage-login', query: { redirect: to.fullPath } })
+      }
+
+      next({ name: 'login', query: { redirect: to.fullPath } })
+    }
+  }
+  next() // 如果不要求权限，就按原地址跳转
 })
 
 export default router

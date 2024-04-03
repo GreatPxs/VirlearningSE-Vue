@@ -2,6 +2,23 @@
 import HomeAside from '@/components/homeLayout/HomeAside.vue'
 import HomeHeader from '@/components/homeLayout/HomeHeader.vue'
 import { RouterView } from 'vue-router'
+import { getUserInfo } from '@/api/users/getUserInfo'
+
+onMounted(async () => {
+  const data = await getUserInfo().then((res) => {
+    //获取用户信息失败
+    if (res.data.resultCode === 500) {
+      ElMessage.error('获取用户信息失败')
+      throw new Error('获取用户信息失败')
+    }
+    //获取用户信息成功成功
+    return res.data
+  })
+
+  window.localStorage.setItem('nickName', data.data.nickName)
+  window.localStorage.setItem('loginName', data.data.loginName)
+  window.localStorage.setItem('introduceSign', data.data.introduceSign)
+})
 </script>
 
 <template>
@@ -12,6 +29,7 @@ import { RouterView } from 'vue-router'
       <el-main class="main">
         <RouterView></RouterView>
       </el-main>
+      <!-- <RouterView></RouterView> -->
     </el-container>
   </el-container>
 </template>
@@ -23,6 +41,6 @@ import { RouterView } from 'vue-router'
 }
 
 .main {
-  background-color: #f3f3f3;
+  background-color: #fff;
 }
 </style>

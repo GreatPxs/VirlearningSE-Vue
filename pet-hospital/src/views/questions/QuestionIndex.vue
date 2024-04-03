@@ -123,7 +123,7 @@ const records = ref([
       </el-table-column>
     </el-table>
 
-    <el-dialog v-model="dialogFormVisible" title="新增题目">
+    <el-dialog v-model="dialogFormVisible" title="新增题目" center>
       <el-form :model="form" label-width="60px">
         <el-form-item label="题目">
           <el-input v-model="form.questionName" autocomplete="off" />
@@ -213,7 +213,7 @@ const records = ref([
       @current-change="(currentPage: number) => queryUsers({ currentPage })"
      -->
     <el-pagination
-      :page-sizes="[5, 10, 20, 50]"
+      :page-sizes="[1, 5, 10, 20, 50]"
       :background="true"
       layout="total, sizes, prev, pager, next, jumper"
     />

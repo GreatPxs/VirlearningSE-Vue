@@ -34,5 +34,29 @@ export default defineConfig({
       //暂且解决不了，能正常跑
       '@': fileURLToPath(new URL('./src', import.meta.url))
     }
+  },
+
+  server: {
+    proxy: {
+      '/api': {
+        target: 'http://114.55.135.87:28018',
+        changeOrigin: true
+      },
+      '/manage-api': {
+        target: 'http://114.55.135.87:28018',
+        changeOrigin: true
+      },
+      '/drug': {
+        target: 'http://114.55.135.87:28018',
+        changeOrigin: true
+      },
+      '/dept': {
+        target: 'http://114.55.135.87:28018',
+        changeOrigin: true
+      }
+    },
+    port: 28018,
+    host: '0.0.0.0', // 配置项目可以局域网访问
+    cors: true // 默认启用并允许任何源
   }
 })

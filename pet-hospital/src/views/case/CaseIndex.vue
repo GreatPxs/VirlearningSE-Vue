@@ -1,8 +1,6 @@
 <script setup lang="ts">
 import { useRouter } from 'vue-router'
 
-const router = useRouter()
-
 //宠物分类选项菜单
 //分类选项菜单
 const options = [
@@ -23,6 +21,9 @@ const options = [
     label: '兔'
   }
 ]
+
+//测试：查询宠物种类选择
+const petType = ref('')
 
 //测试数据
 const record = reactive([
@@ -49,7 +50,7 @@ const record = reactive([
             </el-form-item>
             <el-form-item label="宠物种类">
               <!-- 下述input 需要v-model="queryCondition.petSpecies" 绑定条件-->
-              <el-select placeholder="Select" size="large" style="width: 240px">
+              <el-select placeholder="选择宠物" size="large" style="width: 240px" v-model="petType">
                 <el-option
                   v-for="item in options"
                   :key="item.value"

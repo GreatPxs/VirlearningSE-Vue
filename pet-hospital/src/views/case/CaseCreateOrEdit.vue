@@ -1,6 +1,6 @@
 <script setup lang="ts">
 import { EditPen, Tools, Picture, Clock, Document } from '@element-plus/icons-vue'
-import ImageUpload from './ImageUpload.vue'
+import ImageUpload from '@/views/image/ImageUpload.vue'
 
 // 步骤条当前位置
 const currentStep = ref(0)
@@ -344,3 +344,4 @@ const course = ref({
   padding: 0px 180px 0px 0px;
 }
 </style>
+../image/ImageUpload.vue

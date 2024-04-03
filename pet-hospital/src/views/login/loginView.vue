@@ -1,42 +1,61 @@
 <script setup lang="ts">
-//导入类型说明
-import { FormInstance, FormRules } from 'element-plus'
-import { useRouter } from 'vue-router'
+import { useRouter, useRoute } from 'vue-router'
+import { login } from '@/api/users/login.js'
+import { useTokenAndRoleStore } from '@/stores/tokenAndRole.js'
+import md5 from 'md5'
 
 const router = useRouter()
+const route = useRoute()
+const store = useTokenAndRoleStore()
 
 //暂用表格form数据
 const form = reactive({
-  account: '',
+  loginName: '',
   password: ''
 })
 
-//为表单定义校验规则
-const rules = reactive<FormRules>({
-  account: [
-    { required: true, message: '请输入账号', trigger: 'blur' },
-    { min: 6, max: 18, message: '请输入管理员账号', trigger: 'blur' }
-  ],
-  password: [
-    { required: true, message: '请输入密码', trigger: 'change' },
-    { min: 6, max: 18, message: '密码长度为6~18位', trigger: 'blur' }
-  ]
-})
-
-//获取表单引用,通过formRef.value获取表单实例
-const formRef = ref<FormInstance>()
+//登录按钮状态
+const isLoading = ref(false)
 
 const onSubmit = async () => {
-  //提交时校验是否满足rules规则
-  await formRef.value?.validate().catch((err) => {
-    ElMessage.error('表单校验失败..')
-    throw err
+  //开始请求,置为true
+  isLoading.value = true
+
+  // 使用 md5 库
+  const passwordMd5 = md5(form.password)
+
+  const data = await login(form.loginName, passwordMd5).then((res) => {
+    //登录失败
+    if (res.data.resultCode === 500) {
+      ElMessage.error('登录信息有误')
+      //登录失败,置为false
+      isLoading.value = false
+
+      //打印数据
+      console.log(res.data)
+
+      throw new Error('登录信息有误')
+    }
+    //登录成功
+    return res.data
   })
 
-  console.log('登录成功')
+  //打印数据
+  console.log(data)
+  //保存接口请求返回的token信息
+  store.saveTokenAndRole(data.data, data.message)
+  //保存md5
+  window.localStorage.setItem('passwordMd5', passwordMd5)
+
+  //结束请求,置为false
+  isLoading.value = false
+
+  //登录成功
+  ElMessage.success('登录成功')
+  router.push((route.query.redirect as string) || '/')
 }
 
-const onRegister = () => {
+const toRegister = () => {
   router.push({ name: 'register' })
 }
 </script>
@@ -48,35 +67,32 @@ const onRegister = () => {
         <img src="@/assets/hospital.svg" alt="" />
       </div>
       <div class="form">
-        <!-- 绑定校验规则rules, 添加引用标识formRef -->
-        <el-form
-          :model="form"
-          label-position="left"
-          label-width="60px"
-          size="large"
-          :rules="rules"
-          ref="formRef"
-        >
+        <el-form :model="form" label-position="left" label-width="60px" size="large">
           <div class="first-row">
             <p>实习生登录</p>
           </div>
-          <!-- 使用account规则 -->
-          <el-form-item label="账号" prop="account">
-            <el-input type="text" v-model="form.account" />
+
+          <el-form-item label="账号">
+            <el-input type="text" v-model="form.loginName" placeholder="请输入手机号" />
           </el-form-item>
 
-          <!-- 使用password规则 -->
-          <el-form-item label="密码" prop="password">
-            <el-input type="text" v-model="form.password" />
+          <el-form-item label="密码">
+            <el-input type="text" v-model="form.password" placeholder="请输入密码" />
           </el-form-item>
 
           <el-form-item>
-            <el-button type="primary" @click="onSubmit" size="large" :round="true">
+            <el-button
+              type="primary"
+              @click="onSubmit"
+              size="large"
+              :round="true"
+              :isLoading="isLoading"
+            >
               <p>登录</p>
             </el-button>
           </el-form-item>
 
-          <el-form-item @click="onRegister">
+          <el-form-item @click="toRegister">
             <el-button color="#707070" size="small" :round="true">
               <p>没有账户？现在注册</p>
             </el-button>
@@ -177,3 +193,4 @@ const onRegister = () => {
   }
 }
 </style>
+@/stores/tokenAndRole.js @/api/users/login.js

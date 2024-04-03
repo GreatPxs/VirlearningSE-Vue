@@ -19,11 +19,11 @@ const router = useRouter()
         <el-icon><IEpView /></el-icon> <span>医院导览</span>
       </el-menu-item>
 
-      <el-menu-item>
+      <el-menu-item @click="router.push({ name: 'chooseRole' })">
         <el-icon><IEpPieChart /></el-icon> <span>职能扮演</span>
       </el-menu-item>
 
-      <el-menu-item>
+      <el-menu-item @click="router.push({ name: 'caseStudy' })">
         <el-icon><IEpNotebook /></el-icon> <span>病例学习</span>
       </el-menu-item>
 

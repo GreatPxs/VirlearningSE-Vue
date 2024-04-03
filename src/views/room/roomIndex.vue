@@ -33,7 +33,7 @@ const form = reactive({
   name: '',
   dep_inf: '',
   roles: [],
-  url: ''
+  fileurl: ''
 })
 //0为添加, 1为修改
 const addOrEdit = ref(0)
@@ -44,26 +44,26 @@ const title = computed(() => {
 //控制新增/编辑的dialog
 const dialogFormVisible = ref(false)
 
-//待编辑科室id
+//待编辑药物id
 const editId = ref(0)
 //点击编辑,获取编辑药物信息
 const toModify = async (id, name, dep_inf, roles, url) => {
   addOrEdit.value = 1
   editId.value = id
-  form.drugName = drugName
-  form.specifications = specifications
-  form.unit = unit
-  form.drugNote = drugNote
+  form.name = name
+  form.dep_inf = dep_inf
+  form.roles = roles
+  form.fileurl = url
   dialogFormVisible.value = true
 }
 
 //点击新增,初始化
 const toAdd = async () => {
   addOrEdit.value = 0
-  form.drugName = ''
-  form.specifications = ''
-  form.unit = ''
-  form.drugNote = ''
+  form.name = ''
+  form.dep_inf = ''
+  form.roles = []
+  form.fileurl = ''
 
   dialogFormVisible.value = true
 }
@@ -71,31 +71,32 @@ const toAdd = async () => {
 //添加or编辑提交
 const onSubmit = async () => {
   if (addOrEdit.value === 0) {
-    const data = await addDrug(form).then((res) => {
-      //添加失败
-      if (res.data.state !== 200) {
-        ElMessage.error('添加药物失败')
+    const data = await addRoom(form.name, form.dep_inf, form.roles.join('，'), form.fileurl).then(
+      (res) => {
+        //添加失败
+        if (res.data.resultCode !== 200) {
+          ElMessage.error('添加科室失败')
 
-        //打印数据
-        console.log(res.data)
+          //打印数据
+          console.log(res.data)
 
-        throw new Error('添加药物失败')
+          throw new Error('添加科室失败')
+        }
+        //添加成功
+        return res.data
       }
-      //添加成功
-      return res.data
-    })
+    )
 
-    ElMessage.success('添加药物成功')
+    ElMessage.success('添加科室成功')
     dialogFormVisible.value = false
-
     //添加后,重新获取列表(待写)
   } else {
-    const data = await editDrug(
+    const data = await editRoom(
       editId.value,
-      form.drugName,
-      form.specifications,
-      form.unit,
-      form.drugNote
+      form.name,
+      form.dep_inf,
+      form.roles.join('，'),
+      form.fileurl
     ).then((res) => {
       //编辑失败
       if (res.data.state !== 200) {
@@ -241,7 +242,9 @@ const deleteRoomById = async (id) => {
       </el-table-column>
       <el-table-column label="操作" align="center" v-slot="{ row }" width="180px">
         <!-- 绑定点击跳转函数 @click="$router.push({ name: 'course-edit', params: { courseId: row.id } })" -->
-        <el-button type="primary" @click="toModify(row.id, row.name, row.dep_inf, row.roles)"
+        <el-button
+          type="primary"
+          @click="toModify(row.id, row.name, row.dep_inf, row.roles, row.fileurl)"
           >编辑</el-button
         >
         <el-button type="danger" @click="deleteRoomById(row.id)">删除</el-button>

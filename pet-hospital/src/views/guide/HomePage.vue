@@ -4,7 +4,7 @@ import HomeHeader from '@/components/homeLayout/HomeHeader.vue'
 import { RouterView } from 'vue-router'
 import { getUserInfo } from '@/api/users/getUserInfo'
 import { onMounted } from 'vue'
-import * as THREE from 'three'
+//import * as THREE from 'three'
 
 onMounted(async () => {
   const data = await getUserInfo().then((res) => {
@@ -23,7 +23,7 @@ onMounted(async () => {
 })
 
 //TODO: guide test
-const scene = new THREE.Scene()
+/* const scene = new THREE.Scene()
 const camera = new THREE.PerspectiveCamera(75, window.innerWidth / window.innerHeight, 0.1, 1000)
 
 const renderer = new THREE.WebGLRenderer()
@@ -46,7 +46,7 @@ function animate() {
   renderer.render(scene, camera)
 }
 
-animate()
+animate() */
 
 //test end
 </script>

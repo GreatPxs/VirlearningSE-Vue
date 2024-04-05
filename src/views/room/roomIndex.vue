@@ -3,10 +3,14 @@ import { addRoom } from '@/api/roomManage/addRoom.js'
 import { getRoomByName } from '@/api/roomManage/getRoomByName.js'
 import { deleteRoom } from '@/api/roomManage/deleteRoom.js'
 import { editRoom } from '@/api/roomManage/editRoom.js'
+import { getRoomList } from '@/api/roomManage/getRoomList.js'
+import type { UploadProps } from 'element-plus'
 
-//搜索条件
-const queryCondition = reactive({
-  roomName: ''
+onMounted(() => {
+  getRoomListPage({
+    pageNumber: listCurrentPage.value,
+    pageSize: listPageSize.value
+  })
 })
 
 //角色表
@@ -116,45 +120,44 @@ const onSubmit = async () => {
 
     //修改后,重新获取列表(待写)
   }
-}
 
-//挂载后开始取出列表
-// onMounted(() => {
-//   getUsersListPage({
-//     pageNumber: listCurrentPage.value,
-//     pageSize: listPageSize.value
-//   })
-// })
+  getRoomListPage({
+    pageNumber: listCurrentPage.value,
+    pageSize: listPageSize.value
+  })
+}
 
 //页查询
 const listCurrentPage = ref(1)
 const listPageSize = ref(10)
 const total = ref(0)
-// const getUsersListPage = async (queryCondition) => {
-//   const data = await getUsersList(queryCondition).then((res) => {
-//     //获取失败
-//     if (res.data.resultCode !== 200) {
-//       ElMessage.error('获取用户列表失败')
+const getRoomListPage = async (queryCondition) => {
+  const data = await getRoomList(queryCondition).then((res) => {
+    //获取失败
+    if (res.data.resultCode !== 200) {
+      ElMessage.error('获取科室列表失败')
 
-//       //打印数据
-//       console.log(res.data)
+      //打印数据
+      console.log(res.data)
 
-//       throw new Error('获取用户列表失败')
-//     }
-//     //获取成功
+      throw new Error('获取科室列表失败')
+    }
+    //获取成功
 
-//     console.log(res.data)
-//     listCurrentPage.value = queryCondition.currentPage
-//     listPageSize.value = queryCondition.pageSize
-//     return res.data
-//   })
+    console.log(res.data)
+    return res.data
+  })
 
-//   records.value = data.data.list
-//   total.value = data.data.totalCount
-//   listCurrentPage.value = data.data.currPage
-//   listPageSize.value = data.data.pageSize
-// }
+  records.value = data.data.list
+  total.value = data.data.totalCount
+  listCurrentPage.value = data.data.currPage
+  listPageSize.value = data.data.pageSize
+}
 
+//搜索条件
+const queryCondition = reactive({
+  roomName: ''
+})
 //搜索查询
 const getRoomInfoByName = async () => {
   const data = await getRoomByName(queryCondition.roomName).then((res) => {
@@ -171,16 +174,16 @@ const getRoomInfoByName = async () => {
   //搜索成功
   console.log(data)
   ElMessage.success('搜索成功')
-  // records.value = data.data
   for (let i = 0; i < data.data.length; i++) {
     records.value[i] = {
       id: data.data[i].id,
       name: data.data[i].name,
       dep_inf: data.data[i].dep_inf,
       roles: data.data[i].role !== null ? data.data[i].role.split('，') : [],
-      url: data.data[i].url
+      fileurl: data.data[i].fileurl
     }
   }
+  records.value = records.value.splice(0, data.data.length)
   listCurrentPage.value = 1
   total.value = data.data.length
 
@@ -206,7 +209,27 @@ const deleteRoomById = async (id) => {
   console.log(data)
   ElMessage.success('删除成功')
 
-  //删除成功后,需要重新获取科室列表(待写)
+  //删除成功后,需要重新获取科室列表
+  getRoomListPage({
+    pageNumber: listCurrentPage.value,
+    pageSize: listPageSize.value
+  })
+}
+
+const handlePhotoSuccess: UploadProps['onSuccess'] = (response, uploadFile) => {
+  form.fileurl = response.data
+  console.log(form.fileurl)
+}
+
+const beforePhotoUpload: UploadProps['beforeUpload'] = (rawFile) => {
+  if (rawFile.type !== 'image/jpeg') {
+    ElMessage.error('Avatar picture must be JPG format!')
+    return false
+  } else if (rawFile.size / 1024 / 1024 > 2) {
+    ElMessage.error('Avatar picture size can not exceed 2MB!')
+    return false
+  }
+  return true
 }
 </script>
 
@@ -239,6 +262,9 @@ const deleteRoomById = async (id) => {
         <template #default="{ row }">
           <p v-for="(k, index) in row.roles" :key="index">{{ k }}</p>
         </template>
+      </el-table-column>
+      <el-table-column prop="fileurl" label="照片" width="180" align="center" v-slot="{ row }">
+        <el-image style="width: 100px; height: 100px" :src="row.fileurl" fit="fill" />
       </el-table-column>
       <el-table-column label="操作" align="center" v-slot="{ row }" width="180px">
         <!-- 绑定点击跳转函数 @click="$router.push({ name: 'course-edit', params: { courseId: row.id } })" -->
@@ -273,6 +299,19 @@ const deleteRoomById = async (id) => {
             </el-option>
           </el-select>
         </el-form-item>
+
+        <el-form-item label="照片">
+          <el-upload
+            class="avatar-uploader"
+            action="http://114.55.135.87:28018/upload"
+            :show-file-list="false"
+            :on-success="handlePhotoSuccess"
+            :before-upload="beforePhotoUpload"
+          >
+            <img v-if="form.fileurl" :src="form.fileurl" class="photo" />
+            <el-icon v-else class="avatar-uploader-icon"><IEpPlus /></el-icon>
+          </el-upload>
+        </el-form-item>
       </el-form>
       <template #footer>
         <div class="dialog-footer">
@@ -282,17 +321,17 @@ const deleteRoomById = async (id) => {
       </template>
     </el-dialog>
 
-    <!-- 
-      分页需要属性
-      @size-change="(pageSize) => queryUsers({ pageSize, currentPage: 1 })"
-      @current-change="(currentPage: number) => queryUsers({ currentPage })"
-     -->
     <el-pagination
-      :page-sizes="[5, 10, 20, 50]"
+      :page-sizes="[10, 20, 50]"
       :background="true"
       layout="total, sizes, prev, pager, next, jumper"
       v-model:current-page="listCurrentPage"
       v-model:page-size="listPageSize"
+      @size-change="(pageSize) => getRoomListPage({ pageSize: pageSize, pageNumber: 1 })"
+      @current-change="
+        (currentPage: number) =>
+          getRoomListPage({ pageSize: listPageSize, pageNumber: currentPage })
+      "
       :total="total || 0"
     />
   </el-card>
@@ -321,5 +360,32 @@ const deleteRoomById = async (id) => {
   display: flex;
   justify-content: center;
   margin-top: 17px;
+}
+
+.avatar-uploader .photo {
+  width: 178px;
+  height: 178px;
+  display: block;
+}
+
+.avatar-uploader {
+  border: 1px dashed var(--el-border-color);
+  border-radius: 6px;
+  cursor: pointer;
+  position: relative;
+  overflow: hidden;
+  transition: var(--el-transition-duration-fast);
+}
+
+.avatar-uploader .el-upload:hover {
+  border-color: var(--el-color-primary);
+}
+
+.el-icon.avatar-uploader-icon {
+  font-size: 28px;
+  color: #8c939d;
+  width: 178px;
+  height: 178px;
+  text-align: center;
 }
 </style>

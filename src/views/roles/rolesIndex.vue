@@ -2,7 +2,16 @@
 import { addRole } from '@/api/roleManage/addRole.js'
 import { editRole } from '@/api/roleManage/editRole.js'
 import { getRoleByName } from '@/api/roleManage/getRoleByName.js'
+import { getRoomByName } from '@/api/roomManage/getRoomByName.js'
 import { deleteRole } from '@/api/roleManage/deleteRole.js'
+import { getRoleList } from '@/api/roleManage/getRoleList.js'
+
+onMounted(() => {
+  getRoleListPage({
+    pageNumber: listCurrentPage.value,
+    pageSize: listPageSize.value
+  })
+})
 
 //职能类别数据
 const options = [
@@ -33,30 +42,28 @@ const record = ref([])
 const listCurrentPage = ref(1)
 const listPageSize = ref(10)
 const total = ref(0)
-// const getDrugListPage = async (queryCondition) => {
-//   const data = await getDrugList(queryCondition).then((res) => {
-//     //获取失败
-//     if (res.data.state !== 200) {
-//       ElMessage.error('获取药物列表失败')
+const getRoleListPage = async (queryCondition) => {
+  const data = await getRoleList(queryCondition).then((res) => {
+    //获取失败
+    if (res.data.resultCode !== 200) {
+      ElMessage.error('获取员工列表失败')
 
-//       //打印数据
-//       console.log(res.data)
+      //打印数据
+      console.log(res.data)
 
-//       throw new Error('获取药物列表失败')
-//     }
-//     //获取成功
+      throw new Error('获取员工列表失败')
+    }
+    //获取成功
 
-//     console.log(res.data)
-//     listCurrentPage.value = queryCondition.currentPage
-//     listPageSize.value = queryCondition.pageSize
-//     return res.data
-//   })
+    console.log(res.data)
+    return res.data
+  })
 
-//   record.value = data.data.dataList
-//   total.value = data.data.count
-//   listCurrentPage.value = queryCondition.pageNumber
-//   listPageSize.value = queryCondition.pageSize
-// }
+  record.value = data.data.list
+  total.value = data.data.totalCount
+  listCurrentPage.value = data.data.currPage
+  listPageSize.value = data.data.pageSize
+}
 
 const searchCondition = reactive({
   name: ''
@@ -87,6 +94,34 @@ const getRoleInfoByName = async () => {
   console.log(record.value)
 }
 
+//科室类别数据
+const dept_options = ref([])
+//获取所有科室
+const getAllRooms = async () => {
+  const data = await getRoomByName('').then((res) => {
+    //获取科室失败
+    if (res.data.resultCode !== 200) {
+      ElMessage.error('获取科室失败')
+      //打印数据
+      console.log(res.data)
+      throw new Error('获取科室失败')
+    }
+    return res.data
+  })
+
+  //获取成功
+  console.log(data)
+  //放入科室类别options里
+  dept_options.value = []
+  for (let i = 0; i < data.data.length; i++) {
+    dept_options.value[i] = {
+      label: data.data[i].name,
+      value: data.data[i].name
+    }
+  }
+  console.log(dept_options.value)
+}
+
 //新增or编辑员工
 const form = reactive({
   name: '',
@@ -109,6 +144,7 @@ const dialogFormVisible = ref(false)
 const editId = ref(0)
 //点击编辑,获取编辑药物信息
 const toModify = async (id, name, dep_name, role, sex, age) => {
+  getAllRooms()
   addOrEdit.value = 1
   editId.value = id
   form.name = name
@@ -121,6 +157,7 @@ const toModify = async (id, name, dep_name, role, sex, age) => {
 
 //点击新增,初始化
 const toAdd = async () => {
+  getAllRooms()
   addOrEdit.value = 0
   form.name = ''
   form.dep_name = ''
@@ -172,6 +209,11 @@ const onSubmit = async () => {
 
     //修改后,重新获取列表(待写)
   }
+
+  getRoleListPage({
+    pageNumber: listCurrentPage.value,
+    pageSize: listPageSize.value
+  })
 }
 
 //删除
@@ -191,7 +233,11 @@ const deleteRoleById = async (id) => {
   console.log(data)
   ElMessage.success('删除成功')
 
-  //删除成功后,需要重新获取员工列表(待写)
+  //删除成功后,需要重新获取员工列表
+  getRoleListPage({
+    pageNumber: listCurrentPage.value,
+    pageSize: listPageSize.value
+  })
 }
 </script>
 
@@ -241,7 +287,7 @@ const deleteRoleById = async (id) => {
           </el-form-item>
 
           <el-form-item label="科室">
-            <el-input v-model="form.dep_name" autocomplete="off" />
+            <el-cascader :options="dept_options" v-model="form.dep_name" size="large" />
           </el-form-item>
 
           <el-form-item label="职能">
@@ -264,17 +310,17 @@ const deleteRoleById = async (id) => {
         </template>
       </el-dialog>
 
-      <!-- 
-        分页还需要以下属性
-        v-model:current-page="queriedResult.current"
-        v-model:page-size="queriedResult.size"
-        :total="queriedResult.total || 0"
-        @size-change="(pageSize: number) => queryCourses({ pageSize, currentPage: 1 })"
-        @current-change="(currentPage: number) => queryCourses({ currentPage })"
-       -->
       <el-pagination
         :page-sizes="[1, 5, 10, 20, 50]"
         :background="true"
+        v-model:current-page="listCurrentPage"
+        v-model:page-size="listPageSize"
+        :total="total || 0"
+        @size-change="(pageSize) => getRoleListPage({ pageSize: pageSize, pageNumber: 1 })"
+        @current-change="
+          (currentPage: number) =>
+            getRoleListPage({ pageSize: listPageSize, pageNumber: currentPage })
+        "
         layout="total, sizes, prev, pager, next, jumper"
       />
     </el-card>

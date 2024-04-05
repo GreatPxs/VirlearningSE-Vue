@@ -1,21 +1,6 @@
 <script setup lang="ts">
 import { Select, CloseBold } from '@element-plus/icons-vue'
 
-// 切换用户状态的事件处理函数
-// const handleChange = async (act: 'ENABLE' | 'DISABLE', userId: number) => {
-//   let actions = {
-//     ENABLE: { msg: '启用', fn: enableUser },
-//     DISABLE: { msg: '禁用', fn: forbidUser }
-//   }
-//   const { data } = await actions[act].fn(userId)
-//   if (data.code === '000000') {
-//     ElMessage.success(`${actions[act].msg}用户成功!`)
-//   } else {
-//     ElMessage.error(`${actions[act].msg}用户失败~`)
-//     throw new Error(`${actions[act].msg}用户失败~`)
-//   }
-// }
-
 const queryCondition = ref({
   topic: '',
   type: '',
@@ -30,53 +15,44 @@ const dialogFormVisible = ref(false)
 
 //新建题目
 const form = {
-  questionName: '',
-  type: ''
+  description: '',
+  optionA: '',
+  optionB: '',
+  optionC: '',
+  optionD: '',
+  answer: ''
 }
 
-//分类选项菜单
+//答案选项菜单
 const options = [
   {
-    value: '接诊',
-    label: '接诊'
+    value: 'A',
+    label: 'A'
   },
   {
-    value: '校验',
-    label: '校验'
+    value: 'B',
+    label: 'B'
   },
   {
-    value: '诊断',
-    label: '诊断'
+    value: 'C',
+    label: 'C'
   },
   {
-    value: '治疗',
-    label: '治疗'
+    value: 'D',
+    label: 'D'
   }
 ]
-
-//4个按钮
-const buttonIconA = ref(false)
-const buttonIconB = ref(false)
-const buttonIconC = ref(false)
-const buttonIconD = ref(false)
-
-const toggleButtonStyle = (id: Number) => {
-  if (id === 0) buttonIconA.value = !buttonIconA.value
-  if (id === 1) buttonIconB.value = !buttonIconB.value
-  if (id === 2) buttonIconC.value = !buttonIconC.value
-  if (id === 3) buttonIconD.value = !buttonIconD.value
-}
 
 //测试数据
 const records = ref([
   {
     id: 1,
-    questionName: '炎症',
-    A: '不治',
-    B: '如治',
-    C: '等死',
-    D: '缓刑',
-    type: '接诊'
+    description: '炎症',
+    optionA: '不治',
+    optionB: '如治',
+    optionC: '等死',
+    optionD: '缓刑',
+    answer: 'A'
   }
 ])
 </script>
@@ -93,9 +69,6 @@ const records = ref([
               clearable
             />
           </el-form-item>
-          <el-form-item label="分类">
-            <el-cascader :options="options" v-model="queryCondition.type" />
-          </el-form-item>
           <!-- 绑定点击函数 @click="queryUsers({ currentPage: 1 })" -->
           <el-form-item>
             <el-button type="primary">查询</el-button>
@@ -110,12 +83,12 @@ const records = ref([
     <!--table需要绑定查询结果 :data="queriedResult.records" -->
     <el-table border style="width: 100%" :data="records">
       <el-table-column prop="id" label="ID" align="center" />
-      <el-table-column prop="questionName" label="题目" align="center" />
-      <el-table-column prop="A" label="A" align="center" />
-      <el-table-column prop="B" label="B" align="center" />
-      <el-table-column prop="C" label="C" align="center" />
-      <el-table-column prop="D" label="D" align="center" />
-      <el-table-column prop="type" label="分类" align="center" />
+      <el-table-column prop="description" label="题目" align="center" />
+      <el-table-column prop="optionA" label="A" align="center" />
+      <el-table-column prop="optionB" label="B" align="center" />
+      <el-table-column prop="optionC" label="C" align="center" />
+      <el-table-column prop="optionD" label="D" align="center" />
+      <el-table-column prop="answer" label="答案" align="center" />
       <el-table-column label="操作" align="center" v-slot="{}" width="180px">
         <!-- 绑定点击跳转函数 @click="$router.push({ name: 'course-edit', params: { courseId: row.id } })" -->
         <el-button type="primary">编辑</el-button>
@@ -126,74 +99,43 @@ const records = ref([
     <el-dialog v-model="dialogFormVisible" title="新增题目" center>
       <el-form :model="form" label-width="60px">
         <el-form-item label="题目">
-          <el-input v-model="form.questionName" autocomplete="off" />
+          <el-input v-model="form.description" autocomplete="off" />
         </el-form-item>
 
-        <el-form-item label="分类">
-          <el-cascader :options="options" v-model="form.type" />
-        </el-form-item>
         <el-form-item label="选项A">
           <el-input
-            v-model="form.questionName"
+            v-model="form.optionA"
             autocomplete="off"
             style="width: 540px; margin-right: 40px"
           />
-          <el-button
-            v-if="buttonIconA"
-            type="info"
-            :icon="Select"
-            color="#7cba59"
-            @click="toggleButtonStyle(0)"
-          />
-          <el-button v-else type="info" :icon="CloseBold" @click="toggleButtonStyle(0)" />
         </el-form-item>
 
         <el-form-item label="选项B">
           <el-input
-            v-model="form.questionName"
+            v-model="form.optionB"
             autocomplete="off"
             style="width: 540px; margin-right: 40px"
           />
-          <el-button
-            v-if="buttonIconB"
-            type="info"
-            :icon="Select"
-            color="#7cba59"
-            @click="toggleButtonStyle(1)"
-          />
-          <el-button v-else type="info" :icon="CloseBold" @click="toggleButtonStyle(1)" />
         </el-form-item>
 
         <el-form-item label="选项C">
           <el-input
-            v-model="form.questionName"
+            v-model="form.optionC"
             autocomplete="off"
             style="width: 540px; margin-right: 40px"
           />
-          <el-button
-            v-if="buttonIconC"
-            type="info"
-            :icon="Select"
-            color="#7cba59"
-            @click="toggleButtonStyle(2)"
-          />
-          <el-button v-else type="info" :icon="CloseBold" @click="toggleButtonStyle(2)" />
         </el-form-item>
 
         <el-form-item label="选项D">
           <el-input
-            v-model="form.questionName"
+            v-model="form.optionD"
             autocomplete="off"
             style="width: 540px; margin-right: 40px"
           />
-          <el-button
-            v-if="buttonIconD"
-            type="info"
-            :icon="Select"
-            color="#7cba59"
-            @click="toggleButtonStyle(3)"
-          />
-          <el-button v-else type="info" :icon="CloseBold" @click="toggleButtonStyle(3)" />
+        </el-form-item>
+
+        <el-form-item label="答案">
+          <el-cascader :options="options" v-model="form.answer" size="large" />
         </el-form-item>
       </el-form>
       <template #footer>

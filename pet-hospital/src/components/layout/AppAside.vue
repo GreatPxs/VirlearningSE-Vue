@@ -12,7 +12,7 @@ const router = useRouter()
       <!-- collapse控制是否折叠, unique-opended表示是否只能同时展开一个子菜单 添加router属性 -->
       <el-menu class="el-menu-vertical-demo" :collapse="isCollapse" unique-opened router>
         <!-- 添加logo -->
-        <a href="/aside" class="logo">
+        <a href="/" class="logo">
           <img src="@/assets/hospital.svg" alt="" />
           <h1>后台管理</h1>
         </a>

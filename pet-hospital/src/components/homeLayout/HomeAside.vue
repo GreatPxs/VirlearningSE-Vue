@@ -15,7 +15,7 @@ const router = useRouter()
         <h1></h1>
       </a>
 
-      <el-menu-item>
+      <el-menu-item @click="router.push({ name: 'guide' })">
         <el-icon><IEpView /></el-icon> <span>医院导览</span>
       </el-menu-item>
 

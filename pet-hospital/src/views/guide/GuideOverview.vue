@@ -1,33 +1,23 @@
 <script setup lang="ts">
 import { useRouter } from 'vue-router'
-
+import { ref, onMounted } from 'vue'
+import renderer from '@/api/guide/overview.js'
 const router = useRouter()
+const webgl = ref(null)
+onMounted(() => {
+  webgl.value.appendChild(renderer.domElement)
+})
 </script>
 
 <template>
-  
-  <!-- <div class="robot">
-    <img src="@/assets/robot.svg" alt="" />
-  </div> -->
+ <!--  <div ref="webgl"></div> -->
+  <div id="canvas" ref="webgl"></div>
 </template>
 
 <style lang="scss" scoped>
-.robot {
-  width: 100px;
-  height: 100px;
-  position: fixed;
-  right: 40px;
-  bottom: 40px;
-  background-color: #dbdbdb;
-  border-radius: 50%;
-  border: 2px solid #8a8a8a;
-
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  img {
-    width: 70px;
-    height: 70px;
-  }
+div {
+  width: 80%;
+  height: 80%;
+  background-color: aquamarine;
 }
 </style>

@@ -106,12 +106,22 @@ const router = createRouter({
         {
           path: '/admin/case/create',
           name: 'case-create',
-          component: () => import('@/views/case/CaseCreateOrEdit.vue')
+          component: () => import('@/views/case/CaseCreate.vue')
+        },
+        {
+          path: '/admin/case/:id/edit',
+          name: 'case-edit',
+          component: () => import('@/views/case/CaseEdit.vue')
         },
         {
           path: '/admin/question',
           name: 'questionIndex',
           component: () => import('@/views/questions/QuestionIndex.vue')
+        },
+        {
+          path: '/admin/testPaper/:id/PaperQuestion',
+          name: 'paperQuestion',
+          component: () => import('@/views/testPaper/PaperQuestion.vue')
         },
         {
           path: '/admin/testPaper',
@@ -122,6 +132,11 @@ const router = createRouter({
           path: '/admin/test',
           name: 'testIndex',
           component: () => import('@/views/testManage/TestIndex.vue')
+        },
+        {
+          path: '/admin/test/:id/testExaminee',
+          name: 'testExaminee',
+          component: () => import('@/views/testManage/TestExaminee.vue')
         },
         {
           path: '/admin/drug',

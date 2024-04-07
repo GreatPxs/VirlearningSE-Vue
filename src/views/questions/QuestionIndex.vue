@@ -1,48 +1,39 @@
 <script setup lang="ts">
-import { Select, CloseBold } from '@element-plus/icons-vue'
+import { addQuestion } from '@/api/questionManage/addQuestion.js'
+import { editQuestion } from '@/api/questionManage/editQuestion.js'
+import { deleteQuestion } from '@/api/questionManage/deleteQuestion.js'
+import { getQuestionByName } from '@/api/questionManage/getQuestionByName.js'
+import { getQuestionList } from '@/api/questionManage/getQuestionList'
 
-// 切换用户状态的事件处理函数
-// const handleChange = async (act: 'ENABLE' | 'DISABLE', userId: number) => {
-//   let actions = {
-//     ENABLE: { msg: '启用', fn: enableUser },
-//     DISABLE: { msg: '禁用', fn: forbidUser }
-//   }
-//   const { data } = await actions[act].fn(userId)
-//   if (data.code === '000000') {
-//     ElMessage.success(`${actions[act].msg}用户成功!`)
-//   } else {
-//     ElMessage.error(`${actions[act].msg}用户失败~`)
-//     throw new Error(`${actions[act].msg}用户失败~`)
-//   }
-// }
-
-const queryCondition = ref({
-  topic: '',
-  type: '',
-  A: '',
-  B: '',
-  C: '',
-  D: ''
-})
-
-// 控制dialog是否可见
-const dialogFormVisible = ref(false)
-
-//新建题目
-const form = {
-  questionName: '',
-  type: ''
-}
-
-//分类选项菜单
+//答案选项菜单
 const options = [
+  {
+    value: 'A',
+    label: 'A'
+  },
+  {
+    value: 'B',
+    label: 'B'
+  },
+  {
+    value: 'C',
+    label: 'C'
+  },
+  {
+    value: 'D',
+    label: 'D'
+  }
+]
+
+//类型选项菜单
+const typeOptions = [
   {
     value: '接诊',
     label: '接诊'
   },
   {
-    value: '校验',
-    label: '校验'
+    value: '检查',
+    label: '检查'
   },
   {
     value: '诊断',
@@ -54,31 +45,185 @@ const options = [
   }
 ]
 
-//4个按钮
-const buttonIconA = ref(false)
-const buttonIconB = ref(false)
-const buttonIconC = ref(false)
-const buttonIconD = ref(false)
+//列表数据
+const records = ref([])
 
-const toggleButtonStyle = (id: Number) => {
-  if (id === 0) buttonIconA.value = !buttonIconA.value
-  if (id === 1) buttonIconB.value = !buttonIconB.value
-  if (id === 2) buttonIconC.value = !buttonIconC.value
-  if (id === 3) buttonIconD.value = !buttonIconD.value
+const queryCondition = ref({
+  description: '',
+  type: ''
+})
+//搜索查询
+const getQuestionInfoByName = async () => {
+  const data = await getQuestionByName(queryCondition.value).then((res) => {
+    //搜索失败
+    if (res.data.state !== 200) {
+      ElMessage.error('搜索失败')
+      //打印数据
+      console.log(res.data)
+      throw new Error('搜索失败')
+    }
+    return res.data
+  })
+
+  //搜索成功
+  console.log(data)
+  ElMessage.success('搜索成功')
+  records.value = data.data
+  listCurrentPage.value = 1
+  total.value = data.data.length
+
+  queryCondition.value.description = ''
+  queryCondition.value.type = ''
+
+  console.log(records.value)
 }
 
-//测试数据
-const records = ref([
-  {
-    id: 1,
-    questionName: '炎症',
-    A: '不治',
-    B: '如治',
-    C: '等死',
-    D: '缓刑',
-    type: '接诊'
+//页查询
+const listCurrentPage = ref(1)
+const listPageSize = ref(10)
+const total = ref(0)
+const getQuestionListPage = async (queryCondition) => {
+  const data = await getQuestionList(queryCondition).then((res) => {
+    console.log(res)
+    //获取失败
+    if (res.data.resultCode !== 200) {
+      ElMessage.error('获取题目列表失败')
+
+      //打印数据
+      console.log(res.data)
+
+      throw new Error('获取题目列表失败')
+    }
+    //获取成功
+
+    console.log(res.data)
+    return res.data
+  })
+
+  records.value = data.data.list
+  total.value = data.data.totalCount
+  listCurrentPage.value = data.data.currPage
+  listPageSize.value = data.data.pageSize
+}
+
+//新建题目
+const form = ref({
+  id: 0,
+  description: '',
+  option_a: '',
+  option_b: '',
+  option_c: '',
+  option_d: '',
+  answer: '',
+  type: ''
+})
+//0为添加, 1为修改
+const addOrEdit = ref(0)
+//dialog标题
+const title = computed(() => {
+  return addOrEdit.value === 0 ? '添加题目' : '修改题目'
+})
+//控制新增/编辑的dialog
+const dialogFormVisible = ref(false)
+
+//待编辑药物id
+const editId = ref(0)
+//点击编辑,获取编辑药物信息
+const toModify = async (id, description, option_a, option_b, option_c, option_d, answer, type) => {
+  addOrEdit.value = 1
+  editId.value = id
+  form.value.description = description
+  form.value.option_a = option_a
+  form.value.option_b = option_b
+  form.value.option_c = option_c
+  form.value.option_d = option_d
+  form.value.answer = answer
+  form.value.type = type
+  dialogFormVisible.value = true
+}
+
+//点击新增,初始化
+const toAdd = async () => {
+  addOrEdit.value = 0
+  form.value.description = ''
+  form.value.option_a = ''
+  form.value.option_b = ''
+  form.value.option_c = ''
+  form.value.option_d = ''
+  form.value.answer = ''
+  form.value.type = ''
+
+  dialogFormVisible.value = true
+}
+
+//添加or编辑提交
+const onSubmit = async () => {
+  if (addOrEdit.value === 0) {
+    const data = await addQuestion(form.value).then((res) => {
+      //添加失败
+      if (res.data.state !== 200) {
+        ElMessage.error('添加题目失败')
+
+        //打印数据
+        console.log(res.data)
+
+        throw new Error('添加题目失败')
+      }
+      //添加成功
+      return res.data
+    })
+
+    ElMessage.success('添加药物成功')
+    dialogFormVisible.value = false
+
+    //添加后,重新获取列表(待写)
+  } else {
+    form.value.id = editId.value
+    const data = await editQuestion(form.value).then((res) => {
+      //编辑失败
+      if (res.data.state !== 200) {
+        ElMessage.error('编辑失败')
+        throw new Error('编辑失败')
+      }
+      //编辑成功
+      return res.data
+    })
+
+    console.log(data)
+
+    //编辑成功
+    ElMessage.success('编辑成功')
+
+    dialogFormVisible.value = false
   }
-])
+
+  //修改后,重新获取列表(待写)
+  // getDrugListPage({ pageNumber: listCurrentPage.value, pageSize: listPageSize.value })
+}
+
+//删除
+const deleteQuestionById = async (id) => {
+  const data = await deleteQuestion(id).then((res) => {
+    //删除失败
+    if (res.data.state !== 200) {
+      ElMessage.error('删除失败')
+      //打印数据
+      console.log(res.data)
+      throw new Error('删除失败')
+    }
+    return res.data
+  })
+
+  //删除成功
+  console.log(data)
+  ElMessage.success('删除成功')
+
+  //删除成功后,需要重新获取题目列表
+  // getDrugListPage({
+  //   pageNumber: listCurrentPage.value,
+  //   pageSize: listPageSize.value
+  // })
+}
 </script>
 
 <template>
@@ -86,136 +231,127 @@ const records = ref([
     <template #header>
       <div class="card-header">
         <el-form :inline="true" :model="queryCondition" class="demo-form-inline">
-          <el-form-item label="账号">
+          <el-form-item label="题目">
             <el-input
-              v-model="queryCondition.topic"
+              v-model="queryCondition.description"
               placeholder="请输入要查询的题目内容"
               clearable
             />
           </el-form-item>
-          <el-form-item label="分类">
-            <el-cascader :options="options" v-model="queryCondition.type" />
+
+          <el-form-item label="类别">
+            <el-cascader
+              :options="typeOptions"
+              v-model="queryCondition.type"
+              size="large"
+              placeholder="请输入题目类别"
+            />
           </el-form-item>
-          <!-- 绑定点击函数 @click="queryUsers({ currentPage: 1 })" -->
           <el-form-item>
-            <el-button type="primary">查询</el-button>
+            <el-button type="primary" @click="getQuestionInfoByName">查询</el-button>
           </el-form-item>
         </el-form>
 
-        <el-button type="primary" @click="dialogFormVisible = !dialogFormVisible">
-          新增题目
-        </el-button>
+        <el-button type="primary" @click="toAdd"> 新增题目 </el-button>
       </div>
     </template>
     <!--table需要绑定查询结果 :data="queriedResult.records" -->
     <el-table border style="width: 100%" :data="records">
       <el-table-column prop="id" label="ID" align="center" />
-      <el-table-column prop="questionName" label="题目" align="center" />
-      <el-table-column prop="A" label="A" align="center" />
-      <el-table-column prop="B" label="B" align="center" />
-      <el-table-column prop="C" label="C" align="center" />
-      <el-table-column prop="D" label="D" align="center" />
+      <el-table-column prop="description" label="题目" align="center" />
       <el-table-column prop="type" label="分类" align="center" />
-      <el-table-column label="操作" align="center" v-slot="{}" width="180px">
-        <!-- 绑定点击跳转函数 @click="$router.push({ name: 'course-edit', params: { courseId: row.id } })" -->
-        <el-button type="primary">编辑</el-button>
-        <el-button type="danger">删除</el-button>
+      <el-table-column prop="option_a" label="A" align="center" />
+      <el-table-column prop="option_b" label="B" align="center" />
+      <el-table-column prop="option_c" label="C" align="center" />
+      <el-table-column prop="option_d" label="D" align="center" />
+      <el-table-column prop="answer" label="答案" align="center" />
+      <el-table-column label="操作" align="center" v-slot="{ row }" width="180px">
+        <el-button
+          type="primary"
+          @click="
+            toModify(
+              row.id,
+              row.description,
+              row.option_a,
+              row.option_b,
+              row.option_c,
+              row.option_d,
+              row.answer,
+              row.type
+            )
+          "
+          >编辑</el-button
+        >
+        <el-button type="danger" @click="deleteQuestionById(row.id)">删除</el-button>
       </el-table-column>
     </el-table>
 
-    <el-dialog v-model="dialogFormVisible" title="新增题目" center>
+    <el-dialog v-model="dialogFormVisible" :title="title" center>
       <el-form :model="form" label-width="60px">
         <el-form-item label="题目">
-          <el-input v-model="form.questionName" autocomplete="off" />
+          <el-input v-model="form.description" autocomplete="off" />
         </el-form-item>
 
         <el-form-item label="分类">
-          <el-cascader :options="options" v-model="form.type" />
+          <el-cascader :options="typeOptions" v-model="form.type" size="large" />
         </el-form-item>
+
         <el-form-item label="选项A">
           <el-input
-            v-model="form.questionName"
+            v-model="form.option_a"
             autocomplete="off"
             style="width: 540px; margin-right: 40px"
           />
-          <el-button
-            v-if="buttonIconA"
-            type="info"
-            :icon="Select"
-            color="#7cba59"
-            @click="toggleButtonStyle(0)"
-          />
-          <el-button v-else type="info" :icon="CloseBold" @click="toggleButtonStyle(0)" />
         </el-form-item>
 
         <el-form-item label="选项B">
           <el-input
-            v-model="form.questionName"
+            v-model="form.option_b"
             autocomplete="off"
             style="width: 540px; margin-right: 40px"
           />
-          <el-button
-            v-if="buttonIconB"
-            type="info"
-            :icon="Select"
-            color="#7cba59"
-            @click="toggleButtonStyle(1)"
-          />
-          <el-button v-else type="info" :icon="CloseBold" @click="toggleButtonStyle(1)" />
         </el-form-item>
 
         <el-form-item label="选项C">
           <el-input
-            v-model="form.questionName"
+            v-model="form.option_c"
             autocomplete="off"
             style="width: 540px; margin-right: 40px"
           />
-          <el-button
-            v-if="buttonIconC"
-            type="info"
-            :icon="Select"
-            color="#7cba59"
-            @click="toggleButtonStyle(2)"
-          />
-          <el-button v-else type="info" :icon="CloseBold" @click="toggleButtonStyle(2)" />
         </el-form-item>
 
         <el-form-item label="选项D">
           <el-input
-            v-model="form.questionName"
+            v-model="form.option_d"
             autocomplete="off"
             style="width: 540px; margin-right: 40px"
           />
-          <el-button
-            v-if="buttonIconD"
-            type="info"
-            :icon="Select"
-            color="#7cba59"
-            @click="toggleButtonStyle(3)"
-          />
-          <el-button v-else type="info" :icon="CloseBold" @click="toggleButtonStyle(3)" />
+        </el-form-item>
+
+        <el-form-item label="答案">
+          <el-cascader :options="options" v-model="form.answer" size="large" />
         </el-form-item>
       </el-form>
       <template #footer>
         <div class="dialog-footer">
           <el-button @click="dialogFormVisible = false">取消</el-button>
-          <el-button type="primary" @click="dialogFormVisible = false"> 新增 </el-button>
+          <el-button type="primary" @click="onSubmit"> 提交 </el-button>
         </div>
       </template>
     </el-dialog>
 
     <!-- 
       分页需要属性
-      v-model:current-page="queriedResult.current"
-      v-model:page-size="queriedResult.size"
-      :total="queriedResult.total || 0"
       @size-change="(pageSize) => queryUsers({ pageSize, currentPage: 1 })"
       @current-change="(currentPage: number) => queryUsers({ currentPage })"
      -->
     <el-pagination
-      :page-sizes="[1, 5, 10, 20, 50]"
+      :page-sizes="[10, 20, 50]"
       :background="true"
       layout="total, sizes, prev, pager, next, jumper"
+      v-model:current-page="listCurrentPage"
+      v-model:page-size="listPageSize"
+      :total="total || 0"
     />
   </el-card>
 </template>

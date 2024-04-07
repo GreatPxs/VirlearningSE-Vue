@@ -1,72 +1,167 @@
 <script setup lang="ts">
 import { DocumentAdd } from '@element-plus/icons-vue'
+import { addPaper } from '@/api/paperManage/addPaper.js'
+import { modifyPaper } from '@/api/paperManage/modifyPaper'
+import { deletePaper } from '@/api/paperManage/deletePaper'
+import { getPaperByName } from '@/api/paperManage/getPaperByName'
 
-// 切换用户状态的事件处理函数
-// const handleChange = async (act: 'ENABLE' | 'DISABLE', userId: number) => {
-//   let actions = {
-//     ENABLE: { msg: '启用', fn: enableUser },
-//     DISABLE: { msg: '禁用', fn: forbidUser }
-//   }
-//   const { data } = await actions[act].fn(userId)
-//   if (data.code === '000000') {
-//     ElMessage.success(`${actions[act].msg}用户成功!`)
-//   } else {
-//     ElMessage.error(`${actions[act].msg}用户失败~`)
-//     throw new Error(`${actions[act].msg}用户失败~`)
-//   }
-// }
+//测试试卷数据
+const records = ref([])
 
 const queryCondition = ref({
-  topic: '',
-  type: '',
-  A: '',
-  B: '',
-  C: '',
-  D: ''
+  name: ''
 })
+//搜索查询
+const getPaperInfoByName = async () => {
+  const data = await getPaperByName(queryCondition.value.name).then((res) => {
+    //搜索失败
+    if (res.data.state !== 200) {
+      ElMessage.error('搜索失败')
+      //打印数据
+      console.log(res.data)
+      throw new Error('搜索失败')
+    }
+    return res.data
+  })
 
-// 控制dialog试卷表单是否可见
-const dialogFormVisible = ref(false)
+  //搜索成功
+  console.log(data)
+  ElMessage.success('搜索成功')
+  records.value = data.data
+  listCurrentPage.value = 1
+  total.value = data.data.length
+
+  queryCondition.value.name = ''
+
+  console.log(records.value)
+}
+
+//页查询
+const listCurrentPage = ref(1)
+const listPageSize = ref(10)
+const total = ref(0)
+// const getDrugListPage = async (queryCondition) => {
+//   const data = await getDrugList(queryCondition).then((res) => {
+//     console.log(res)
+//     //获取失败
+//     if (res.data.resultCode !== 200) {
+//       ElMessage.error('获取药物列表失败')
+
+//       //打印数据
+//       console.log(res.data)
+
+//       throw new Error('获取药物列表失败')
+//     }
+//     //获取成功
+
+//     console.log(res.data)
+//     return res.data
+//   })
+
+//   record.value = data.data.list
+//   total.value = data.data.totalCount
+//   listCurrentPage.value = data.data.currPage
+//   listPageSize.value = data.data.pageSize
+// }
 
 //控制dialog新增题目表单是否可见
 const dialogQuesVisible = ref(false)
 
 //新建题目
-const form = reactive({
-  paperName: '',
-  examTime: 0,
-  totalScore: 0
+const form = ref({
+  name: ''
 })
+//0为添加, 1为修改
+const addOrEdit = ref(0)
+//dialog标题
+const title = computed(() => {
+  return addOrEdit.value === 0 ? '添加试卷' : '修改试卷'
+})
+//控制新增/编辑的dialog
+const dialogFormVisible = ref(false)
 
-//测试试卷数据
-const records = ref([
-  {
-    id: 1,
-    paperName: '卷一',
-    examTime: '100分钟',
-    totalScore: 100
-  }
-])
-
-//测试试卷所需题目数据
-const testQuestions = reactive([
-  {
-    isChosen: false,
-    id: 0,
-    type: '接诊',
-    question: '炎症',
-    questionScore: 0
-  }
-])
-
-const addQuestion = () => {
-  dialogFormVisible.value = false
-  dialogQuesVisible.value = true
+//待编辑药物id
+const editId = ref(0)
+//点击编辑,获取编辑药物信息
+const toModify = async (id, name) => {
+  addOrEdit.value = 1
+  editId.value = id
+  form.value.name = name
+  dialogFormVisible.value = true
 }
 
-const afterAddingQuestion = () => {
-  dialogQuesVisible.value = false
+//点击新增,初始化
+const toAdd = async () => {
+  addOrEdit.value = 0
+  form.value.name = ''
+
   dialogFormVisible.value = true
+}
+
+//添加or编辑提交
+const onSubmit = async () => {
+  if (addOrEdit.value === 0) {
+    const data = await addPaper(form.value).then((res) => {
+      //添加失败
+      if (res.data.state !== 200) {
+        ElMessage.error('添加试卷失败')
+
+        //打印数据
+        console.log(res.data)
+
+        throw new Error('添加试卷失败')
+      }
+      //添加成功
+      return res.data
+    })
+
+    ElMessage.success('添加试卷成功')
+    dialogFormVisible.value = false
+  } else {
+    const data = await modifyPaper(editId.value, form.value.name).then((res) => {
+      //编辑失败
+      if (res.data.state !== 200) {
+        ElMessage.error('编辑失败')
+        throw new Error('编辑失败')
+      }
+      //编辑成功
+      return res.data
+    })
+
+    console.log(data)
+
+    //编辑成功
+    ElMessage.success('编辑成功')
+
+    dialogFormVisible.value = false
+  }
+
+  //修改后,重新获取列表(待写)
+  // getDrugListPage({ pageNumber: listCurrentPage.value, pageSize: listPageSize.value })
+}
+
+//删除
+const deletePaperById = async (id) => {
+  const data = await deletePaper(id).then((res) => {
+    //删除失败
+    if (res.data.state !== 200) {
+      ElMessage.error('删除失败')
+      //打印数据
+      console.log(res.data)
+      throw new Error('删除失败')
+    }
+    return res.data
+  })
+
+  //删除成功
+  console.log(data)
+  ElMessage.success('删除成功')
+
+  //删除成功后,需要重新获取题目列表
+  // getDrugListPage({
+  //   pageNumber: listCurrentPage.value,
+  //   pageSize: listPageSize.value
+  // })
 }
 </script>
 
@@ -76,60 +171,54 @@ const afterAddingQuestion = () => {
       <div class="card-header">
         <el-form :inline="true" :model="queryCondition" class="demo-form-inline">
           <el-form-item label="试卷">
-            <el-input v-model="queryCondition.topic" placeholder="请输入试卷关键字" clearable />
+            <el-input v-model="queryCondition.name" placeholder="请输入试卷关键字" clearable />
           </el-form-item>
-          <!-- 绑定点击函数 @click="queryUsers({ currentPage: 1 })" -->
           <el-form-item>
-            <el-button type="primary">查询</el-button>
+            <el-button type="primary" @click="getPaperInfoByName">查询</el-button>
           </el-form-item>
         </el-form>
 
-        <el-button type="primary" @click="dialogFormVisible = !dialogFormVisible">
-          新增试卷
-        </el-button>
+        <el-button type="primary" @click="toAdd"> 新增试卷 </el-button>
       </div>
     </template>
     <!--table需要绑定查询结果 :data="queriedResult.records" -->
     <el-table border style="width: 100%" :data="records">
-      <el-table-column prop="id" label="试卷ID" align="center" />
-      <el-table-column prop="paperName" label="试卷名称" align="center" />
-      <el-table-column prop="examTime" label="考试时间(分钟)" align="center" />
+      <el-table-column prop="paperId" label="试卷ID" align="center" />
+      <el-table-column prop="name" label="试卷名称" align="center" />
       <el-table-column prop="totalScore" label="总分" align="center" />
-      <el-table-column label="操作" align="center" v-slot="{}" width="180px">
+      <el-table-column prop="totalNum" label="题目数" align="center" />
+      <el-table-column label="试题" align="center" v-slot="{ row }" width="180px">
         <!-- 绑定点击跳转函数 @click="$router.push({ name: 'course-edit', params: { courseId: row.id } })" -->
-        <el-button type="primary">编辑</el-button>
-        <el-button type="danger">删除</el-button>
+        <el-button
+          type="info"
+          :icon="DocumentAdd"
+          @click="this.$router.push({ name: 'paperQuestion', params: { id: row.paperId } })"
+        >
+          选择试题
+        </el-button>
+      </el-table-column>
+      <el-table-column label="操作" align="center" v-slot="{ row }" width="180px">
+        <!-- 绑定点击跳转函数 @click="$router.push({ name: 'course-edit', params: { courseId: row.id } })" -->
+        <el-button type="primary" @click="toModify(row.paperId, row.name)">编辑</el-button>
+        <el-button type="danger" @click="deletePaperById(row.paperId)">删除</el-button>
       </el-table-column>
     </el-table>
 
-    <el-dialog v-model="dialogFormVisible" title="添加试卷" center>
+    <el-dialog v-model="dialogFormVisible" :title="title" center>
       <el-form :model="form" label-width="100px">
         <el-form-item label="试卷名称">
-          <el-input v-model="form.paperName" autocomplete="off" />
-        </el-form-item>
-
-        <!-- 绑定 @change="handleChange" -->
-        <el-form-item label="用时(分钟)">
-          <el-input-number v-model="form.examTime" :min="0" :max="200" />
-        </el-form-item>
-
-        <el-form-item label="总分">
-          <el-input-number v-model="form.totalScore" :min="0" :max="200" />
-        </el-form-item>
-
-        <el-form-item>
-          <el-button type="info" :icon="DocumentAdd" @click="addQuestion"> 添加试题 </el-button>
+          <el-input v-model="form.name" autocomplete="off" />
         </el-form-item>
       </el-form>
       <template #footer>
         <div class="dialog-footer">
           <el-button @click="dialogFormVisible = false">取消</el-button>
-          <el-button type="primary" @click="dialogFormVisible = false"> 提交 </el-button>
+          <el-button type="primary" @click="onSubmit"> 提交 </el-button>
         </div>
       </template>
     </el-dialog>
 
-    <el-dialog v-model="dialogQuesVisible" title="添加试题" center style="width: 70%">
+    <!-- <el-dialog v-model="dialogQuesVisible" title="添加试题" center style="width: 70%">
       <el-table border style="width: 100%" :data="testQuestions">
         <el-table-column prop="isChosen" label="勾选" align="center" width="60px">
           <template #default="scope">
@@ -156,13 +245,10 @@ const afterAddingQuestion = () => {
         :background="true"
         layout="total, sizes, prev, pager, next, jumper"
       />
-    </el-dialog>
+    </el-dialog> -->
 
     <!-- 
       分页需要属性
-      v-model:current-page="queriedResult.current"
-      v-model:page-size="queriedResult.size"
-      :total="queriedResult.total || 0"
       @size-change="(pageSize) => queryUsers({ pageSize, currentPage: 1 })"
       @current-change="(currentPage: number) => queryUsers({ currentPage })"
      -->
@@ -170,6 +256,9 @@ const afterAddingQuestion = () => {
       :page-sizes="[5, 10, 20, 50]"
       :background="true"
       layout="total, sizes, prev, pager, next, jumper"
+      v-model:current-page="listCurrentPage"
+      v-model:page-size="listPageSize"
+      :total="total || 0"
     />
   </el-card>
 </template>

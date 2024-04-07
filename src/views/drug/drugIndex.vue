@@ -16,6 +16,30 @@ onMounted(() => {
 const searchCondition = reactive({
   name: ''
 })
+//搜索查询
+const getDrugInfoByName = async () => {
+  const data = await getDrugByName(searchCondition.name).then((res) => {
+    //搜索失败
+    if (res.data.state !== 200) {
+      ElMessage.error('搜索失败')
+      //打印数据
+      console.log(res.data)
+      throw new Error('搜索失败')
+    }
+    return res.data
+  })
+
+  //搜索成功
+  console.log(data)
+  ElMessage.success('搜索成功')
+  record.value = data.data.dataList
+  listCurrentPage.value = 1
+  total.value = data.data.dataList.length
+
+  searchCondition.name = ''
+
+  console.log(record.value)
+}
 
 //药品类别数据
 const options = [
@@ -148,8 +172,9 @@ const listPageSize = ref(10)
 const total = ref(0)
 const getDrugListPage = async (queryCondition) => {
   const data = await getDrugList(queryCondition).then((res) => {
+    console.log(res)
     //获取失败
-    if (res.data.state !== 200) {
+    if (res.data.resultCode !== 200) {
       ElMessage.error('获取药物列表失败')
 
       //打印数据
@@ -160,40 +185,13 @@ const getDrugListPage = async (queryCondition) => {
     //获取成功
 
     console.log(res.data)
-    listCurrentPage.value = queryCondition.currentPage
-    listPageSize.value = queryCondition.pageSize
     return res.data
   })
 
-  record.value = data.data.dataList
-  total.value = data.data.count
-  listCurrentPage.value = queryCondition.pageNumber
-  listPageSize.value = queryCondition.pageSize
-}
-
-//搜索查询
-const getDrugInfoByName = async () => {
-  const data = await getDrugByName(searchCondition.name).then((res) => {
-    //搜索失败
-    if (res.data.state !== 200) {
-      ElMessage.error('搜索失败')
-      //打印数据
-      console.log(res.data)
-      throw new Error('搜索失败')
-    }
-    return res.data
-  })
-
-  //搜索成功
-  console.log(data)
-  ElMessage.success('搜索成功')
-  record.value = data.data.dataList
-  listCurrentPage.value = 1
-  total.value = data.data.dataList.length
-
-  searchCondition.name = ''
-
-  console.log(record.value)
+  record.value = data.data.list
+  total.value = data.data.totalCount
+  listCurrentPage.value = data.data.currPage
+  listPageSize.value = data.data.pageSize
 }
 
 //新增药物的测试数据
@@ -255,8 +253,6 @@ const onSubmit = async () => {
 
     ElMessage.success('添加药物成功')
     dialogFormVisible.value = false
-
-    //添加后,重新获取列表(待写)
   } else {
     const data = await editDrug(
       editId.value,
@@ -280,9 +276,9 @@ const onSubmit = async () => {
     ElMessage.success('编辑成功')
 
     dialogFormVisible.value = false
-
-    //修改后,重新获取列表(待写)
   }
+
+  getDrugListPage({ pageNumber: listCurrentPage.value, pageSize: listPageSize.value })
 }
 
 //删除
@@ -302,7 +298,11 @@ const deleteDrugById = async (id) => {
   console.log(data)
   ElMessage.success('删除成功')
 
-  //删除成功后,需要重新获取药物列表(待写)
+  //删除成功后,需要重新获取药物列表
+  getDrugListPage({
+    pageNumber: listCurrentPage.value,
+    pageSize: listPageSize.value
+  })
 }
 </script>
 

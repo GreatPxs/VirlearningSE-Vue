@@ -3,8 +3,6 @@ import request from '@/utils/request.js'
 export const addDrug = (queryCondition) => {
   return request({
     method: 'GET',
-    // url: '/drug/addDrug',
-    // params: queryCondition
 
     url:
       `/drug/addDrug?id&drugName=` +

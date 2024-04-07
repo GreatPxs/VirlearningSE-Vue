@@ -6,10 +6,11 @@ export const addPaperQuestion = (paperId, id, pqscore) => {
       paperId +
       `&name&totalNum&totalScore&id=` +
       id +
-      `&type&description&option_a&option_b&option_c&option_d&answer&pqScore`
+      `&type&description&option_a&option_b&option_c&option_d&answer&pqScore=` +
+      pqscore
   )
   return request({
-    method: 'PUT',
+    method: 'GET',
     url:
       `/paper/insertPaperQuestion?paperId=` +
       paperId +

@@ -5,6 +5,13 @@ import { deleteQuestion } from '@/api/questionManage/deleteQuestion.js'
 import { getQuestionByName } from '@/api/questionManage/getQuestionByName.js'
 import { getQuestionList } from '@/api/questionManage/getQuestionList'
 
+onMounted(() => {
+  getQuestionListPage({
+    pageNumber: listCurrentPage.value,
+    pageSize: listPageSize.value
+  })
+})
+
 //答案选项菜单
 const options = [
   {
@@ -197,8 +204,8 @@ const onSubmit = async () => {
     dialogFormVisible.value = false
   }
 
-  //修改后,重新获取列表(待写)
-  // getDrugListPage({ pageNumber: listCurrentPage.value, pageSize: listPageSize.value })
+  //修改后,重新获取列表
+  getQuestionListPage({ pageNumber: listCurrentPage.value, pageSize: listPageSize.value })
 }
 
 //删除
@@ -219,10 +226,7 @@ const deleteQuestionById = async (id) => {
   ElMessage.success('删除成功')
 
   //删除成功后,需要重新获取题目列表
-  // getDrugListPage({
-  //   pageNumber: listCurrentPage.value,
-  //   pageSize: listPageSize.value
-  // })
+  getQuestionListPage({ pageNumber: listCurrentPage.value, pageSize: listPageSize.value })
 }
 </script>
 
@@ -340,11 +344,6 @@ const deleteQuestionById = async (id) => {
       </template>
     </el-dialog>
 
-    <!-- 
-      分页需要属性
-      @size-change="(pageSize) => queryUsers({ pageSize, currentPage: 1 })"
-      @current-change="(currentPage: number) => queryUsers({ currentPage })"
-     -->
     <el-pagination
       :page-sizes="[10, 20, 50]"
       :background="true"
@@ -352,6 +351,11 @@ const deleteQuestionById = async (id) => {
       v-model:current-page="listCurrentPage"
       v-model:page-size="listPageSize"
       :total="total || 0"
+      @size-change="(pageSize) => getQuestionListPage({ pageSize: pageSize, pageNumber: 1 })"
+      @current-change="
+        (currentPage: number) =>
+          getQuestionListPage({ pageSize: listPageSize, pageNumber: currentPage })
+      "
     />
   </el-card>
 </template>

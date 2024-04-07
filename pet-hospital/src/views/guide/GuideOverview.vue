@@ -5,9 +5,10 @@ const router = useRouter()
 </script>
 
 <template>
-  <div class="robot">
+  
+  <!-- <div class="robot">
     <img src="@/assets/robot.svg" alt="" />
-  </div>
+  </div> -->
 </template>
 
 <style lang="scss" scoped>

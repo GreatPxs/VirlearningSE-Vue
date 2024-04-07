@@ -57,6 +57,18 @@ export default defineConfig({
       '/role': {
         target: 'http://114.55.135.87:28018',
         changeOrigin: true
+      },
+      '/Case': {
+        target: 'http://114.55.135.87:28018',
+        changeOrigin: true
+      },
+      '/question': {
+        target: 'http://114.55.135.87:28018',
+        changeOrigin: true
+      },
+      '/paper': {
+        target: 'http://114.55.135.87:28018',
+        changeOrigin: true
       }
     },
     port: 28018,

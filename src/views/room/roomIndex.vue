@@ -93,7 +93,6 @@ const onSubmit = async () => {
 
     ElMessage.success('添加科室成功')
     dialogFormVisible.value = false
-    //添加后,重新获取列表(待写)
   } else {
     const data = await editRoom(
       editId.value,
@@ -117,8 +116,6 @@ const onSubmit = async () => {
     ElMessage.success('编辑成功')
 
     dialogFormVisible.value = false
-
-    //修改后,重新获取列表(待写)
   }
 
   getRoomListPage({
@@ -223,10 +220,10 @@ const handlePhotoSuccess: UploadProps['onSuccess'] = (response, uploadFile) => {
 
 const beforePhotoUpload: UploadProps['beforeUpload'] = (rawFile) => {
   if (rawFile.type !== 'image/jpeg') {
-    ElMessage.error('Avatar picture must be JPG format!')
+    ElMessage.error('Photo must be JPG format!')
     return false
   } else if (rawFile.size / 1024 / 1024 > 2) {
-    ElMessage.error('Avatar picture size can not exceed 2MB!')
+    ElMessage.error('Photo size can not exceed 2MB!')
     return false
   }
   return true

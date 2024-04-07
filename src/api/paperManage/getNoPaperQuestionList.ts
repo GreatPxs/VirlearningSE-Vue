@@ -1,6 +1,6 @@
 import request from '@/utils/request.js'
 
-export const getPaperQuestionList = (paperId, pageNumber, pageSize) => {
+export const getNoPaperQuestionList = (paperId, pageNumber, pageSize) => {
   console.log(
     `/paper/nopaperQuestionList?pageNumber=` +
       pageNumber +

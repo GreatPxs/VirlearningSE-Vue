@@ -2,14 +2,14 @@ import request from '@/utils/request.js'
 
 export const deletePaperQuestion = (paperId, id) => {
   console.log(
-    `/paper/insertPaperQuestion?paperId=` +
+    `/paper/deletePaperQuestion?paperId=` +
       paperId +
       `&name&totalNum&totalScore&id=` +
       id +
-      `&type&description&option_a&option_b&option_c&option_d&answer&pqScore`
+      `&type&description&option_a&option_b&option_c&option_d&answer`
   )
   return request({
-    method: 'PUT',
+    method: 'GET',
     url:
       `/paper/deletePaperQuestion?paperId=` +
       paperId +

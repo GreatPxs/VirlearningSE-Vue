@@ -4,6 +4,14 @@ import { addPaper } from '@/api/paperManage/addPaper.js'
 import { modifyPaper } from '@/api/paperManage/modifyPaper'
 import { deletePaper } from '@/api/paperManage/deletePaper'
 import { getPaperByName } from '@/api/paperManage/getPaperByName'
+import { getPaperList } from '@/api/paperManage/getPaperList'
+
+onMounted(() => {
+  getPaperListPage({
+    pageNumber: listCurrentPage.value,
+    pageSize: listPageSize.value
+  })
+})
 
 //测试试卷数据
 const records = ref([])
@@ -40,29 +48,29 @@ const getPaperInfoByName = async () => {
 const listCurrentPage = ref(1)
 const listPageSize = ref(10)
 const total = ref(0)
-// const getDrugListPage = async (queryCondition) => {
-//   const data = await getDrugList(queryCondition).then((res) => {
-//     console.log(res)
-//     //获取失败
-//     if (res.data.resultCode !== 200) {
-//       ElMessage.error('获取药物列表失败')
+const getPaperListPage = async (queryCondition) => {
+  const data = await getPaperList(queryCondition).then((res) => {
+    console.log(res)
+    //获取失败
+    if (res.data.resultCode !== 200) {
+      ElMessage.error('获取试卷列表失败')
 
-//       //打印数据
-//       console.log(res.data)
+      //打印数据
+      console.log(res.data)
 
-//       throw new Error('获取药物列表失败')
-//     }
-//     //获取成功
+      throw new Error('获取试卷列表失败')
+    }
+    //获取成功
 
-//     console.log(res.data)
-//     return res.data
-//   })
+    console.log(res.data)
+    return res.data
+  })
 
-//   record.value = data.data.list
-//   total.value = data.data.totalCount
-//   listCurrentPage.value = data.data.currPage
-//   listPageSize.value = data.data.pageSize
-// }
+  records.value = data.data.list
+  total.value = data.data.totalCount
+  listCurrentPage.value = data.data.currPage
+  listPageSize.value = data.data.pageSize
+}
 
 //控制dialog新增题目表单是否可见
 const dialogQuesVisible = ref(false)
@@ -137,7 +145,7 @@ const onSubmit = async () => {
   }
 
   //修改后,重新获取列表(待写)
-  // getDrugListPage({ pageNumber: listCurrentPage.value, pageSize: listPageSize.value })
+  getPaperListPage({ pageNumber: listCurrentPage.value, pageSize: listPageSize.value })
 }
 
 //删除
@@ -158,10 +166,7 @@ const deletePaperById = async (id) => {
   ElMessage.success('删除成功')
 
   //删除成功后,需要重新获取题目列表
-  // getDrugListPage({
-  //   pageNumber: listCurrentPage.value,
-  //   pageSize: listPageSize.value
-  // })
+  getPaperListPage({ pageNumber: listCurrentPage.value, pageSize: listPageSize.value })
 }
 </script>
 
@@ -247,11 +252,6 @@ const deletePaperById = async (id) => {
       />
     </el-dialog> -->
 
-    <!-- 
-      分页需要属性
-      @size-change="(pageSize) => queryUsers({ pageSize, currentPage: 1 })"
-      @current-change="(currentPage: number) => queryUsers({ currentPage })"
-     -->
     <el-pagination
       :page-sizes="[5, 10, 20, 50]"
       :background="true"
@@ -259,6 +259,11 @@ const deletePaperById = async (id) => {
       v-model:current-page="listCurrentPage"
       v-model:page-size="listPageSize"
       :total="total || 0"
+      @size-change="(pageSize) => getPaperListPage({ pageSize: pageSize, pageNumber: 1 })"
+      @current-change="
+        (currentPage: number) =>
+          getPaperListPage({ pageSize: listPageSize, pageNumber: currentPage })
+      "
     />
   </el-card>
 </template>

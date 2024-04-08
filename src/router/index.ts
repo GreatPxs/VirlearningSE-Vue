@@ -21,7 +21,7 @@ const router = createRouter({
         {
           path: '/guide',
           name: 'guide',
-          component: () => import('@/views/home/HomeIndexView.vue')
+          component: () => import('@/views/guide/GuideOverview.vue')
         },
         {
           path: '/user-info',

@@ -1,58 +1,29 @@
 import * as Three from 'three'
+import model from './model.js'
 import { OrbitControls } from 'three/examples/jsm/controls/OrbitControls.js'
-import { GLTFLoader } from 'three/examples/jsm/loaders/GLTFLoader.js'
 import { GUI } from 'three/examples/jsm/libs/lil-gui.module.min.js'
+import { EffectComposer } from 'three/examples/jsm/postprocessing/EffectComposer.js'
+import { RenderPass } from 'three/examples/jsm/postprocessing/RenderPass.js'
+import { OutlinePass } from 'three/examples/jsm/postprocessing/OutlinePass.js'
+import { CSS2DRenderer, CSS2DObject } from 'three/examples/jsm/renderers/CSS2DRenderer.js'
 //创建场景
 const scene = new Three.Scene()
-scene.background = new Three.Color('#CCCCCC')
+scene.add(model)
 
-//GLTF加载器
-const loader = new GLTFLoader()
-loader.load('/public/overview.gltf', function (gltf) {
-  console.log('控制台查看加载gltf文件返回的对象结构', gltf)
-  console.log('gltf对象场景属性', gltf.scene)
-  scene.add(gltf.scene)
-})
-
-/* // 递归遍历所有模型节点批量修改材质
-gltf.scene.traverse(function (obj) {
-  if (obj.isMesh) {
-    //判断是否是网格模型
-    console.log('模型节点', obj)
-    console.log('模型节点名字', obj.name)
-  }
-}) */
-
-//创建物体
-/* const geometry = new Three.BoxGeometry(100, 100, 100)
-const material = new Three.MeshLambertMaterial({
-  color: 0x00ff00
-})
-const mesh = new Three.Mesh(geometry, material)
-scene.add(mesh) */
-//创建坐标系
-/* const axesHelper = new Three.AxesHelper(30)
-scene.add(axesHelper) */
-/* //光源
-const pointLight = new Three.PointLight(0xffffff, 1.0)
-pointLight.position.set(400, 200, 250)
-scene.add(pointLight) */
-
-// 平行光
-const directionalLight = new Three.DirectionalLight(0xffffff, 5.5)
-// 设置光源的方向：通过光源position属性和目标指向对象的position属性计算
-directionalLight.position.set(80, 50, 0)
-// 方向光默认指向xyz坐标原点
+// 添加平行光源
+const directionalLight = new Three.DirectionalLight(0xffffff, 3.5)
+directionalLight.position.set(80, 50, 30)
 scene.add(directionalLight)
+// 添加环境光源
+const ambient = new Three.AmbientLight(0xffffff, 0.4)
+scene.add(ambient)
 
 //画布尺寸
-/* const v = document.getElementById('canvas')
-console.log(v.width) */
 const width = window.innerWidth
 const height = window.innerHeight
 
 //创建相机
-const obj = {
+const campoint = {
   x: 0,
   y: 0,
   z: -5
@@ -60,17 +31,51 @@ const obj = {
 
 const camera = new Three.PerspectiveCamera(30, width / height, 1, 3000)
 camera.position.set(0, 80, 0)
-camera.lookAt(obj.x, obj.y, obj.z)
-
+camera.lookAt(campoint.x, campoint.y, campoint.z)
 //渲染器
-const renderer = new Three.WebGLRenderer()
+const renderer = new Three.WebGLRenderer({
+  alpha: true
+})
 renderer.setSize(width, height, true)
-renderer.render(scene, camera)
+//const inner_inpatient = model.getObjectByName('inner_inpatient')
+// 后处理对象
+const composer = new EffectComposer(renderer)
+const renderPass = new RenderPass(scene, camera)
+composer.addPass(renderPass)
+const v2 = new Three.Vector2(window.innerWidth, window.innerHeight)
+const outlinePass = new OutlinePass(v2, scene, camera)
+outlinePass.visibleEdgeColor.set(0x00ffff)
+outlinePass.edgeThickness = 4
+outlinePass.edgeStrength = 6
+composer.addPass(outlinePass)
+//标签渲染
+const css2renderer = new CSS2DRenderer()
+css2renderer.render(scene, camera)
+css2renderer.setSize(width, height)
+css2renderer.domElement.style.position = 'absolute'
+css2renderer.domElement.style.top = 0
+css2renderer.domElement.style.pointerEvents = 'none'
+document.body.appendChild(css2renderer.domElement)
+
+//渲染循环
+function render() {
+  composer.render()
+  //renderer.render(scene, camera)
+  //renderPass.render(scene, camera)
+  css2renderer.render(scene, camera)
+  requestAnimationFrame(render)
+}
+render()
+//添加标签
+document.addEventListener('DOMContentLoaded', function () {
+  const div1 = document.querySelector('#inpatient')
+  console.log(div1)
+})
 
 //相机控件
 const controls = new OrbitControls(camera, renderer.domElement)
 //controls.enableRotate = false
-controls.target.set(obj.x, obj.y, obj.z)
+controls.target.set(campoint.x, campoint.y, campoint.z)
 controls.update()
 controls.addEventListener('change', function () {
   renderer.render(scene, camera)
@@ -78,20 +83,60 @@ controls.addEventListener('change', function () {
 
 //监听窗口变化
 window.onresize = function () {
-  const width = window.innerWidth
-  const height = window.innerHeight
+  const width = window.innerWidth - 200
+  const height = window.innerHeight - 60
   renderer.setSize(width, height)
   camera.aspect = window.innerWidth / window.innerHeight
   camera.updateProjectionMatrix()
 }
+//监听点击事件
+//let chooseObj = null
+renderer.domElement.addEventListener('click', (event) => {
+  scene.traverse((one) => {
+    if (one.isCSS2DObject) {
+      scene.remove(one)
+    }
+  })
+  const px = event.offsetX
+  const py = event.offsetY
+  const x = (px / width) * 2 - 1
+  const y = -(py / height) * 2 + 1
+  const raycaster = new Three.Raycaster()
+  raycaster.setFromCamera(new Three.Vector2(x, y), camera)
+  const intersects = raycaster.intersectObjects(model.children)
+  //console.log('返回对象', intersects)
+  if (intersects.length > 0) {
+    //intersects[0].object.material.color.set(0xff0000)
+    let obj = intersects[0].object
+    outlinePass.selectedObjects = [obj]
+    if (obj.name != 'floor') {
+      let dom = createDiv(obj.name)
+      let css2dobject = new CSS2DObject(dom)
+      const v3 = new Three.Vector3()
+      obj.getWorldPosition(v3)
+      css2dobject.position.set(v3.x, v3.y, v3.z)
+      scene.add(css2dobject)
+      render()
+    } else { /* empty */ }
+  } else {
+    outlinePass.selectedObjects = []
+  }
+})
 
+function createDiv(name) {
+  let dom = document.createElement('div')
+  dom.style.padding = '5px 10px'
+  dom.style.border = '1px solid skyblue'
+  dom.style.color = 'black'
+  dom.style.background = '#E6E6FA'
+  dom.innerHTML = name
+  return dom
+}
 //gui对象
 const gui = new GUI()
 //const camFolder = gui.addFolder('相机坐标')
-gui.add(directionalLight, 'intensity', 0, 10)
-/* camFolder.close()
-camFolder.add(obj, 'x').min(-50).max(50).step(1).name('相机x坐标')
-camFolder.add(obj, 'y').min(-50).max(50).step(1).name('相机y坐标')
-camFolder.add(obj, 'z').min(-50).max(50).step(1).name('相机z坐标') */
+gui.add(directionalLight, 'intensity', 1, 10).name('光照强度')
 
 export default renderer
+
+//获取标签名

@@ -16,9 +16,9 @@ onMounted(() => {
 </template>
 
 <style lang="scss" scoped>
-div {
-  width: 80%;
-  height: 80%;
-  background-color: aquamarine;
+canvas {
+  margin: 0px;
+  overflow: hidden;
+  /* background-color: aquamarine; */
 }
 </style>

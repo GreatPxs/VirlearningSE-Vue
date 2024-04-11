@@ -19,8 +19,8 @@ const ambient = new Three.AmbientLight(0xffffff, 0.4)
 scene.add(ambient)
 
 //画布尺寸
-const width = window.innerWidth
-const height = window.innerHeight
+const width = window.innerWidth - 350
+const height = window.innerHeight - 80
 
 //创建相机
 const campoint = {
@@ -37,6 +37,7 @@ const renderer = new Three.WebGLRenderer({
   alpha: true
 })
 renderer.setSize(width, height, true)
+
 //const inner_inpatient = model.getObjectByName('inner_inpatient')
 // 后处理对象
 const composer = new EffectComposer(renderer)
@@ -81,6 +82,15 @@ controls.addEventListener('change', function () {
   renderer.render(scene, camera)
 })
 
+/* //进入科室按钮
+var btn_enter = document.createElement('enter')
+btn_enter.innerHTML = '进入科室'
+btn_enter.style.position = 'absolue'
+btn_enter.style.top = '80px'
+btn_enter.style.left = '240px'
+btn_enter.style.zIndex = '999'
+document.body.appendChild(btn_enter) */
+
 //监听窗口变化
 window.onresize = function () {
   const width = window.innerWidth - 200
@@ -89,8 +99,10 @@ window.onresize = function () {
   camera.aspect = window.innerWidth / window.innerHeight
   camera.updateProjectionMatrix()
 }
+
 //监听点击事件
 //let chooseObj = null
+let chooseObj = null
 renderer.domElement.addEventListener('click', (event) => {
   scene.traverse((one) => {
     if (one.isCSS2DObject) {
@@ -108,6 +120,8 @@ renderer.domElement.addEventListener('click', (event) => {
   if (intersects.length > 0) {
     //intersects[0].object.material.color.set(0xff0000)
     let obj = intersects[0].object
+    chooseObj = obj.name
+    console.log(chooseObj)
     outlinePass.selectedObjects = [obj]
     if (obj.name != 'floor') {
       let dom = createDiv(obj.name)
@@ -117,9 +131,13 @@ renderer.domElement.addEventListener('click', (event) => {
       css2dobject.position.set(v3.x, v3.y, v3.z)
       scene.add(css2dobject)
       render()
-    } else { /* empty */ }
+    } else {
+      console.log('floor') /* empty */
+    }
   } else {
     outlinePass.selectedObjects = []
+    chooseObj = null
+    console.log(chooseObj)
   }
 })
 
@@ -133,10 +151,8 @@ function createDiv(name) {
   return dom
 }
 //gui对象
-const gui = new GUI()
+/* const gui = new GUI()
 //const camFolder = gui.addFolder('相机坐标')
 gui.add(directionalLight, 'intensity', 1, 10).name('光照强度')
-
+ */
 export default renderer
-
-//获取标签名

@@ -12,35 +12,6 @@ onMounted(() => {
   })
 })
 
-//搜索条件
-const searchCondition = reactive({
-  name: ''
-})
-//搜索查询
-const getDrugInfoByName = async () => {
-  const data = await getDrugByName(searchCondition.name).then((res) => {
-    //搜索失败
-    if (res.data.state !== 200) {
-      ElMessage.error('搜索失败')
-      //打印数据
-      console.log(res.data)
-      throw new Error('搜索失败')
-    }
-    return res.data
-  })
-
-  //搜索成功
-  console.log(data)
-  ElMessage.success('搜索成功')
-  record.value = data.data.dataList
-  listCurrentPage.value = 1
-  total.value = data.data.dataList.length
-
-  searchCondition.name = ''
-
-  console.log(record.value)
-}
-
 //药品类别数据
 const options = [
   {
@@ -165,6 +136,37 @@ const options = [
 
 //测试数据 drugName:药名  specification:类别 unit:主治症状 drugNote:使用说明
 const record = ref([])
+//标记是否为条件搜索 0页查询 1条件搜索
+const conditionSearch = ref(0)
+
+//搜索条件
+const searchCondition = reactive({
+  name: ''
+})
+//搜索查询
+const getDrugInfoByName = async (pageCondition) => {
+  const data = await getDrugByName(searchCondition.name, pageCondition).then((res) => {
+    //搜索失败
+    if (res.data.state !== 200) {
+      ElMessage.error('搜索失败')
+      //打印数据
+      console.log(res.data)
+      throw new Error('搜索失败')
+    }
+    return res.data
+  })
+
+  //搜索成功
+  conditionSearch.value = 1
+  console.log(data)
+  ElMessage.success('搜索成功')
+  record.value = data.data.dataList
+  listCurrentPage.value = pageCondition.pageNumber
+  listPageSize.value = pageCondition.pageSize
+  total.value = data.data.dataList.length
+
+  console.log(record.value)
+}
 
 //页查询
 const listCurrentPage = ref(1)
@@ -192,6 +194,33 @@ const getDrugListPage = async (queryCondition) => {
   total.value = data.data.totalCount
   listCurrentPage.value = data.data.currPage
   listPageSize.value = data.data.pageSize
+}
+
+//处理页数大小改变
+const handlePageSizeChange = (pageSize) => {
+  if (conditionSearch.value === 0) {
+    getDrugListPage({ pageSize: pageSize, pageNumber: 1 })
+  } else {
+    getDrugInfoByName({ pageSize: pageSize, pageNumber: 1 })
+  }
+}
+//处理页码改变
+const handlePageNumberChange = (currentPage) => {
+  if (conditionSearch.value === 0) {
+    getDrugListPage({ pageSize: listPageSize.value, pageNumber: currentPage })
+  } else {
+    getDrugInfoByName({ pageSize: listPageSize.value, pageNumber: currentPage })
+  }
+}
+
+//刷新页面
+const handleRefresh = () => {
+  getDrugListPage({
+    pageNumber: 1,
+    pageSize: listPageSize.value
+  })
+  conditionSearch.value = 0
+  listCurrentPage.value = 1
 }
 
 //新增药物的测试数据
@@ -285,7 +314,7 @@ const onSubmit = async () => {
 const deleteDrugById = async (id) => {
   const data = await deleteDrug(id).then((res) => {
     //删除失败
-    if (res.data.resultCode !== 200) {
+    if (res.data.state !== 200) {
       ElMessage.error('删除失败')
       //打印数据
       console.log(res.data)
@@ -311,16 +340,21 @@ const deleteDrugById = async (id) => {
     <el-card class="box-card">
       <template #header>
         <div class="card-header">
+          <el-icon :size="40" class="refresh" @click="handleRefresh"><IEpRefresh /></el-icon>
           <el-form :inline="true" :model="searchCondition" class="demo-form-inline">
-            <el-form-item label="药物">
+            <el-form-item label="药物" class="searchInput">
               <el-input v-model="searchCondition.name" clearable placeholder="药物名称" />
             </el-form-item>
 
             <el-form-item>
-              <el-button type="primary" @click="getDrugInfoByName">查询 </el-button>
+              <el-button
+                type="primary"
+                @click="getDrugInfoByName({ pageNumber: 1, pageSize: listPageSize })"
+                >查询
+              </el-button>
             </el-form-item>
           </el-form>
-          <el-button type="primary" @click="toAdd"> 新增药物 </el-button>
+          <el-button type="primary" @click="toAdd" class="addButton"> 新增药物 </el-button>
         </div>
       </template>
 
@@ -375,11 +409,8 @@ const deleteDrugById = async (id) => {
         v-model:current-page="listCurrentPage"
         v-model:page-size="listPageSize"
         :total="total || 0"
-        @size-change="(pageSize) => getDrugListPage({ pageSize: pageSize, pageNumber: 1 })"
-        @current-change="
-          (currentPage: number) =>
-            getDrugListPage({ pageSize: listPageSize, pageNumber: currentPage })
-        "
+        @size-change="(pageSize) => handlePageSizeChange(pageSize)"
+        @current-change="(currentPage: number) => handlePageNumberChange(currentPage)"
       />
     </el-card>
   </div>
@@ -413,5 +444,26 @@ const deleteDrugById = async (id) => {
   justify-content: center;
   align-items: center;
   margin-top: 20px;
+}
+
+.demo-form-inline {
+  .el-form-item {
+    margin: 0px;
+  }
+
+  .searchInput {
+    margin-right: 5px;
+  }
+}
+
+.refresh {
+  margin-right: 40px;
+}
+.refresh:hover {
+  color: #409eff;
+}
+
+.addButton {
+  margin-left: 700px;
 }
 </style>

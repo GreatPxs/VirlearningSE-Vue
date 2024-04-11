@@ -18,8 +18,13 @@ const router = useRouter()
       </div>
     </div>
 
+<<<<<<< HEAD
     <div class="row">
       <div @click="router.push({ name: 'caseStudy' })">
+=======
+    <div class="row" @click="router.push({ name: 'caseStudy' })">
+      <div>
+>>>>>>> f70944996ad4546b1d5be707e57cc2721b2b6b28
         <img src="@/assets/casestudy.png" alt="" />
         <p>病例学习</p>
       </div>
@@ -31,9 +36,7 @@ const router = useRouter()
     </div>
   </div>
 
-  <div class="robot">
-    <img src="@/assets/robot.svg" alt="" />
-  </div>
+  <img src="@/assets/robot.svg" alt="" class="robot" @click="router.push({ name: 'aiChat' })" />
 </template>
 
 <style lang="scss" scoped>
@@ -80,18 +83,14 @@ const router = useRouter()
   width: 100px;
   height: 100px;
   position: fixed;
-  right: 40px;
+  right: 70px;
   bottom: 40px;
-  background-color: #dbdbdb;
-  border-radius: 50%;
-  border: 2px solid #8a8a8a;
+  width: 70px;
+  height: 70px;
+  cursor: pointer;
+}
 
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  img {
-    width: 70px;
-    height: 70px;
-  }
+.robot:hover {
+  transform: scale(1.5);
 }
 </style>

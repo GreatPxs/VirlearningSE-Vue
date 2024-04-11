@@ -52,6 +52,7 @@ const onSubmit = async () => {
 </script>
 
 <template>
+  <img src="@/assets/back.svg" class="back" @click="$router.push({ name: 'login' })" />
   <div class="login">
     <div class="form">
       <!-- 绑定校验规则rules, 添加引用标识formRef -->
@@ -62,7 +63,7 @@ const onSubmit = async () => {
         </div>
 
         <el-form-item label="账号">
-          <el-input type="text" v-model="form.userName" placeholder="请输入手机号" />
+          <el-input type="text" v-model="form.userName" placeholder="请输入管理员账号" />
         </el-form-item>
 
         <el-form-item label="密码">
@@ -126,6 +127,18 @@ const onSubmit = async () => {
       }
     }
   }
+}
+
+.back {
+  width: 60px;
+  height: 60px;
+  position: fixed;
+  left: 50px;
+  top: 50px;
+}
+
+.back:hover {
+  transform: scale(1.5);
 }
 </style>
 @/stores/tokenAndRole @/api/users/adminLogin.js @/api/adminUser/adminLogin.js

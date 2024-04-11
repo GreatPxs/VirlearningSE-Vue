@@ -1,53 +1,60 @@
 <script setup lang="ts">
 //导入类型说明
 import { FormInstance } from 'element-plus'
+import type { UploadProps } from 'element-plus'
 import { changeUserInfo } from '@/api/users/changeUserInfo'
+import { useUserInfoStore } from '@/stores/userInfo'
 import md5 from 'md5'
+
+const userInfoToken = useUserInfoStore()
+const passwordMd5 = ref('')
+
+onBeforeMount(() => {
+  form.avatar = userInfoToken.avatar
+  form.nickName = userInfoToken.nickName
+  passwordMd5.value = userInfoToken.passwordMd5
+})
+
+const uploadAction = ref(
+  'http://114.55.135.87:28018/api/v1/user/file?id :=' + window.localStorage.getItem('userId')
+)
 
 //暂用表格form数据
 const form = reactive({
   avatar: '', // 用户头像的URL
-  avatarList: [], // 用于显示已选择的文件列表
-  nickName: window.localStorage.getItem('nickName') || '我',
+  nickName: '',
   password: ''
 })
 
 //获取表单引用,通过formRef.value获取表单实例
 const formRef = ref<FormInstance>()
 
-const beforeAvatarUpload = (file) => {
-  // 在这里可以添加一些逻辑，比如检查文件类型、大小等
-  // 如果文件不符合要求，返回false阻止上传
+const beforeAvatarUpload: UploadProps['beforeUpload'] = (rawFile) => {
+  if (rawFile.type !== 'image/jpeg') {
+    ElMessage.error('照片必须为JPG格式!')
+    return false
+  } else if (rawFile.size / 1024 / 1024 > 2) {
+    ElMessage.error('照片不超过2MB!')
+    return false
+  }
   return true
 }
 
-const handleUploadSuccess = (response, file, fileList) => {
-  // 上传成功后的处理
-  // 假设你的服务器返回了图片的URL，你可以将其赋值给form.avatar
-  form.avatar = response.url
-  form.avatarList = fileList
-}
-
-const handleUploadError = (err, file, fileList) => {
-  // 上传失败的处理
-  console.error('上传头像失败:', err)
-}
-
-const handleExceed = (files, fileList) => {
-  // 文件超过限制的处理
-  console.error('选择的文件超过了限制!')
-}
-
-// 使用 md5 库
-let passwordMd5 = window.localStorage.getItem('passwordMd5')
-if (form.password === '') {
-  passwordMd5 = md5(form.password)
+const handleAvatarUploadSuccess: UploadProps['onSuccess'] = (response, uploadFile) => {
+  form.avatar = response.data
+  userInfoToken.saveAvatar(form.avatar)
+  console.log(form.avatar)
 }
 
 //提交修改的用户信息
 const onSubmit = async () => {
-  passwordMd5 = md5(form.password)
-  const data = await changeUserInfo(form.nickName, passwordMd5, '').then((res) => {
+  if (form.password === '') {
+    passwordMd5.value = md5(form.password)
+  } else {
+    passwordMd5.value = md5(form.password)
+  }
+
+  const data = await changeUserInfo(form.nickName, passwordMd5.value, '').then((res) => {
     //修改失败
     if (res.data.resultCode === 500) {
       ElMessage.error('修改失败')
@@ -57,13 +64,18 @@ const onSubmit = async () => {
     return res.data
   })
 
-  window.localStorage.setItem('nickName', form.nickName)
-  window.localStorage.setItem('passwordMd5', passwordMd5)
+  //保存修改
+  userInfoToken.saveNickName(form.nickName)
+  userInfoToken.savepasswordMd5(passwordMd5.value)
   ElMessage.success('修改成功')
 }
 </script>
 
 <template>
+  <div class="personal-center">
+    <img src="@/assets/personal-center.svg" />
+    <div>个人中心</div>
+  </div>
   <div class="user-info-page">
     <div class="form">
       <!-- action需要绑定后端上传接口url -->
@@ -71,20 +83,16 @@ const onSubmit = async () => {
         <el-form-item label-width="0px">
           <el-upload
             class="avatar-uploader"
-            action="/your-upload-url"
+            :action="uploadAction"
             :before-upload="beforeAvatarUpload"
-            :on-success="handleUploadSuccess"
-            :on-error="handleUploadError"
-            :file-list="form.avatarList"
-            :auto-upload="false"
-            :limit="1"
-            :on-exceed="handleExceed"
+            :on-success="handleAvatarUploadSuccess"
             :show-file-list="false"
           >
             <!-- <img v-if="form.avatar" :src="form.avatar" class="avatar" />
             <i v-else class="el-icon-plus avatar-uploader-icon"></i> -->
             <div class="avatar">
-              <img src="@/assets/plus.svg" />
+              <img v-if="form.avatar" :src="form.avatar" class="avatar" />
+              <img v-else src="@/assets/plus.svg" />
               <p>点击头像修改</p>
             </div>
           </el-upload>
@@ -125,6 +133,7 @@ const onSubmit = async () => {
   border-radius: 10px;
   width: 400px;
   height: 400px;
+  margin-bottom: 80px;
 
   display: flex;
   justify-content: center;
@@ -163,6 +172,26 @@ const onSubmit = async () => {
     .el-button {
       width: 100%;
     }
+  }
+}
+
+.personal-center {
+  position: fixed;
+  left: 250px;
+  top: 100px;
+  display: flex;
+  align-items: center;
+
+  img {
+    width: 70px;
+    height: 70px;
+    margin-right: 10px;
+  }
+
+  div {
+    font-size: 25px;
+    font-weight: bold;
+    color: #515151;
   }
 }
 </style>

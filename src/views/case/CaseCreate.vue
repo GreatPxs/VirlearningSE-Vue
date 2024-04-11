@@ -192,10 +192,11 @@ const handlejzVideoSuccess: UploadProps['onSuccess'] = (response, uploadFile) =>
 
 //检查视频处理
 const beforejcVideoUpload: UploadProps['beforeUpload'] = (rawFile) => {
-  const isVideo = rawFile.type === 'video/mp4' || rawFile.type === 'video/avi'
+  const isVideo =
+    rawFile.type === 'video/mp4' || rawFile.type === 'video/avi' || rawFile.type === 'video/mpg'
   const isLt100M = rawFile.size / 1024 / 1024 < 100
   if (!isVideo) {
-    ElMessage.error('请上传视频文件!')
+    ElMessage.error('请上传mp4、avi、mpg格式视频文件!')
   }
   if (!isLt100M) {
     ElMessage.error('上传视频大小不能超过100MB!')
@@ -209,10 +210,11 @@ const handlejcVideoSuccess: UploadProps['onSuccess'] = (response, uploadFile) =>
 
 //诊断视频处理
 const beforezdVideoUpload: UploadProps['beforeUpload'] = (rawFile) => {
-  const isVideo = rawFile.type === 'video/mp4' || rawFile.type === 'video/avi'
+  const isVideo =
+    rawFile.type === 'video/mp4' || rawFile.type === 'video/avi' || rawFile.type === 'video/mpg'
   const isLt100M = rawFile.size / 1024 / 1024 < 100
   if (!isVideo) {
-    ElMessage.error('请上传视频文件!')
+    ElMessage.error('请上传mp4、avi、mpg格式视频文件!')
   }
   if (!isLt100M) {
     ElMessage.error('上传视频大小不能超过100MB!')
@@ -226,10 +228,11 @@ const handlezdVideoSuccess: UploadProps['onSuccess'] = (response, uploadFile) =>
 
 //治疗视频处理
 const beforezlVideoUpload: UploadProps['beforeUpload'] = (rawFile) => {
-  const isVideo = rawFile.type === 'video/mp4' || rawFile.type === 'video/avi'
+  const isVideo =
+    rawFile.type === 'video/mp4' || rawFile.type === 'video/avi' || rawFile.type === 'video/mpg'
   const isLt100M = rawFile.size / 1024 / 1024 < 100
   if (!isVideo) {
-    ElMessage.error('请上传视频文件!')
+    ElMessage.error('请上传mp4、avi、mpg格式视频文件!')
   }
   if (!isLt100M) {
     ElMessage.error('上传视频大小不能超过100MB!')
@@ -247,11 +250,16 @@ const handlejzPhotoSuccess: UploadProps['onSuccess'] = (response, uploadFile) =>
   console.log(form.value.jzphoto)
 }
 const beforejzPhotoUpload: UploadProps['beforeUpload'] = (rawFile) => {
-  if (rawFile.type !== 'image/jpeg') {
-    ElMessage.error('照片必须为JPG格式!')
+  if (
+    rawFile.type !== 'image/jpeg' &&
+    rawFile.type !== 'image/jpg' &&
+    rawFile.type !== 'image/png' &&
+    rawFile.type !== 'image/webp'
+  ) {
+    ElMessage.error('Photo must be JPG、JPEG、PNG、WEBP format!')
     return false
   } else if (rawFile.size / 1024 / 1024 > 2) {
-    ElMessage.error('照片不超过2MB!')
+    ElMessage.error('Photo size can not exceed 2MB!')
     return false
   }
   return true
@@ -263,11 +271,16 @@ const handlejcPhotoSuccess: UploadProps['onSuccess'] = (response, uploadFile) =>
   console.log(form.value.jcphoto)
 }
 const beforejcPhotoUpload: UploadProps['beforeUpload'] = (rawFile) => {
-  if (rawFile.type !== 'image/jpeg') {
-    ElMessage.error('照片必须为JPG格式!')
+  if (
+    rawFile.type !== 'image/jpeg' &&
+    rawFile.type !== 'image/jpg' &&
+    rawFile.type !== 'image/png' &&
+    rawFile.type !== 'image/webp'
+  ) {
+    ElMessage.error('Photo must be JPG、JPEG、PNG、WEBP format!')
     return false
   } else if (rawFile.size / 1024 / 1024 > 2) {
-    ElMessage.error('照片不超过2MB!')
+    ElMessage.error('Photo size can not exceed 2MB!')
     return false
   }
   return true
@@ -279,11 +292,16 @@ const handlezdPhotoSuccess: UploadProps['onSuccess'] = (response, uploadFile) =>
   console.log(form.value.zdphoto)
 }
 const beforezdPhotoUpload: UploadProps['beforeUpload'] = (rawFile) => {
-  if (rawFile.type !== 'image/jpeg') {
-    ElMessage.error('照片必须为JPG格式!')
+  if (
+    rawFile.type !== 'image/jpeg' &&
+    rawFile.type !== 'image/jpg' &&
+    rawFile.type !== 'image/png' &&
+    rawFile.type !== 'image/webp'
+  ) {
+    ElMessage.error('Photo must be JPG、JPEG、PNG、WEBP format!')
     return false
   } else if (rawFile.size / 1024 / 1024 > 2) {
-    ElMessage.error('照片不超过2MB!')
+    ElMessage.error('Photo size can not exceed 2MB!')
     return false
   }
   return true
@@ -295,11 +313,16 @@ const handlezlPhotoSuccess: UploadProps['onSuccess'] = (response, uploadFile) =>
   console.log(form.value.zlphoto)
 }
 const beforezlPhotoUpload: UploadProps['beforeUpload'] = (rawFile) => {
-  if (rawFile.type !== 'image/jpeg') {
-    ElMessage.error('照片必须为JPG格式!')
+  if (
+    rawFile.type !== 'image/jpeg' &&
+    rawFile.type !== 'image/jpg' &&
+    rawFile.type !== 'image/png' &&
+    rawFile.type !== 'image/webp'
+  ) {
+    ElMessage.error('Photo must be JPG、JPEG、PNG、WEBP format!')
     return false
   } else if (rawFile.size / 1024 / 1024 > 2) {
-    ElMessage.error('照片不超过2MB!')
+    ElMessage.error('Photo size can not exceed 2MB!')
     return false
   }
   return true
@@ -321,7 +344,7 @@ const beforezlPhotoUpload: UploadProps['beforeUpload'] = (rawFile) => {
         <el-step title="疾病名称" :icon="EditPen" @click="currentStep = 0" />
         <el-step title="接诊" :icon="Picture" @click="currentStep = 1" />
         <el-step title="病例检查" :icon="Tools" @click="currentStep = 2" />
-        <el-step title="诊断结构" :icon="Clock" @click="currentStep = 3" />
+        <el-step title="诊断结果" :icon="Clock" @click="currentStep = 3" />
         <el-step title="治疗方案" :icon="Document" @click="currentStep = 4" />
       </el-steps>
     </template>
@@ -402,7 +425,7 @@ const beforezlPhotoUpload: UploadProps['beforeUpload'] = (rawFile) => {
           </el-upload>
         </el-form-item>
       </div>
-      <!-- 诊断结构 -->
+      <!-- 诊断结果 -->
       <div v-show="currentStep === 3">
         <el-form-item label="诊断结果">
           <el-input

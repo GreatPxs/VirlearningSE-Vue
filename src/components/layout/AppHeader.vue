@@ -2,13 +2,45 @@
 import { adminLogout } from '@/api/adminUser/adminLogout.js'
 import { useTokenAndRoleStore } from '@/stores/tokenAndRole'
 import { useRouter } from 'vue-router'
+
+import md5 from 'md5'
+import { changeUserInfo } from '@/api/users/changeUserInfo'
+import { useUserInfoStore } from '@/stores/userInfo'
+import { updatePassword } from '@/api/adminUser/updatePassword'
 //导入侧边栏折叠状态
 import { isCollapse } from './collapse'
 
 const router = useRouter()
 
-const nickName = window.localStorage.getItem('nickName')
+const userInfoToken = useUserInfoStore()
 
+//暂用表格form数据
+const form = reactive({
+  oldPassword: '',
+  newPassword: ''
+})
+const dialogFormVisible = ref(false)
+//提交修改的用户信息
+const onSubmit = async () => {
+  let oldPasswordMd5 = md5(form.oldPassword)
+  let newPasswordMd5 = md5(form.newPassword)
+  const data = await updatePassword(oldPasswordMd5, newPasswordMd5).then((res) => {
+    //修改失败
+    if (res.data.resultCode !== 200) {
+      ElMessage.error('修改失败')
+      throw new Error('修改失败')
+    }
+    //修改成功
+    return res.data
+  })
+
+  //保存修改
+  userInfoToken.savepasswordMd5(newPasswordMd5.value)
+  ElMessage.success('修改成功')
+  dialogFormVisible.value = false
+}
+
+const nickName = window.localStorage.getItem('nickName')
 //退出处理事件
 const handleLogout = async () => {
   // 退出-弹窗确认  点确认:返回成功promise  点取消:返回失败promise
@@ -25,10 +57,7 @@ const handleLogout = async () => {
   ElMessage.success('管理员已登出')
   useTokenAndRoleStore().saveTokenAndRole('', '') // 清空 token
   // 清空用户信息
-  window.localStorage.setItem('nickName', '')
-  window.localStorage.setItem('loginName', '')
-  window.localStorage.setItem('introduceSign', '')
-  window.localStorage.setItem('passwordMd5', '')
+  window.localStorage.clear()
   router.push('/manage-login') // 跳转到登录页
 }
 </script>
@@ -42,14 +71,6 @@ const handleLogout = async () => {
       <IEpExpand v-else />
     </el-icon>
 
-    <!-- 面包屑 -->
-    <el-breadcrumb separator="/">
-      <el-breadcrumb-item :to="{ path: '/' }">homepage</el-breadcrumb-item>
-      <el-breadcrumb-item><a href="/">promotion management</a></el-breadcrumb-item>
-      <el-breadcrumb-item>promotion list</el-breadcrumb-item>
-      <el-breadcrumb-item>promotion detail</el-breadcrumb-item>
-    </el-breadcrumb>
-
     <!-- 下拉菜单,用户登录信息展示 -->
     <el-dropdown>
       <el-avatar
@@ -58,12 +79,42 @@ const handleLogout = async () => {
       />
       <template #dropdown>
         <el-dropdown-menu>
-          <el-dropdown-item>{{ nickName }}</el-dropdown-item>
+          <el-dropdown-item @click="dialogFormVisible = true">修改密码</el-dropdown-item>
           <el-dropdown-item divided @click="handleLogout">退出</el-dropdown-item>
         </el-dropdown-menu>
       </template>
     </el-dropdown>
   </el-header>
+
+  <el-dialog v-model="dialogFormVisible" title="修改密码" center>
+    <el-form :model="form" label-width="80px">
+      <el-form-item label="原密码">
+        <el-input
+          v-model="form.oldPassword"
+          type="text"
+          autocomplete="off"
+          placeholder="********************************"
+          size="default"
+        />
+      </el-form-item>
+      <el-form-item label="新密码">
+        <el-input
+          v-model="form.newPassword"
+          type="text"
+          autocomplete="off"
+          placeholder="********************************"
+          size="default"
+        />
+      </el-form-item>
+    </el-form>
+
+    <template #footer>
+      <div class="dialog-footer">
+        <el-button @click="dialogFormVisible = false">取消</el-button>
+        <el-button type="primary" @click="onSubmit"> 提交 </el-button>
+      </div>
+    </template>
+  </el-dialog>
 </template>
 
 <style lang="scss" scoped>

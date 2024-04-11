@@ -1,16 +1,22 @@
 import request from '@/utils/request.js'
 
-export const getDrugByName = (pageCondition) => {
+export const getDrugByName = (queryCondition, pageCondition) => {
   console.log(
     `/drug/selectDrug?drugName=` +
-      pageCondition.name +
-      `&unit&origin&categoryId&pageNoStr=&pageSizeStr=`
+      queryCondition +
+      `&unit&origin&categoryId&pageNoStr=` +
+      pageCondition.pageNumber +
+      `&pageSizeStr=` +
+      pageCondition.pageSize
   )
   return request({
     method: 'GET',
     url:
       `/drug/selectDrug?drugName=` +
-      pageCondition +
-      `&unit&origin&categoryId&pageNoStr=&pageSizeStr=`
+      queryCondition +
+      `&unit&origin&categoryId&pageNoStr=` +
+      pageCondition.pageNumber +
+      `&pageSizeStr=` +
+      pageCondition.pageSize
   })
 }

@@ -29,5 +29,9 @@ export const useTokenAndRoleStore = defineStore('token', () => {
     window.localStorage.setItem('roleInfo', roleInfo)
   }
 
+  {
+    true // 开启数据缓存 +++++++
+  }
+
   return { tokenAndRole, saveTokenAndRole }
 })

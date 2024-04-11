@@ -35,9 +35,11 @@ const roles = reactive([
     <el-card style="max-width: 150px" v-for="(role, index) in roles" :key="index">
       <img :src="role.roleIcon" alt="图片加载失败" style="width: 100%" />
       <template #footer>
-        <el-button color="#1aaba8" @click="router.push({ name: 'rolePage' })">{{
-          role.roleName
-        }}</el-button>
+        <el-button
+          color="#1aaba8"
+          @click="router.push({ name: 'rolePage', params: { role: role.roleName } })"
+          >{{ role.roleName }}</el-button
+        >
       </template>
     </el-card>
   </div>

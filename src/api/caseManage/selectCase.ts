@@ -1,6 +1,6 @@
 import request from '@/utils/request.js'
 
-export const selectCase = (queryCondition) => {
+export const selectCase = (queryCondition, pageCondition) => {
   console.log(
     `/Case/selectCase?symptom&animal=` +
       queryCondition.animal +
@@ -15,6 +15,9 @@ export const selectCase = (queryCondition) => {
       queryCondition.animal +
       `&name=` +
       queryCondition.name +
-      `&pageNoStr&pageSizeStr`
+      `&pageNoStr=` +
+      pageCondition.pageNumber +
+      `&pageSizeStr=` +
+      pageCondition.pageSize
   })
 }

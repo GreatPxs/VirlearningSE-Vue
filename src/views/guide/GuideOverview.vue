@@ -23,18 +23,19 @@ onMounted(() => {
   <div id="canvas" ref="webgl"></div>
 </template>
 <style lang="scss" scoped>
-/* enter {
-  position: absolute;
-  left: 1250px;
+#enter {
+  position: fixed;
+  right: 80px;
+  bottom: 50px;
   z-index: 999;
-} */
-canvas {
+}
+/* canvas {
   position: absolute;
   z-index: -1;
   margin: 0px;
   overflow: hidden;
   top: 0%;
   left: 0%;
-  /*  background-color: aquamarine; */
-}
+  
+} */
 </style>

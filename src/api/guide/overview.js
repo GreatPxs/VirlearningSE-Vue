@@ -82,15 +82,6 @@ controls.addEventListener('change', function () {
   renderer.render(scene, camera)
 })
 
-/* //进入科室按钮
-var btn_enter = document.createElement('enter')
-btn_enter.innerHTML = '进入科室'
-btn_enter.style.position = 'absolue'
-btn_enter.style.top = '80px'
-btn_enter.style.left = '240px'
-btn_enter.style.zIndex = '999'
-document.body.appendChild(btn_enter) */
-
 //监听窗口变化
 window.onresize = function () {
   const width = window.innerWidth - 200
@@ -116,7 +107,7 @@ renderer.domElement.addEventListener('click', (event) => {
   const raycaster = new Three.Raycaster()
   raycaster.setFromCamera(new Three.Vector2(x, y), camera)
   const intersects = raycaster.intersectObjects(model.children)
-  //console.log('返回对象', intersects)
+  console.log('返回对象', intersects)
   if (intersects.length > 0) {
     //intersects[0].object.material.color.set(0xff0000)
     let obj = intersects[0].object
@@ -124,6 +115,9 @@ renderer.domElement.addEventListener('click', (event) => {
     console.log(chooseObj)
     outlinePass.selectedObjects = [obj]
     if (obj.name != 'floor') {
+      if (chooseObj == obj.name) {
+        console.log('already choose')
+      }
       let dom = createDiv(obj.name)
       let css2dobject = new CSS2DObject(dom)
       const v3 = new Three.Vector3()

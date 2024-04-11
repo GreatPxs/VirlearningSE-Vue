@@ -3,7 +3,6 @@
 <script setup lang="ts" defer="true">
 import { useRouter } from 'vue-router'
 import { ref, onMounted } from 'vue'
-import '@/api/guide/overview.js'
 import renderer from '@/api/guide/overview.js'
 import { render } from 'vue'
 const router = useRouter()

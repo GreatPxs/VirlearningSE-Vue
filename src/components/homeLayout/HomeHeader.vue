@@ -3,9 +3,12 @@ import { isCollapseInHome } from './isCollapseInHome'
 import { useRouter } from 'vue-router'
 import { logout } from '@/api/users/logout.js'
 import { useTokenAndRoleStore } from '@/stores/tokenAndRole'
+import { useUserInfoStore } from '@/stores/userInfo'
 
 const router = useRouter()
-const nickName = window.localStorage.getItem('nickName')
+const userInfoToken = useUserInfoStore()
+const nickName = ref(userInfoToken.nickName)
+const avatar = ref(userInfoToken.avatar)
 
 //跳转至用户信息页面
 const toUserInfo = () => {
@@ -28,10 +31,7 @@ const handleLogout = async () => {
   ElMessage.success('用户已登出')
   useTokenAndRoleStore().saveTokenAndRole('', '') // 清空 token
   // 清空用户信息
-  window.localStorage.setItem('nickName', '')
-  window.localStorage.setItem('loginName', '')
-  window.localStorage.setItem('introduceSign', '')
-  window.localStorage.setItem('passwordMd5', '')
+  window.localStorage.clear()
   router.push('/login') // 跳转到登录页
 }
 </script>
@@ -47,14 +47,11 @@ const handleLogout = async () => {
 
     <!-- 下拉菜单,用户登录信息展示 -->
     <el-dropdown>
-      <el-avatar
-        :size="36"
-        :src="'https://cube.elemecdn.com/3/7c/3ea6beec64369c2642b92c6726f1epng.png'"
-      />
+      <el-avatar :size="36" :src="avatar" />
       <template #dropdown>
         <el-dropdown-menu>
           <el-dropdown-item>{{ nickName }}</el-dropdown-item>
-          <el-dropdown-item @click="toUserInfo" divided>用户信息</el-dropdown-item>
+          <el-dropdown-item @click="toUserInfo" divided>个人中心</el-dropdown-item>
           <el-dropdown-item divided @click="handleLogout">退出</el-dropdown-item>
         </el-dropdown-menu>
       </template>

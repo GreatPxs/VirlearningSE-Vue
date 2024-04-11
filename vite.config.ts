@@ -69,6 +69,18 @@ export default defineConfig({
       '/paper': {
         target: 'http://114.55.135.87:28018',
         changeOrigin: true
+      },
+      '/exam': {
+        target: 'http://114.55.135.87:28018',
+        changeOrigin: true
+      },
+      '/chat': {
+        target: 'http://114.55.135.87:28018',
+        changeOrigin: true
+      },
+      '/getchat': {
+        target: 'http://114.55.135.87:28018',
+        changeOrigin: true
       }
     },
     port: 28018,

@@ -30,6 +30,10 @@ const router = useRouter()
       <el-menu-item @click="router.push({ name: 'testInfo' })">
         <el-icon><IEpTickets /></el-icon> <span>试题测试</span>
       </el-menu-item>
+
+      <el-menu-item @click="router.push({ name: 'aiChat' })">
+        <el-icon><IEpHeadset /></el-icon> <span>AI助教</span>
+      </el-menu-item>
     </el-menu>
   </el-aside>
 </template>

@@ -17,10 +17,6 @@ const router = useRouter()
           <h1>后台管理</h1>
         </a>
 
-        <el-menu-item @click="router.push({ name: 'adminUserInfo' })">
-          <el-icon><IEpUser /></el-icon> <span>个人中心</span>
-        </el-menu-item>
-
         <el-menu-item @click="router.push({ name: 'users' })">
           <el-icon><IEpMonitor /></el-icon> <span>用户管理</span>
         </el-menu-item>

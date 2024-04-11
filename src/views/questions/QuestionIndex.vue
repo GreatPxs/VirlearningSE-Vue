@@ -55,6 +55,8 @@ const typeOptions = [
 //列表数据
 const records = ref([])
 
+//是否为搜索查询
+const conditionSearch = ref(0)
 const queryCondition = ref({
   description: '',
   type: ''
@@ -73,6 +75,7 @@ const getQuestionInfoByName = async () => {
   })
 
   //搜索成功
+  conditionSearch.value = 1
   console.log(data)
   ElMessage.success('搜索成功')
   records.value = data.data
@@ -111,6 +114,16 @@ const getQuestionListPage = async (queryCondition) => {
   total.value = data.data.totalCount
   listCurrentPage.value = data.data.currPage
   listPageSize.value = data.data.pageSize
+}
+
+//刷新页面
+const handleRefresh = () => {
+  getQuestionListPage({
+    pageNumber: 1,
+    pageSize: listPageSize.value
+  })
+  conditionSearch.value = 0
+  listCurrentPage.value = 1
 }
 
 //新建题目
@@ -221,12 +234,18 @@ const deleteQuestionById = async (id) => {
     return res.data
   })
 
-  //删除成功
-  console.log(data)
-  ElMessage.success('删除成功')
+  if (data.data === -1) {
+    ElMessageBox.alert('题目在试卷中使用，无法删除', '提示', {
+      confirmButtonText: 'OK'
+    })
+  } else {
+    //删除成功
+    console.log(data)
+    ElMessage.success('删除成功')
 
-  //删除成功后,需要重新获取题目列表
-  getQuestionListPage({ pageNumber: listCurrentPage.value, pageSize: listPageSize.value })
+    //删除成功后,需要重新获取题目列表
+    getQuestionListPage({ pageNumber: listCurrentPage.value, pageSize: listPageSize.value })
+  }
 }
 </script>
 
@@ -234,6 +253,7 @@ const deleteQuestionById = async (id) => {
   <el-card class="box-card">
     <template #header>
       <div class="card-header">
+        <el-icon :size="40" class="refresh" @click="handleRefresh"><IEpRefresh /></el-icon>
         <el-form :inline="true" :model="queryCondition" class="demo-form-inline">
           <el-form-item label="题目">
             <el-input
@@ -345,6 +365,7 @@ const deleteQuestionById = async (id) => {
     </el-dialog>
 
     <el-pagination
+      v-show="conditionSearch === 0"
       :page-sizes="[10, 20, 50]"
       :background="true"
       layout="total, sizes, prev, pager, next, jumper"
@@ -371,6 +392,10 @@ const deleteQuestionById = async (id) => {
   font-size: 14px;
 }
 
+.el-form-item {
+  margin-bottom: 20px;
+}
+
 .item {
   margin-bottom: 18px;
 }
@@ -383,5 +408,9 @@ const deleteQuestionById = async (id) => {
   display: flex;
   justify-content: center;
   margin-top: 17px;
+}
+
+.refresh:hover {
+  color: #409eff;
 }
 </style>

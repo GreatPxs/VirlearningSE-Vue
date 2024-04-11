@@ -16,12 +16,12 @@ onMounted(() => {
 //角色表
 const options = [
   {
-    value: '助理',
-    label: '助理'
+    value: '医助',
+    label: '医助'
   },
   {
-    value: '执业兽医师',
-    label: '执业兽医师'
+    value: '兽医',
+    label: '兽医'
   },
   {
     value: '前台',
@@ -124,6 +124,8 @@ const onSubmit = async () => {
   })
 }
 
+//是否为条件查询
+const conditionSearch = ref(0)
 //页查询
 const listCurrentPage = ref(1)
 const listPageSize = ref(10)
@@ -150,7 +152,6 @@ const getRoomListPage = async (queryCondition) => {
   listCurrentPage.value = data.data.currPage
   listPageSize.value = data.data.pageSize
 }
-
 //搜索条件
 const queryCondition = reactive({
   roomName: ''
@@ -169,6 +170,7 @@ const getRoomInfoByName = async () => {
   })
 
   //搜索成功
+  conditionSearch.value = 1
   console.log(data)
   ElMessage.success('搜索成功')
   for (let i = 0; i < data.data.length; i++) {
@@ -187,6 +189,16 @@ const getRoomInfoByName = async () => {
   queryCondition.roomName = ''
 
   console.log(records.value)
+}
+
+//刷新页面
+const handleRefresh = () => {
+  getRoomListPage({
+    pageNumber: 1,
+    pageSize: listPageSize.value
+  })
+  conditionSearch.value = 0
+  listCurrentPage.value = 1
 }
 
 //删除
@@ -219,8 +231,13 @@ const handlePhotoSuccess: UploadProps['onSuccess'] = (response, uploadFile) => {
 }
 
 const beforePhotoUpload: UploadProps['beforeUpload'] = (rawFile) => {
-  if (rawFile.type !== 'image/jpeg') {
-    ElMessage.error('Photo must be JPG format!')
+  if (
+    rawFile.type !== 'image/jpeg' &&
+    rawFile.type !== 'image/jpg' &&
+    rawFile.type !== 'image/png' &&
+    rawFile.type !== 'image/webp'
+  ) {
+    ElMessage.error('Photo must be JPG、JPEG、PNG、WEBP format!')
     return false
   } else if (rawFile.size / 1024 / 1024 > 2) {
     ElMessage.error('Photo size can not exceed 2MB!')
@@ -234,20 +251,17 @@ const beforePhotoUpload: UploadProps['beforeUpload'] = (rawFile) => {
   <el-card class="box-card">
     <template #header>
       <div class="card-header">
-        <el-form :inline="true" :model="queryCondition" class="demo-form-inline">
-          <el-form-item label="科室">
-            <el-input
-              v-model="queryCondition.roomName"
-              placeholder="请输入科室名关键字"
-              clearable
-            />
+        <el-icon :size="40" class="refresh" @click="handleRefresh"><IEpRefresh /></el-icon>
+        <el-form :inline="true" :form="queryCondition" class="demo-form-inline">
+          <el-form-item label="科室" class="searchInput">
+            <el-input v-model="queryCondition.roomName" placeholder="请输入科室名" clearable />
           </el-form-item>
           <el-form-item>
             <el-button type="primary" @click="getRoomInfoByName">查询</el-button>
           </el-form-item>
         </el-form>
 
-        <el-button type="primary" @click="toAdd"> 新增科室 </el-button>
+        <el-button type="primary" @click="toAdd" class="addButton"> 新增科室 </el-button>
       </div>
     </template>
     <!--table需要绑定查询结果 :data="queriedResult.records" -->
@@ -255,16 +269,11 @@ const beforePhotoUpload: UploadProps['beforeUpload'] = (rawFile) => {
       <el-table-column prop="id" label="科室编号" align="center" />
       <el-table-column prop="name" label="科室名称" align="center" />
       <el-table-column prop="dep_inf" label="功能" align="center" />
-      <el-table-column prop="roles" label="主要负责人" align="center">
-        <template #default="{ row }">
-          <p v-for="(k, index) in row.roles" :key="index">{{ k }}</p>
-        </template>
-      </el-table-column>
+      <el-table-column prop="play_role" label="主要负责人" align="center" />
       <el-table-column prop="fileurl" label="照片" width="180" align="center" v-slot="{ row }">
         <el-image style="width: 100px; height: 100px" :src="row.fileurl" fit="fill" />
       </el-table-column>
       <el-table-column label="操作" align="center" v-slot="{ row }" width="180px">
-        <!-- 绑定点击跳转函数 @click="$router.push({ name: 'course-edit', params: { courseId: row.id } })" -->
         <el-button
           type="primary"
           @click="toModify(row.id, row.name, row.dep_inf, row.roles, row.fileurl)"
@@ -319,6 +328,7 @@ const beforePhotoUpload: UploadProps['beforeUpload'] = (rawFile) => {
     </el-dialog>
 
     <el-pagination
+      v-show="conditionSearch === 0"
       :page-sizes="[10, 20, 50]"
       :background="true"
       layout="total, sizes, prev, pager, next, jumper"
@@ -335,30 +345,6 @@ const beforePhotoUpload: UploadProps['beforeUpload'] = (rawFile) => {
 </template>
 
 <style lang="scss" scoped>
-.card-header {
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-}
-
-.text {
-  font-size: 14px;
-}
-
-.item {
-  margin-bottom: 18px;
-}
-
-.box-card {
-  width: auto;
-}
-
-.el-pagination {
-  display: flex;
-  justify-content: center;
-  margin-top: 17px;
-}
-
 .avatar-uploader .photo {
   width: 178px;
   height: 178px;
@@ -384,5 +370,54 @@ const beforePhotoUpload: UploadProps['beforeUpload'] = (rawFile) => {
   width: 178px;
   height: 178px;
   text-align: center;
+}
+
+.card-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.text {
+  font-size: 14px;
+}
+
+.item {
+  margin-bottom: 14px;
+}
+
+.box-card {
+  width: auto;
+}
+
+.el-form-item {
+  margin-bottom: 20px;
+}
+
+.el-pagination {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  margin-top: 20px;
+}
+
+.demo-form-inline {
+  .el-form-item {
+    margin: 0px;
+  }
+
+  .searchInput {
+    margin-right: 5px;
+  }
+}
+.refresh {
+  margin-right: 40px;
+}
+.refresh:hover {
+  color: #409eff;
+}
+
+.addButton {
+  margin-left: 700px;
 }
 </style>

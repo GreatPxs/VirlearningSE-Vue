@@ -36,6 +36,8 @@ const options = [
 
 //测试数据
 const record = ref([])
+//标记是否为条件搜索 0页查询 1条件搜索
+const conditionSearch = ref(0)
 
 //搜索条件
 const searchCondition = ref({
@@ -43,8 +45,8 @@ const searchCondition = ref({
   animal: ''
 })
 //搜索查询
-const selectCaseInfo = async () => {
-  const data = await selectCase(searchCondition.value).then((res) => {
+const selectCaseInfo = async (pageCondition) => {
+  const data = await selectCase(searchCondition.value, pageCondition).then((res) => {
     //搜索失败
     if (res.data.state !== 200) {
       ElMessage.error('搜索失败')
@@ -56,18 +58,16 @@ const selectCaseInfo = async () => {
   })
 
   //搜索成功
+  conditionSearch.value = 1
   console.log(data)
   ElMessage.success('搜索成功')
   record.value = data.data.dataList
-  listCurrentPage.value = 1
+  listCurrentPage.value = pageCondition.pageNumber
+  listPageSize.value = pageCondition.pageSize
   total.value = data.data.count
-
-  searchCondition.value.name = ''
-  searchCondition.value.animal = ''
 
   console.log(record.value)
 }
-
 //页查询
 const listCurrentPage = ref(1)
 const listPageSize = ref(10)
@@ -94,6 +94,33 @@ const getCaseListPage = async (queryCondition) => {
   total.value = data.data.totalCount
   listCurrentPage.value = data.data.currPage
   listPageSize.value = data.data.pageSize
+}
+
+//处理页数大小改变
+const handlePageSizeChange = (pageSize) => {
+  if (conditionSearch.value === 0) {
+    getCaseListPage({ pageSize: pageSize, pageNumber: 1 })
+  } else {
+    selectCaseInfo({ pageSize: pageSize, pageNumber: 1 })
+  }
+}
+//处理页码改变
+const handlePageNumberChange = (currentPage) => {
+  if (conditionSearch.value === 0) {
+    getCaseListPage({ pageSize: listPageSize.value, pageNumber: currentPage })
+  } else {
+    selectCaseInfo({ pageSize: listPageSize.value, pageNumber: currentPage })
+  }
+}
+
+//刷新页面
+const handleRefresh = () => {
+  getCaseListPage({
+    pageNumber: 1,
+    pageSize: listPageSize.value
+  })
+  conditionSearch.value = 0
+  listCurrentPage.value = 1
 }
 
 //删除
@@ -126,6 +153,7 @@ const deleteCaseById = async (id) => {
     <el-card class="box-card">
       <template #header>
         <div class="card-header">
+          <el-icon :size="40" class="refresh" @click="handleRefresh"><IEpRefresh /></el-icon>
           <el-form :inline="true" class="demo-form-inline" :model="searchCondition">
             <el-form-item label="病种">
               <el-input clearable placeholder="疾病名称" v-model="searchCondition.name" />
@@ -146,7 +174,11 @@ const deleteCaseById = async (id) => {
               </el-select>
             </el-form-item>
             <el-form-item>
-              <el-button type="primary" @click="selectCaseInfo">查询 </el-button>
+              <el-button
+                type="primary"
+                @click="selectCaseInfo({ pageNumber: 1, pageSize: listPageSize })"
+                >查询
+              </el-button>
             </el-form-item>
           </el-form>
           <el-button type="primary" @click="$router.push({ name: 'case-create' })">
@@ -188,11 +220,8 @@ const deleteCaseById = async (id) => {
         v-model:current-page="listCurrentPage"
         v-model:page-size="listPageSize"
         :total="total || 0"
-        @size-change="(pageSize) => getCaseListPage({ pageSize: pageSize, pageNumber: 1 })"
-        @current-change="
-          (currentPage: number) =>
-            getCaseListPage({ pageSize: listPageSize, pageNumber: currentPage })
-        "
+        @size-change="(pageSize) => handlePageSizeChange(pageSize)"
+        @current-change="(currentPage: number) => handlePageNumberChange(currentPage)"
       />
     </el-card>
   </div>
@@ -226,5 +255,9 @@ const deleteCaseById = async (id) => {
   justify-content: center;
   align-items: center;
   margin-top: 20px;
+}
+
+.refresh:hover {
+  color: #409eff;
 }
 </style>

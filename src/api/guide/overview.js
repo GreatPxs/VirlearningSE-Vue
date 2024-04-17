@@ -6,6 +6,10 @@ import { EffectComposer } from 'three/examples/jsm/postprocessing/EffectComposer
 import { RenderPass } from 'three/examples/jsm/postprocessing/RenderPass.js'
 import { OutlinePass } from 'three/examples/jsm/postprocessing/OutlinePass.js'
 import { CSS2DRenderer, CSS2DObject } from 'three/examples/jsm/renderers/CSS2DRenderer.js'
+
+/* class overviewModel {
+
+} */
 //创建场景
 const scene = new Three.Scene()
 scene.add(model)
@@ -28,7 +32,8 @@ const campoint = {
   y: 0,
   z: -5
 }
-
+const enter_button = document.getElementById('#enter')
+console.log(enter_button)
 const camera = new Three.PerspectiveCamera(30, width / height, 1, 3000)
 camera.position.set(0, 80, 0)
 camera.lookAt(campoint.x, campoint.y, campoint.z)
@@ -149,4 +154,5 @@ function createDiv(name) {
 //const camFolder = gui.addFolder('相机坐标')
 gui.add(directionalLight, 'intensity', 1, 10).name('光照强度')
  */
-export default renderer
+
+export { renderer, scene }

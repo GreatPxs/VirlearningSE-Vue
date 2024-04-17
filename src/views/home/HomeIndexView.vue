@@ -18,13 +18,8 @@ const router = useRouter()
       </div>
     </div>
 
-<<<<<<< HEAD
-    <div class="row">
-      <div @click="router.push({ name: 'caseStudy' })">
-=======
     <div class="row" @click="router.push({ name: 'caseStudy' })">
       <div>
->>>>>>> f70944996ad4546b1d5be707e57cc2721b2b6b28
         <img src="@/assets/casestudy.png" alt="" />
         <p>病例学习</p>
       </div>

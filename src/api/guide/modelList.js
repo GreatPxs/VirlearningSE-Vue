@@ -3,7 +3,7 @@ const modelList = [
     name: '导览',
     fileType: 'glb',
     id: 0,
-    filePath: '/public/overview.glb'
+    filePath: '/public/导览.glb'
   },
   {
     name: '手术室',

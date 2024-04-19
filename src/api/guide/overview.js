@@ -6,10 +6,7 @@ import { EffectComposer } from 'three/examples/jsm/postprocessing/EffectComposer
 import { RenderPass } from 'three/examples/jsm/postprocessing/RenderPass.js'
 import { OutlinePass } from 'three/examples/jsm/postprocessing/OutlinePass.js'
 import { CSS2DRenderer, CSS2DObject } from 'three/examples/jsm/renderers/CSS2DRenderer.js'
-
-/* class overviewModel {
-
-} */
+import { CSS3DRenderer, CSS3DObject } from 'three/examples/jsm/renderers/CSS3DRenderer.js'
 //创建场景
 const scene = new Three.Scene()
 scene.add(model)
@@ -32,8 +29,8 @@ const campoint = {
   y: 0,
   z: -5
 }
-const enter_button = document.getElementById('#enter')
-console.log(enter_button)
+// const enter_button = document.getElementById('#enter')
+// console.log(enter_button)
 const camera = new Three.PerspectiveCamera(30, width / height, 1, 3000)
 camera.position.set(0, 80, 0)
 camera.lookAt(campoint.x, campoint.y, campoint.z)
@@ -72,11 +69,6 @@ function render() {
   requestAnimationFrame(render)
 }
 render()
-//添加标签
-document.addEventListener('DOMContentLoaded', function () {
-  const div1 = document.querySelector('#inpatient')
-  console.log(div1)
-})
 
 //相机控件
 const controls = new OrbitControls(camera, renderer.domElement)
@@ -98,7 +90,7 @@ window.onresize = function () {
 
 //监听点击事件
 //let chooseObj = null
-let chooseObj = null
+var chooseObj = ref(null)
 renderer.domElement.addEventListener('click', (event) => {
   scene.traverse((one) => {
     if (one.isCSS2DObject) {
@@ -112,16 +104,16 @@ renderer.domElement.addEventListener('click', (event) => {
   const raycaster = new Three.Raycaster()
   raycaster.setFromCamera(new Three.Vector2(x, y), camera)
   const intersects = raycaster.intersectObjects(model.children)
-  console.log('返回对象', intersects)
+  // console.log('返回对象', intersects)
   if (intersects.length > 0) {
     //intersects[0].object.material.color.set(0xff0000)
     let obj = intersects[0].object
-    chooseObj = obj.name
-    console.log(chooseObj)
+    chooseObj.value = obj.name
+    console.log('inside', chooseObj.value)
     outlinePass.selectedObjects = [obj]
     if (obj.name != 'floor') {
-      if (chooseObj == obj.name) {
-        console.log('already choose')
+      if (chooseObj.value == obj.name) {
+        // console.log('already choose')
       }
       let dom = createDiv(obj.name)
       let css2dobject = new CSS2DObject(dom)
@@ -131,12 +123,12 @@ renderer.domElement.addEventListener('click', (event) => {
       scene.add(css2dobject)
       render()
     } else {
-      console.log('floor') /* empty */
+      // console.log('floor') /* empty */
     }
   } else {
     outlinePass.selectedObjects = []
-    chooseObj = null
-    console.log(chooseObj)
+    chooseObj.value = null
+    console.log(chooseObj.value)
   }
 })
 
@@ -154,5 +146,43 @@ function createDiv(name) {
 //const camFolder = gui.addFolder('相机坐标')
 gui.add(directionalLight, 'intensity', 1, 10).name('光照强度')
  */
+function clearnModel() {
+  if (scene !== null && scene.children.length > 3) {
+    scene.children = []
+    composer.removePass(outlinePass)
+    // 必须要清空当前div下的canvas不然canvas会继续叠加
+    const domDiv = document.getElementById('webgl')
+    if (domDiv !== null) {
+      domDiv.removeChild(domDiv.firstChild)
+    }
+    scene.traverse((one) => {
+      if (one.isCSS2DObject) {
+        scene.remove(one)
+      }
+    })
+    render()
+  }
+}
+function cleanCSS2DTags() {
+  scene.traverse((one) => {
+    if (one.isCSS2DObject) {
+      scene.remove(one)
+    }
+  })
+}
+function clearScene() {
+  cancelAnimationFrame(render)
+  scene.traverse((child) => {
+    if (child.material) {
+      child.material.dispose()
+      child = null
+    }
+  })
+  renderer.forceContextLoss()
+  renderer.dispose()
+  scene.clear()
+  // camera = null
+  // controls = null
 
-export { renderer, scene }
+}
+export { renderer, chooseObj, cleanCSS2DTags, clearScene }

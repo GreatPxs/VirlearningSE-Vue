@@ -2,18 +2,18 @@
   <div class="room-page">
     <el-button id="exit" @click="$router.push({ name: 'guide' })">退出</el-button>
 
-    <el-button-group id="feature_group">
+    <el-button-group class="feature_group">
       <el-button id="feature">功能说明</el-button>
       <el-button id="procedure">操作流程</el-button>
       <el-button id="animation">演示动画</el-button>
     </el-button-group>
 
     <el-select
-      id="rolechoose"
+      class="rolechoose"
       v-model="value"
       placeholder="选择职业"
       size="large"
-      style="width: 240px"
+      style="width: 140px;"
     >
       <el-option
         v-for="item in options"
@@ -46,5 +46,9 @@ const options = [
 ]
 </script>
 <style lang="scss" scoped>
-
+.rolechoose{
+  position:relative;
+  width: 40px;
+  
+}
 </style>

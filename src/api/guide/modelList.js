@@ -14,26 +14,32 @@ const modelList = [
     id: 1,
     filePath: '/public/手术室.glb',
     lightPosition: [80, 50, 30],
-    cameraPosition: [0, 80, 0],
-    cameraLookAt: [0, 0, -5]
+    cameraPosition: [-5, 6, -5],
+    cameraLookAt: [0.5, -0.25, 0.5],
+    minDistance: 7,
+    maxDistance: 20
   },
   {
     name: '诊室1',
     fileType: 'glb',
     id: 2,
     filePath: '/public/诊室.glb',
-    lightPosition: [80, 50, 30],
-    cameraPosition: [0, 80, 0],
-    cameraLookAt: [0, 0, -5]
+    lightPosition: [-8, 10, 0],
+    cameraPosition: [-7, 5, 0],
+    cameraLookAt: [1.5, -0.25, 0],
+    minDistance: 7,
+    maxDistance: 10
   },
   {
     name: '诊室2',
     fileType: 'glb',
     id: 3,
     filePath: '/public/诊室.glb',
-    lightPosition: [80, 50, 30],
-    cameraPosition: [0, 80, 0],
-    cameraLookAt: [0, 0, -5]
+    lightPosition: [0, 50, 0],
+    cameraPosition: [-7, 5, 0],
+    cameraLookAt: [1.5, -0.25, 0],
+    minDistance: 7,
+    maxDistance: 10
   },
   {
     name: '档案室',

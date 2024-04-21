@@ -183,6 +183,5 @@ function clearScene() {
   scene.clear()
   // camera = null
   // controls = null
-
 }
 export { renderer, chooseObj, cleanCSS2DTags, clearScene }

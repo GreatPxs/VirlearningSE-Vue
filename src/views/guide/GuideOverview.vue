@@ -22,7 +22,7 @@ const webgl = ref(null)
 //   console.log('outside:' + newValue)
 // })
 
-console.log(name)
+//console.log(name)
 
 onBeforeMount(() => {
   if (location.href.indexOf('#reloaded') === -1) {
@@ -36,7 +36,7 @@ onMounted(() => {
   // console.log('outside', obj.value)
   //console.log('outside', chooseObj)
 })
-onBeforeUnmount(()=>{
+onBeforeUnmount(() => {
   clearScene()
 })
 </script>

@@ -74,7 +74,74 @@ const controls = new OrbitControls(camera, renderer.domElement)
 renderer.setSize(width, height, true)
 
 //后处理对象
-// const composer = new EffectComposer(renderer)
+const composer = new EffectComposer(renderer)
+const renderPass = new RenderPass(scene, camera)
+composer.addPass(renderPass)
+const v2 = new Three.Vector2(window.innerWidth, window.innerHeight)
+const outlinePass = new OutlinePass(v2, scene, camera)
+outlinePass.visibleEdgeColor.set(0x00ffff)
+outlinePass.edgeThickness = 4
+outlinePass.edgeStrength = 6
+composer.addPass(outlinePass)
+//标签对象
+const css2renderer = new CSS2DRenderer()
+css2renderer.render(scene, camera)
+css2renderer.setSize(width, height)
+css2renderer.domElement.style.position = 'absolute'
+css2renderer.domElement.style.top = 0
+css2renderer.domElement.style.pointerEvents = 'none'
+document.body.appendChild(css2renderer.domElement)
+//点击事件
+var chooseObj = ref(null)
+renderer.domElement.addEventListener('click', (event) => {
+  scene.traverse((one) => {
+    if (one.isCSS2DObject) {
+      scene.remove(one)
+    }
+  })
+  const px = event.offsetX
+  const py = event.offsetY
+  const x = (px / width) * 2 - 1
+  const y = -(py / height) * 2 + 1
+  const raycaster = new Three.Raycaster()
+  raycaster.setFromCamera(new Three.Vector2(x, y), camera)
+  const intersects = raycaster.intersectObjects(model.children)
+  console.log('返回对象', intersects)
+  if (intersects.length > 0) {
+    //intersects[0].object.material.color.set(0xff0000)
+    let obj = intersects[0].object
+    console.log(obj.parent)
+    chooseObj.value = obj.name
+    // console.log('inside', chooseObj.value)
+    if (
+      obj.name != 'floor' &&
+      obj.parent.name != 'Scene' &&
+      obj.parent.name != '' &&
+      !obj.parent.name.includes('墙') &&
+      !obj.parent.name.includes('天花板') &&
+      !obj.parent.name.includes('地面')
+    ) {
+      obj = obj.parent
+      outlinePass.selectedObjects = [obj]
+      if (chooseObj.value == obj.name) {
+        // console.log('already choose')
+      }
+      let dom = createDiv(obj.name)
+      let css2dobject = new CSS2DObject(dom)
+      const v3 = new Three.Vector3()
+      obj.getWorldPosition(v3)
+      css2dobject.position.set(v3.x, v3.y, v3.z)
+      scene.add(css2dobject)
+      render()
+    } else {
+      // console.log('floor') /* empty */
+    }
+  } else {
+    outlinePass.selectedObjects = []
+    chooseObj.value = null
+    console.log(chooseObj.value)
+  }
+})
 onBeforeMount(() => {
   // console.log('modelList: ')
   // console.log(modelList)
@@ -103,7 +170,11 @@ onBeforeMount(() => {
     camera_lookAt.value[1],
     camera_lookAt.value[2]
   ) */
-  directionalLight.position.set(light_position.value[0], light_position.value[1], light_position.value[2])
+  directionalLight.position.set(
+    light_position.value[0],
+    light_position.value[1],
+    light_position.value[2]
+  )
   scene.add(directionalLight)
   //scene.add(spotLight)
   // scene.add(directionLight)
@@ -130,6 +201,7 @@ onBeforeMount(() => {
   controls.minDistance = minDistance.value
   controls.maxDistance = maxDistance.value
   controls.update()
+  //自动刷新
   controls.addEventListener('change', function () {
     renderer.render(scene, camera)
   })
@@ -138,9 +210,30 @@ onBeforeMount(() => {
   render()
   //设置后处理对象
 })
+//监听窗口变化
+window.onresize = function () {
+  const width = window.innerWidth - 350
+  const height = window.innerHeight - 80
+  renderer.setSize(width, height)
+  camera.aspect = window.innerWidth / window.innerHeight
+  camera.updateProjectionMatrix()
+}
+//渲染循环
 function render() {
-  renderer.render(scene, camera)
+  composer.render()
+  //renderer.render(scene, camera)
+  css2renderer.render(scene, camera)
   requestAnimationFrame(render)
+}
+//创建标签
+function createDiv(name) {
+  let dom = document.createElement('div')
+  dom.style.padding = '5px 10px'
+  dom.style.border = '1px solid skyblue'
+  dom.style.color = 'black'
+  dom.style.background = '#E6E6FA'
+  dom.innerHTML = name
+  return dom
 }
 onMounted(() => {
   roomTarget.value.appendChild(renderer.domElement)

@@ -81,8 +81,8 @@ controls.addEventListener('change', function () {
 
 //监听窗口变化
 window.onresize = function () {
-  const width = window.innerWidth - 200
-  const height = window.innerHeight - 60
+  const width = window.innerWidth - 350
+  const height = window.innerHeight - 80
   renderer.setSize(width, height)
   camera.aspect = window.innerWidth / window.innerHeight
   camera.updateProjectionMatrix()

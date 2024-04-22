@@ -6,7 +6,9 @@ const modelList = [
     filePath: '/public/导览.glb',
     lightPosition: [80, 50, 30],
     cameraPosition: [0, 80, 0],
-    cameraLookAt: [0, 0, -5]
+    cameraLookAt: [0, 0, -5],
+    minDistance: 0.01,
+    maxDistance: 100
   },
   {
     name: '手术室',
@@ -37,7 +39,9 @@ const modelList = [
     filePath: '/public/档案室.glb',
     lightPosition: [80, 50, 30],
     cameraPosition: [0, 80, 0],
-    cameraLookAt: [0, 0, -5]
+    cameraLookAt: [0, 0, -5],
+    minDistance: 0.01,
+    maxDistance: 100
   },
   {
     name: '药房',
@@ -46,7 +50,9 @@ const modelList = [
     filePath: '/public/药房.glb',
     lightPosition: [80, 50, 30],
     cameraPosition: [0, 80, 0],
-    cameraLookAt: [0, 0, -5]
+    cameraLookAt: [0, 0, -5],
+    minDistance: 0.01,
+    maxDistance: 100
   },
   {
     name: '前台',
@@ -55,7 +61,9 @@ const modelList = [
     filePath: '/public/前台.glb',
     lightPosition: [80, 50, 30],
     cameraPosition: [0, 80, 0],
-    cameraLookAt: [0, 0, -5]
+    cameraLookAt: [0, 0, -5],
+    minDistance: 0.01,
+    maxDistance: 100
   },
   {
     name: '化验室',
@@ -64,7 +72,9 @@ const modelList = [
     filePath: '/public/化验室.glb',
     lightPosition: [80, 50, 30],
     cameraPosition: [0, 80, 0],
-    cameraLookAt: [0, 0, -5]
+    cameraLookAt: [0, 0, -5],
+    minDistance: 0.01,
+    maxDistance: 100
   },
   {
     name: '手术准备室',
@@ -73,7 +83,9 @@ const modelList = [
     filePath: '/public/手术准备室.glb',
     lightPosition: [80, 50, 30],
     cameraPosition: [0, 80, 0],
-    cameraLookAt: [0, 0, -5]
+    cameraLookAt: [0, 0, -5],
+    minDistance: 0.01,
+    maxDistance: 100
   },
   {
     name: '影像室',
@@ -82,7 +94,9 @@ const modelList = [
     filePath: '/public/影像室.glb',
     lightPosition: [80, 50, 30],
     cameraPosition: [0, 80, 0],
-    cameraLookAt: [0, 0, -5]
+    cameraLookAt: [0, 0, -5],
+    minDistance: 0.01,
+    maxDistance: 100
   },
   {
     name: '专科检查室',
@@ -91,7 +105,9 @@ const modelList = [
     filePath: '/public/专科检查室.glb',
     lightPosition: [80, 50, 30],
     cameraPosition: [0, 80, 0],
-    cameraLookAt: [0, 0, -5]
+    cameraLookAt: [0, 0, -5],
+    minDistance: 0.01,
+    maxDistance: 100
   },
   {
     name: '注射室',
@@ -100,7 +116,9 @@ const modelList = [
     filePath: '/public/注射室.glb',
     lightPosition: [80, 50, 30],
     cameraPosition: [0, 80, 0],
-    cameraLookAt: [0, 0, -5]
+    cameraLookAt: [0, 0, -5],
+    minDistance: 0.01,
+    maxDistance: 100
   },
   {
     name: '手术准备室',
@@ -109,7 +127,9 @@ const modelList = [
     filePath: '/public/手术准备室.glb',
     lightPosition: [80, 50, 30],
     cameraPosition: [0, 80, 0],
-    cameraLookAt: [0, 0, -5]
+    cameraLookAt: [0, 0, -5],
+    minDistance: 0.01,
+    maxDistance: 100
   },
   {
     name: '病理剖检室',
@@ -118,7 +138,9 @@ const modelList = [
     filePath: '/public/病理剖检室.glb',
     lightPosition: [80, 50, 30],
     cameraPosition: [0, 80, 0],
-    cameraLookAt: [0, 0, -5]
+    cameraLookAt: [0, 0, -5],
+    minDistance: 0.01,
+    maxDistance: 100
   },
   {
     name: '住院管理部',
@@ -127,7 +149,9 @@ const modelList = [
     filePath: '/public/住院管理部.glb',
     lightPosition: [80, 50, 30],
     cameraPosition: [0, 80, 0],
-    cameraLookAt: [0, 0, -5]
+    cameraLookAt: [0, 0, -5],
+    minDistance: 0.01,
+    maxDistance: 100
   },
   {
     name: '住院部',
@@ -136,7 +160,9 @@ const modelList = [
     filePath: '/public/住院部.glb',
     lightPosition: [80, 50, 30],
     cameraPosition: [0, 80, 0],
-    cameraLookAt: [0, 0, -5]
+    cameraLookAt: [0, 0, -5],
+    minDistance: 0.01,
+    maxDistance: 100
   },
   {
     name: '处置室',
@@ -145,7 +171,9 @@ const modelList = [
     filePath: '/public/处置室.glb',
     lightPosition: [80, 50, 30],
     cameraPosition: [0, 80, 0],
-    cameraLookAt: [0, 0, -5]
+    cameraLookAt: [0, 0, -5],
+    minDistance: 0.01,
+    maxDistance: 100
   },
   {
     name: '免疫室',
@@ -154,7 +182,9 @@ const modelList = [
     filePath: '/public/免疫室.glb',
     lightPosition: [80, 50, 30],
     cameraPosition: [0, 80, 0],
-    cameraLookAt: [0, 0, -5]
+    cameraLookAt: [0, 0, -5],
+    minDistance: 0.01,
+    maxDistance: 100
   }
 ]
 

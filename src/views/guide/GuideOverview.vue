@@ -5,6 +5,7 @@
     id="enter"
     type="primary"
     @click="$router.push({ name: 'guideroom', query: { name: chooseObj } })"
+    v-show="isShow"
     >进入科室</el-button
   >
   <div id="webgl" ref="webgl"></div>
@@ -16,11 +17,18 @@ import { ref, onMounted, watch } from 'vue'
 import { renderer, chooseObj, clearnModel, clearScene } from '@/api/guide/overview.js'
 const router = useRouter()
 
+const isShow = ref(false)
 const webgl = ref(null)
 // let obj = ref(chooseObj.value)
-// watch(chooseObj, (newValue, oldValue) => {
-//   console.log('outside:' + newValue)
-// })
+watch(chooseObj, (newValue, oldValue) => {
+  if (newValue !== null) {
+    isShow.value = true
+  }
+  else{
+    isShow.value = false
+  }
+  console.log('outside:' + newValue)
+})
 
 //console.log(name)
 

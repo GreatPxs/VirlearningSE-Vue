@@ -176,12 +176,7 @@ onBeforeMount(() => {
     light_position.value[2]
   )
   scene.add(directionalLight)
-  //scene.add(spotLight)
-  // scene.add(directionLight)
-  //载入模型
-  // loader.load(attributes.path, function (gltf) {
-  //   model.add(gltf.scene)
-  // })
+  //模型载入
   loader.load(path.value, function (gltf) {
     model.add(gltf.scene)
   })
@@ -197,6 +192,8 @@ onBeforeMount(() => {
   // controls.dampingFactor = 0.05
   //拖动速度
   controls.rotateSpeed = 0.15
+  //禁止移动
+  controls.enablePan = false
   //缩放范围
   controls.minDistance = minDistance.value
   controls.maxDistance = maxDistance.value
@@ -239,6 +236,24 @@ onMounted(() => {
   roomTarget.value.appendChild(renderer.domElement)
   // console.log(path.value)
   // console.log(model)
+})
+//清除画布
+function clearScene() {
+  cancelAnimationFrame(render)
+  scene.traverse((child) => {
+    if (child.material) {
+      child.material.dispose()
+      child = null
+    }
+  })
+  renderer.forceContextLoss()
+  renderer.dispose()
+  scene.clear()
+  // camera = null
+  // controls = null
+}
+onBeforeUnmount(() => {
+  clearScene()
 })
 const options = [
   {

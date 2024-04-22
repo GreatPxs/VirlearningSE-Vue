@@ -90,6 +90,7 @@ const getRoomInfoByRole = async () => {
 }
 function printroom(obj) {
   console.log(obj)
+  console.log(roleInfo.value.roleName)
 }
 
 const currentSection = ref(1)
@@ -141,10 +142,18 @@ const currentSection = ref(1)
               <el-table-column prop="dep_inf" label="岗位职责" />
               <el-table-column label="操作" align="center" width="150">
                 <template #default="scope">
-                  <el-button type="primary" 
-                    @click="router.push({ name: 'guideroom', query: { name: scope.row.name } })"
-                    >进入科室</el-button>
+                  <el-button
+                    type="primary"
+                    @click="
+                      router.push({
+                        name: 'guideroom',
+                        query: { name: scope.row.name, role: roleInfo.roleName }
+                      })
+                    "
+                    >进入科室</el-button
+                  >
                 </template>
+                <!-- @click="router.push({ name: 'guideroom', query: { name: scope.row.name } })" -->
                 <!--  @click="$router.push({ name: 'guideroom',query:{name:deptInfo.} })" -->
               </el-table-column>
             </el-table>

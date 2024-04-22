@@ -1,6 +1,7 @@
 <template>
   <div class="room-page">
-    <el-button id="exit" @click="$router.push({ name: 'guide' })">退出</el-button>
+    <el-button id="exit" @click="$router.push({ name: 'guide' })" v-show="exitToOverview">退出</el-button>
+    <el-button id="return" @click="$router.push({ name: 'chooseRole' })" v-show="returnToRoleChoose">返回</el-button>
     <div class="roomcanvas" ref="roomTarget"></div>
     <el-button-group class="feature_group">
       <el-button id="feature">功能说明</el-button>
@@ -8,7 +9,13 @@
       <el-button id="animation">演示动画</el-button>
     </el-button-group>
 
-    <el-select class="rolechoose" v-model="value" placeholder="选择职业" size="large">
+    <el-select
+      class="rolechoose"
+      v-model="value"
+      placeholder="选择职业"
+      size="large"
+      :disabled="true"
+    >
       <el-option
         v-for="item in options"
         :key="item.value"
@@ -33,11 +40,13 @@ import { RenderPass } from 'three/examples/jsm/postprocessing/RenderPass.js'
 import { OutlinePass } from 'three/examples/jsm/postprocessing/OutlinePass.js'
 import { CSS2DRenderer, CSS2DObject } from 'three/examples/jsm/renderers/CSS2DRenderer.js'
 
-const value = ref([])
+const exitToOverview = ref(true)
+const returnToRoleChoose = ref(false)
 const roomTarget = ref(null)
 const route = useRoute()
 //模型名
-const { name } = route.query
+const { name, role } = route.query
+const value = ref(role)
 
 //模型参数
 const camera_position = ref(null)
@@ -146,7 +155,12 @@ renderer.domElement.addEventListener('click', (event) => {
 onBeforeMount(() => {
   // console.log('modelList: ')
   // console.log(modelList)
+  console.log('role: ' + role)
   console.log('name: ' + name)
+  if (role !== undefined) {
+    exitToOverview.value = false
+    returnToRoleChoose.value = true
+  }
   for (let c of modelList) {
     if (c.name === name.replace(/[0-9]+/g, '')) {
       path.value = c.filePath
@@ -155,7 +169,7 @@ onBeforeMount(() => {
       light_position.value = c.lightPosition
       minDistance.value = c.minDistance
       maxDistance.value = c.maxDistance
-      console.log(light_position.value)
+      // console.log(light_position.value)
       // console.log(camera_position.value)
       // console.log(camera_lookAt.value)
       break
@@ -182,7 +196,7 @@ onBeforeMount(() => {
     model.add(gltf.scene)
   })
   scene.add(model)
-  console.log(model)
+  // console.log(model)
   //设置相机
   camera.position.set(camera_position.value[0], camera_position.value[1], camera_position.value[2])
   camera.lookAt(camera_lookAt.value[0], camera_lookAt.value[1], camera_lookAt.value[2])
@@ -235,6 +249,7 @@ function createDiv(name) {
 }
 onMounted(() => {
   roomTarget.value.appendChild(renderer.domElement)
+  // console.log(role)
   // console.log(path.value)
   // console.log(model)
 })

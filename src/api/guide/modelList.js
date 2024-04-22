@@ -20,22 +20,11 @@ const modelList = [
     maxDistance: 20
   },
   {
-    name: '诊室1',
+    name: '诊室',
     fileType: 'glb',
     id: 2,
     filePath: '/public/诊室.glb',
     lightPosition: [-8, 10, 0],
-    cameraPosition: [-7, 5, 0],
-    cameraLookAt: [1.5, -0.25, 0],
-    minDistance: 7,
-    maxDistance: 10
-  },
-  {
-    name: '诊室2',
-    fileType: 'glb',
-    id: 3,
-    filePath: '/public/诊室.glb',
-    lightPosition: [0, 50, 0],
     cameraPosition: [-7, 5, 0],
     cameraLookAt: [1.5, -0.25, 0],
     minDistance: 7,
@@ -123,10 +112,10 @@ const modelList = [
     cameraLookAt: [0, 0, -5]
   },
   {
-    name: '病理解剖室',
+    name: '病理剖检室',
     fileType: 'glb',
     id: 13,
-    filePath: '/public/病理解剖室.glb',
+    filePath: '/public/病理剖检室.glb',
     lightPosition: [80, 50, 30],
     cameraPosition: [0, 80, 0],
     cameraLookAt: [0, 0, -5]

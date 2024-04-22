@@ -38,6 +38,7 @@ const roomTarget = ref(null)
 const route = useRoute()
 //模型名
 const { name } = route.query
+
 //模型参数
 const camera_position = ref(null)
 const camera_lookAt = ref(null)
@@ -147,7 +148,7 @@ onBeforeMount(() => {
   // console.log(modelList)
   console.log('name: ' + name)
   for (let c of modelList) {
-    if (c.name === name) {
+    if (c.name === name.replace(/[0-9]+/g, '')) {
       path.value = c.filePath
       camera_position.value = c.cameraPosition
       camera_lookAt.value = c.cameraLookAt

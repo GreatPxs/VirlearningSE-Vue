@@ -1,7 +1,11 @@
 <template>
   <div class="room-page">
-    <el-button id="exit" @click="$router.push({ name: 'guide' })" v-show="exitToOverview">退出</el-button>
-    <el-button id="return" @click="$router.push({ name: 'chooseRole' })" v-show="returnToRoleChoose">返回</el-button>
+    <el-button id="exit" @click="$router.push({ name: 'guide' })" v-show="exitToOverview"
+      >退出</el-button
+    >
+    <el-button id="return" @click="$router.push({ name: 'chooseRole' })" v-show="returnToRoleChoose"
+      >返回</el-button
+    >
     <div class="roomcanvas" ref="roomTarget"></div>
     <el-button-group class="feature_group">
       <el-button id="feature">功能说明</el-button>

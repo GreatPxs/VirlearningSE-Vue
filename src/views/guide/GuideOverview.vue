@@ -23,8 +23,7 @@ const webgl = ref(null)
 watch(chooseObj, (newValue, oldValue) => {
   if (newValue !== null) {
     isShow.value = true
-  }
-  else{
+  } else {
     isShow.value = false
   }
   console.log('outside:' + newValue)

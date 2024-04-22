@@ -15,6 +15,8 @@ onMounted(() => {
 
 //测试试卷数据
 const records = ref([])
+//是否为搜索查询
+const conditionSearch = ref(0)
 
 const queryCondition = ref({
   name: ''
@@ -33,6 +35,7 @@ const getPaperInfoByName = async () => {
   })
 
   //搜索成功
+  conditionSearch.value = 1
   console.log(data)
   ElMessage.success('搜索成功')
   records.value = data.data
@@ -72,8 +75,15 @@ const getPaperListPage = async (queryCondition) => {
   listPageSize.value = data.data.pageSize
 }
 
-//控制dialog新增题目表单是否可见
-const dialogQuesVisible = ref(false)
+//刷新页面
+const handleRefresh = () => {
+  getPaperListPage({
+    pageNumber: 1,
+    pageSize: listPageSize.value
+  })
+  conditionSearch.value = 0
+  listCurrentPage.value = 1
+}
 
 //新建题目
 const form = ref({
@@ -161,12 +171,18 @@ const deletePaperById = async (id) => {
     return res.data
   })
 
-  //删除成功
-  console.log(data)
-  ElMessage.success('删除成功')
+  if (data.data === -1) {
+    ElMessageBox.alert('试卷在考试中使用，无法删除', '提示', {
+      confirmButtonText: 'OK'
+    })
+  } else {
+    //删除成功
+    console.log(data)
+    ElMessage.success('删除成功')
 
-  //删除成功后,需要重新获取题目列表
-  getPaperListPage({ pageNumber: listCurrentPage.value, pageSize: listPageSize.value })
+    //删除成功后,需要重新获取题目列表
+    getPaperListPage({ pageNumber: listCurrentPage.value, pageSize: listPageSize.value })
+  }
 }
 </script>
 
@@ -174,8 +190,9 @@ const deletePaperById = async (id) => {
   <el-card class="box-card">
     <template #header>
       <div class="card-header">
+        <el-icon :size="40" class="refresh" @click="handleRefresh"><IEpRefresh /></el-icon>
         <el-form :inline="true" :model="queryCondition" class="demo-form-inline">
-          <el-form-item label="试卷">
+          <el-form-item label="试卷" class="searchInput">
             <el-input v-model="queryCondition.name" placeholder="请输入试卷关键字" clearable />
           </el-form-item>
           <el-form-item>
@@ -183,7 +200,7 @@ const deletePaperById = async (id) => {
           </el-form-item>
         </el-form>
 
-        <el-button type="primary" @click="toAdd"> 新增试卷 </el-button>
+        <el-button type="primary" @click="toAdd" class="addButton"> 新增试卷 </el-button>
       </div>
     </template>
     <!--table需要绑定查询结果 :data="queriedResult.records" -->
@@ -223,36 +240,8 @@ const deletePaperById = async (id) => {
       </template>
     </el-dialog>
 
-    <!-- <el-dialog v-model="dialogQuesVisible" title="添加试题" center style="width: 70%">
-      <el-table border style="width: 100%" :data="testQuestions">
-        <el-table-column prop="isChosen" label="勾选" align="center" width="60px">
-          <template #default="scope">
-            <el-checkbox v-model="scope.row.isChosen" size="large" />
-          </template>
-        </el-table-column>
-        <el-table-column prop="id" label="题目ID" align="center" width="80px" />
-        <el-table-column prop="type" label="题目类型" align="center" width="90px" />
-        <el-table-column prop="questionName" label="题目" align="center" />
-        <el-table-column prop="questionScore" label="给分" align="center" width="180px">
-          <template #default="scope">
-            <el-input-number v-model="scope.row.questionScore" :min="1" :max="200" />
-          </template>
-        </el-table-column>
-      </el-table>
-      <template #footer>
-        <div class="dialog-footer">
-          <el-button type="primary" @click="afterAddingQuestion"> 提交 </el-button>
-        </div>
-      </template>
-
-      <el-pagination
-        :page-sizes="[5, 10, 20, 50]"
-        :background="true"
-        layout="total, sizes, prev, pager, next, jumper"
-      />
-    </el-dialog> -->
-
     <el-pagination
+      v-show="conditionSearch === 0"
       :page-sizes="[5, 10, 20, 50]"
       :background="true"
       layout="total, sizes, prev, pager, next, jumper"
@@ -280,16 +269,41 @@ const deletePaperById = async (id) => {
 }
 
 .item {
-  margin-bottom: 18px;
+  margin-bottom: 14px;
 }
 
 .box-card {
   width: auto;
 }
 
+.el-form-item {
+  margin-bottom: 20px;
+}
+
 .el-pagination {
   display: flex;
   justify-content: center;
-  margin-top: 17px;
+  align-items: center;
+  margin-top: 20px;
+}
+
+.demo-form-inline {
+  .el-form-item {
+    margin: 0px;
+  }
+
+  .searchInput {
+    margin-right: 25px;
+  }
+}
+.refresh {
+  margin-right: 40px;
+}
+.refresh:hover {
+  color: #409eff;
+}
+
+.addButton {
+  margin-left: 700px;
 }
 </style>

@@ -1,12 +1,15 @@
 <script setup lang="ts">
 import { useRouter, useRoute } from 'vue-router'
 import { login } from '@/api/users/login.js'
+import { getUserInfoByName } from '@/api/users/getUserInfoByName'
 import { useTokenAndRoleStore } from '@/stores/tokenAndRole.js'
+import { useUserInfoStore } from '@/stores/userInfo'
 import md5 from 'md5'
 
 const router = useRouter()
 const route = useRoute()
 const store = useTokenAndRoleStore()
+const userInfoStore = useUserInfoStore()
 
 //暂用表格form数据
 const form = reactive({
@@ -40,12 +43,30 @@ const onSubmit = async () => {
     return res.data
   })
 
-  //打印数据
-  console.log(data)
+  //获取用户ID
+  const info = await getUserInfoByName(form.loginName).then((res) => {
+    //登录失败
+    if (res.data.state !== 200) {
+      ElMessage.error('获取用户ID失败')
+      //登录失败,置为false
+      isLoading.value = false
+
+      //打印数据
+      console.log(res.data)
+
+      throw new Error('获取用户ID失败')
+    }
+    //登录成功
+    return res.data
+  })
+  //保存用户信息
+  userInfoStore.saveUserId(info.data.userId)
+  userInfoStore.saveAvatar(info.data.fileurl)
+  userInfoStore.saveNickName(info.data.nickName)
+  userInfoStore.savepasswordMd5(passwordMd5)
+
   //保存接口请求返回的token信息
   store.saveTokenAndRole(data.data, data.message)
-  //保存md5
-  window.localStorage.setItem('passwordMd5', passwordMd5)
 
   //结束请求,置为false
   isLoading.value = false

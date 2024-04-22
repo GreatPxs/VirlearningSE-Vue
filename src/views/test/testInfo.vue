@@ -1,92 +1,218 @@
 <script setup lang="ts">
+import { ElTable } from 'element-plus'
 import { useRouter } from 'vue-router'
-import { User, DocumentAdd } from '@element-plus/icons-vue'
+import { getUserExamHistory } from '@/api/test/getUserExamHistory'
+import { getUserExamTodo } from '@/api/test/getUserExamTodo'
 
 const router = useRouter()
 
-// 切换用户状态的事件处理函数
-// const handleChange = async (act: 'ENABLE' | 'DISABLE', userId: number) => {
-//   let actions = {
-//     ENABLE: { msg: '启用', fn: enableUser },
-//     DISABLE: { msg: '禁用', fn: forbidUser }
-//   }
-//   const { data } = await actions[act].fn(userId)
-//   if (data.code === '000000') {
-//     ElMessage.success(`${actions[act].msg}用户成功!`)
-//   } else {
-//     ElMessage.error(`${actions[act].msg}用户失败~`)
-//     throw new Error(`${actions[act].msg}用户失败~`)
-//   }
-// }
-
-const queryCondition = ref({
-  topic: '',
-  type: '',
-  A: '',
-  B: '',
-  C: '',
-  D: ''
+//用户ID
+const userId = ref(0)
+onBeforeMount(() => {
+  userId.value = parseInt(window.localStorage.getItem('userId'))
+  console.log(userId.value)
 })
 
-//测试考试数据
-const records = ref([
-  {
-    id: 1,
-    testName: '测试一',
-    startTime: '2024-3-15 15:30',
-    endTime: '2024-3-15 16:30',
-    totalScore: 100
-  },
-  {
-    id: 2,
-    testName: '测试二',
-    startTime: '2024-3-16 15:30',
-    endTime: '2024-3-16 16:30',
-    totalScore: 120
+onMounted(() => {
+  getUserExamTodoList({
+    pageNumber: 1,
+    pageSize: listPageSize.value
+  })
+
+  getUserExamHistoryList({
+    pageNumber: 1,
+    pageSize: listSecondPageSize.value
+  })
+})
+
+//切换事件
+const handleClick = () => {
+  getUserExamTodoList({
+    pageNumber: 1,
+    pageSize: listPageSize.value
+  })
+
+  getUserExamHistoryList({
+    pageNumber: 1,
+    pageSize: listSecondPageSize.value
+  })
+}
+
+//待参加考试列表数据
+const records = ref([])
+//页查询
+const listCurrentPage = ref(1)
+const listPageSize = ref(10)
+const total = ref(0)
+const getUserExamTodoList = async (queryCondition) => {
+  const data = await getUserExamTodo(userId.value, queryCondition).then((res) => {
+    //获取失败
+    if (res.data.resultCode !== 200) {
+      ElMessage.error('获取已参加考试列表失败')
+
+      //打印数据
+      console.log(res.data)
+
+      throw new Error('获取已参加考试列表失败')
+    }
+    //获取成功
+
+    console.log(res.data)
+    return res.data
+  })
+
+  records.value = data.data.list
+  total.value = data.data.totalCount
+  listCurrentPage.value = data.data.currPage
+  listPageSize.value = data.data.pageSize
+}
+
+const secondRecords = ref([]) //已参加或结束考试列表数据
+//页查询
+const listSecondCurrentPage = ref(1)
+const listSecondPageSize = ref(10)
+const secondTotal = ref(0)
+const getUserExamHistoryList = async (queryCondition) => {
+  const data = await getUserExamHistory(userId.value, queryCondition).then((res) => {
+    //获取失败
+    if (res.data.resultCode !== 200) {
+      ElMessage.error('获取待考考试列表失败')
+
+      //打印数据
+      console.log(res.data)
+
+      throw new Error('获取待考考试列表失败')
+    }
+    //获取成功
+
+    console.log(res.data)
+    return res.data
+  })
+
+  secondRecords.value = data.data.list
+  secondTotal.value = data.data.totalCount
+  listSecondCurrentPage.value = data.data.currPage
+  listSecondPageSize.value = data.data.pageSize
+}
+
+const activeIndex = ref('1')
+
+//参加考试
+const participateIn = (examId, paperId, name, startTime, endTime) => {
+  //判断考试是否开始
+  const now = new Date().valueOf()
+  const begin = new Date(startTime).valueOf()
+  const end = new Date(endTime).valueOf()
+  console.log(`now-${now}`)
+  console.log(`begin-${begin}`)
+  console.log(`end-${end}`)
+  if (now < begin) {
+    ElMessageBox.alert('考试暂未开始', '提示', {
+      confirmButtonText: 'OK'
+    })
+
+    return
   }
-])
+
+  if (now > end) {
+    ElMessageBox.alert('考试已经结束', '提示', {
+      confirmButtonText: 'OK'
+    })
+
+    return
+  }
+
+  window.localStorage.setItem('begin', begin.toString())
+  window.localStorage.setItem('end', end.toString())
+  window.localStorage.setItem('name', name)
+  window.localStorage.setItem('startTime', startTime)
+  window.localStorage.setItem('endTime', endTime)
+  router.push({
+    name: 'testPage',
+    params: {
+      examId: examId,
+      paperId: paperId
+    }
+  })
+}
+
+//查阅试卷
+const checkTest = (examId, paperId, name, startTime, endTime) => {
+  window.localStorage.setItem('name', name)
+  window.localStorage.setItem('startTime', startTime)
+  window.localStorage.setItem('endTime', endTime)
+  router.push({
+    name: 'testResult',
+    params: {
+      examId: examId,
+      paperId: paperId
+    }
+  })
+}
 </script>
 
 <template>
-  <el-card class="box-card">
-    <template #header>
-      <div class="card-header">
-        <el-form :inline="true" :model="queryCondition" class="demo-form-inline">
-          <el-form-item label="考试">
-            <el-input v-model="queryCondition.topic" placeholder="请输入考试关键字" clearable />
-          </el-form-item>
-          <!-- 绑定点击函数 @click="queryUsers({ currentPage: 1 })" -->
-          <el-form-item>
-            <el-button type="primary">查询</el-button>
-          </el-form-item>
-        </el-form>
-      </div>
-    </template>
-    <!--table需要绑定查询结果 :data="queriedResult.records" -->
-    <el-table border style="width: 100%" :data="records">
-      <el-table-column prop="id" label="考试ID" align="center" />
-      <el-table-column prop="testName" label="考试名称" align="center" />
+  <el-tabs v-model="activeIndex" class="demo-tabs" type="card" @tab-click="handleClick">
+    <el-tab-pane label="待参加考试" name="1"></el-tab-pane>
+    <el-tab-pane label="已参加考试" name="2"></el-tab-pane>
+  </el-tabs>
+  <el-card class="box-card" v-show="activeIndex === '1'">
+    <el-table :data="records" border style="width: 100%">
+      <el-table-column prop="examId" label="考试ID" width="180" align="center" />
+      <el-table-column prop="name" label="考试名称" width="180" align="center" />
       <el-table-column prop="startTime" label="开始时间" align="center" />
       <el-table-column prop="endTime" label="结束时间" align="center" />
-      <el-table-column prop="totalScore" label="总分" align="center" />
-      <el-table-column label="操作" align="center" v-slot="{}" width="180px">
-        <!-- 绑定点击跳转函数 @click="$router.push({ name: 'course-edit', params: { courseId: row.id } })" -->
-        <el-button type="primary" @click="router.push({ name: 'testPage' })">开始考试</el-button>
+      <el-table-column label="操作" align="center" v-slot="{ row }" width="180px">
+        <el-button
+          type="primary"
+          @click="participateIn(row.examId, row.paperId, row.name, row.startTime, row.endTime)"
+          >进入考试</el-button
+        >
       </el-table-column>
     </el-table>
 
-    <!-- 
-      分页需要属性
-      v-model:current-page="queriedResult.current"
-      v-model:page-size="queriedResult.size"
-      :total="queriedResult.total || 0"
-      @size-change="(pageSize) => queryUsers({ pageSize, currentPage: 1 })"
-      @current-change="(currentPage: number) => queryUsers({ currentPage })"
-     -->
     <el-pagination
       :page-sizes="[5, 10, 20, 50]"
       :background="true"
       layout="total, sizes, prev, pager, next, jumper"
+      v-model:current-page="listCurrentPage"
+      v-model:page-size="listPageSize"
+      :total="total || 0"
+      @size-change="(pageSize) => getUserExamTodoList({ pageSize: pageSize, pageNumber: 1 })"
+      @current-change="
+        (currentPage: number) =>
+          getUserExamTodoList({ pageSize: listPageSize, pageNumber: currentPage })
+      "
+    />
+  </el-card>
+
+  <el-card class="box-card" v-show="activeIndex === '2'">
+    <el-table :data="secondRecords" border style="width: 100%">
+      <el-table-column prop="examId" label="考试ID" width="180" align="center" />
+      <el-table-column prop="name" label="考试名称" width="180" align="center" />
+      <el-table-column prop="startTime" label="开始时间" align="center" />
+      <el-table-column prop="endTime" label="结束时间" align="center" />
+      <el-table-column label="操作" align="center" v-slot="{ row }" width="180px">
+        <el-button
+          type="primary"
+          @click="checkTest(row.examId, row.paperId, row.name, row.startTime, row.endTime)"
+          >查阅成绩</el-button
+        >
+      </el-table-column>
+    </el-table>
+
+    <el-pagination
+      :page-sizes="[5, 10, 20, 50]"
+      :background="true"
+      layout="total, sizes, prev, pager, next, jumper"
+      v-model:current-page="listSecondCurrentPage"
+      v-model:page-size="listSecondPageSize"
+      :total="secondTotal || 0"
+      @size-change="(pageSize) => getUserExamHistoryList({ pageSize: pageSize, pageNumber: 1 })"
+      @current-change="
+        (currentPage: number) =>
+          getUserExamHistoryList({ pageSize: listSecondPageSize, pageNumber: currentPage })
+      "
     />
   </el-card>
 </template>
@@ -103,16 +229,37 @@ const records = ref([
 }
 
 .item {
-  margin-bottom: 18px;
+  margin-bottom: 14px;
 }
 
 .box-card {
   width: auto;
 }
 
+.el-form-item {
+  margin-bottom: 20px;
+}
+
 .el-pagination {
   display: flex;
   justify-content: center;
-  margin-top: 17px;
+  align-items: center;
+  margin-top: 20px;
+}
+
+.demo-form-inline {
+  .el-form-item {
+    margin: 0px;
+  }
+
+  .searchInput {
+    margin-right: 25px;
+  }
+}
+.refresh {
+  margin-right: 40px;
+}
+.refresh:hover {
+  color: #409eff;
 }
 </style>

@@ -1,7 +1,36 @@
 <script setup lang="ts">
 import { useRoute } from 'vue-router'
+import { getExamUser } from '@/api/testManage/getExamUser'
+import { getNoExamUser } from '@/api/testManage/getNoExamUserList'
+import { deleteExamUser } from '@/api/testManage/deleteExamUser'
+import { addExamUser } from '@/api/testManage/addExamUser'
 // 默认用户头像
 const circleUrl = 'https://cube.elemecdn.com/3/7c/3ea6beec64369c2642b92c6726f1epng.png'
+
+onMounted(() => {
+  getExamUserList({
+    pageNumber: listCurrentPage.value,
+    pageSize: listPageSize.value
+  })
+
+  getNoExamUserList({
+    pageNumber: listCurrentPage.value,
+    pageSize: listPageSize.value
+  })
+})
+
+//切换事件
+const handleClick = () => {
+  getExamUserList({
+    pageNumber: listSelectedCurrentPage.value,
+    pageSize: listSelectedPageSize.value
+  })
+
+  getNoExamUserList({
+    pageNumber: listCurrentPage.value,
+    pageSize: listPageSize.value
+  })
+}
 
 const route = useRoute()
 //考试ID
@@ -13,41 +42,54 @@ onBeforeMount(() => {
 const activeIndex = ref('1')
 
 //已选用户信息
-const selectedRecords = ref([
-  {
-    userId: 1,
-    fileurl: '',
-    nickName: '昵称',
-    loginName: '18565953718'
-  }
-])
+const selectedRecords = ref([])
 //已选用户页查询
 const listSelectedCurrentPage = ref(1)
 const listSelectedPageSize = ref(10)
 const selectedTotal = ref(0)
-// const getDrugListPage = async (queryCondition) => {
-//   const data = await getDrugList(queryCondition).then((res) => {
-//     console.log(res)
-//     //获取失败
-//     if (res.data.resultCode !== 200) {
-//       ElMessage.error('获取药物列表失败')
+const getExamUserList = async (queryCondition) => {
+  const data = await getExamUser(examId.value, queryCondition).then((res) => {
+    console.log(res)
+    //获取失败
+    if (res.data.resultCode !== 200) {
+      ElMessage.error('获取考生列表失败')
 
-//       //打印数据
-//       console.log(res.data)
+      //打印数据
+      console.log(res.data)
 
-//       throw new Error('获取药物列表失败')
-//     }
-//     //获取成功
+      throw new Error('获取考生列表失败')
+    }
+    //获取成功
 
-//     console.log(res.data)
-//     return res.data
-//   })
+    console.log(res.data)
+    return res.data
+  })
 
-//   record.value = data.data.list
-//   total.value = data.data.totalCount
-//   listCurrentPage.value = data.data.currPage
-//   listPageSize.value = data.data.pageSize
-// }
+  selectedRecords.value = data.data.list
+  selectedTotal.value = data.data.totalCount
+  listSelectedCurrentPage.value = data.data.currPage
+  listSelectedPageSize.value = data.data.pageSize
+}
+//删除已选用户
+const deleteUserById = async (id) => {
+  const data = await deleteExamUser(examId.value, id).then((res) => {
+    //删除失败
+    if (res.data.state !== 200) {
+      ElMessage.error('删除失败')
+      //打印数据
+      console.log(res.data)
+      throw new Error('删除失败')
+    }
+    return res.data
+  })
+
+  //删除成功
+  console.log(data)
+  ElMessage.success('删除成功')
+
+  //删除成功后,需要重新获取已选用户列表
+  getExamUserList({ pageNumber: listCurrentPage.value, pageSize: listPageSize.value })
+}
 
 const records = ref([
   {
@@ -61,40 +103,55 @@ const records = ref([
 const listCurrentPage = ref(1)
 const listPageSize = ref(10)
 const total = ref(0)
-// const getDrugListPage = async (queryCondition) => {
-//   const data = await getDrugList(queryCondition).then((res) => {
-//     console.log(res)
-//     //获取失败
-//     if (res.data.resultCode !== 200) {
-//       ElMessage.error('获取药物列表失败')
+const getNoExamUserList = async (queryCondition) => {
+  const data = await getNoExamUser(examId.value, queryCondition).then((res) => {
+    console.log(res)
+    //获取失败
+    if (res.data.resultCode !== 200) {
+      ElMessage.error('获取可选考生列表失败')
 
-//       //打印数据
-//       console.log(res.data)
+      //打印数据
+      console.log(res.data)
 
-//       throw new Error('获取药物列表失败')
-//     }
-//     //获取成功
+      throw new Error('获取可选考生列表失败')
+    }
+    //获取成功
 
-//     console.log(res.data)
-//     return res.data
-//   })
+    console.log(res.data)
+    return res.data
+  })
 
-//   record.value = data.data.list
-//   total.value = data.data.totalCount
-//   listCurrentPage.value = data.data.currPage
-//   listPageSize.value = data.data.pageSize
-// }
-const queryCondition = ref({
-  //添加用户搜索条件
-  name: ''
-})
-//条件搜索
+  records.value = data.data.list
+  total.value = data.data.totalCount
+  listCurrentPage.value = data.data.currPage
+  listPageSize.value = data.data.pageSize
+}
+//添加用户
+const addUserById = async (id) => {
+  const data = await addExamUser(examId.value, id).then((res) => {
+    //添加失败
+    if (res.data.state !== 200) {
+      ElMessage.error('添加失败')
+      //打印数据
+      console.log(res.data)
+      throw new Error('添加失败')
+    }
+    return res.data
+  })
+
+  //添加成功
+  console.log(data)
+  ElMessage.success('添加成功')
+
+  //添加成功后,需要重新获取题目列表
+  getNoExamUserList({ pageNumber: listCurrentPage.value, pageSize: listPageSize.value })
+}
 </script>
 
 <template>
   <el-page-header @back="$router.go(-1)">
     <template #content>
-      <el-tabs v-model="activeIndex" class="demo-tabs" type="card">
+      <el-tabs v-model="activeIndex" class="demo-tabs" type="card" @tab-click="handleClick">
         <el-tab-pane label="已选用户" name="1"></el-tab-pane>
         <el-tab-pane label="添加用户" name="2"></el-tab-pane>
       </el-tabs>
@@ -107,21 +164,16 @@ const queryCondition = ref({
       <el-table-column prop="userId" label="用户ID" align="center" />
       <el-table-column label="头像" width="180" align="center" v-slot="{ row }">
         <el-avatar :size="50" :src="row.fileurl">
-          <img :src="circleUrl" alt="" />
+          <img :src="row.fileurl !== null && row.fileurl != '' ? row.fileurl : circleUrl" alt="" />
         </el-avatar>
       </el-table-column>
       <el-table-column prop="nickName" label="昵称" align="center" />
       <el-table-column prop="loginName" label="账号" align="center" />
-      <el-table-column label="操作" align="center" v-slot="{}" width="180px">
-        <el-button type="danger">删除</el-button>
+      <el-table-column label="操作" align="center" v-slot="{ row }" width="180px">
+        <el-button type="danger" @click="deleteUserById(row.userId)">删除</el-button>
       </el-table-column>
     </el-table>
 
-    <!-- 
-      分页需要属性
-      @size-change="(pageSize) => queryUsers({ pageSize, currentPage: 1 })"
-      @current-change="(currentPage: number) => queryUsers({ currentPage })"
-     -->
     <el-pagination
       :page-sizes="[10, 20, 50]"
       :background="true"
@@ -133,22 +185,6 @@ const queryCondition = ref({
   </el-card>
 
   <el-card class="box-card" v-show="activeIndex === '2'">
-    <template #header>
-      <div class="card-header">
-        <el-form :inline="true" :model="queryCondition" class="demo-form-inline">
-          <el-form-item label="用户账号">
-            <el-input
-              v-model="queryCondition.name"
-              placeholder="请输入要查询的用户账号"
-              clearable
-            />
-          </el-form-item>
-          <el-form-item>
-            <el-button type="primary">查询</el-button>
-          </el-form-item>
-        </el-form>
-      </div>
-    </template>
     <!--table需要绑定查询结果 :data="queriedResult.records" -->
     <el-table border style="width: 100%" :data="records">
       <el-table-column prop="userId" label="用户ID" align="center" />
@@ -159,16 +195,11 @@ const queryCondition = ref({
       </el-table-column>
       <el-table-column prop="nickName" label="昵称" align="center" />
       <el-table-column prop="loginName" label="账号" align="center" />
-      <el-table-column label="操作" align="center" v-slot="{}" width="180px">
-        <el-button type="primary">添加</el-button>
+      <el-table-column label="操作" align="center" v-slot="{ row }" width="180px">
+        <el-button type="primary" @click="addUserById(row.userId)">添加</el-button>
       </el-table-column>
     </el-table>
 
-    <!-- 
-      分页需要属性
-      @size-change="(pageSize) => queryUsers({ pageSize, currentPage: 1 })"
-      @current-change="(currentPage: number) => queryUsers({ currentPage })"
-     -->
     <el-pagination
       :page-sizes="[10, 20, 50]"
       :background="true"

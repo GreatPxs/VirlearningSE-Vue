@@ -10,7 +10,7 @@ console.log(filePath) */
 loader.load('/public/导览.glb', function (gltf) {
   //console.log('gltf对象场景属性', gltf.scene)
   model.add(gltf.scene)
-  //console.log(model)
+  // console.log(model)
   model.traverse(function (obj) {
     //console.log('名称' + obj.name)
     /* if (obj.isMesh && obj.name != 'floor') {

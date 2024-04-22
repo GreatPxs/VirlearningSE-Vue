@@ -82,7 +82,7 @@ const types6 = ['犬', '猫免疫程序']
           <div
             v-for="(value, index) in types1"
             :key="index"
-            @click="router.push({ name: 'caseList' })"
+            @click="router.push({ name: 'caseList', params: { name: value } })"
           >
             {{ value }}
           </div>
@@ -97,7 +97,7 @@ const types6 = ['犬', '猫免疫程序']
           <div
             v-for="(value, index) in types2"
             :key="index"
-            @click="router.push({ name: 'caseList' })"
+            @click="router.push({ name: 'caseList', params: { name: value } })"
           >
             {{ value }}
           </div>
@@ -112,7 +112,7 @@ const types6 = ['犬', '猫免疫程序']
           <div
             v-for="(value, index) in types3"
             :key="index"
-            @click="router.push({ name: 'caseList' })"
+            @click="router.push({ name: 'caseList', params: { name: value } })"
           >
             {{ value }}
           </div>
@@ -127,7 +127,7 @@ const types6 = ['犬', '猫免疫程序']
           <div
             v-for="(value, index) in types4"
             :key="index"
-            @click="router.push({ name: 'caseList' })"
+            @click="router.push({ name: 'caseList', params: { name: value } })"
           >
             {{ value }}
           </div>
@@ -142,7 +142,7 @@ const types6 = ['犬', '猫免疫程序']
           <div
             v-for="(value, index) in types5"
             :key="index"
-            @click="router.push({ name: 'caseList' })"
+            @click="router.push({ name: 'caseList', params: { name: value } })"
           >
             {{ value }}
           </div>
@@ -157,7 +157,7 @@ const types6 = ['犬', '猫免疫程序']
           <div
             v-for="(value, index) in types6"
             :key="index"
-            @click="router.push({ name: 'caseList' })"
+            @click="router.push({ name: 'caseList', params: { name: value } })"
           >
             {{ value }}
           </div>
@@ -206,7 +206,7 @@ a {
     .nav-link {
       padding: 10px;
       width: 30px;
-      height: 95px;
+      height: 88px;
       text-align: center;
 
       background-color: #6ea4ed;

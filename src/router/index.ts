@@ -24,6 +24,11 @@ const router = createRouter({
           component: () => import('@/views/guide/GuideOverview.vue')
         },
         {
+          path: '/guideroom',
+          name: 'guideroom',
+          component: () => import('@/views/guide/GuideRoom.vue')
+        },
+        {
           path: '/user-info',
           name: 'userInfo',
           component: () => import('@/views/user/userInfo.vue')
@@ -34,9 +39,14 @@ const router = createRouter({
           component: () => import('@/views/test/testInfo.vue')
         },
         {
-          path: '/testPage',
+          path: '/:examId/:paperId/testPage',
           name: 'testPage',
           component: () => import('@/views/test/testPage.vue')
+        },
+        {
+          path: '/:examId/:paperId/testResult',
+          name: 'testResult',
+          component: () => import('@/views/test/testResult.vue')
         },
         {
           path: '/caseStudy',
@@ -44,12 +54,12 @@ const router = createRouter({
           component: () => import('@/views/caseStudy/caseStudyIndex.vue')
         },
         {
-          path: '/caseList',
+          path: '/:name/caseList',
           name: 'caseList',
           component: () => import('@/views/caseStudy/caseList.vue')
         },
         {
-          path: '/casePage',
+          path: '/:id/casePage',
           name: 'casePage',
           component: () => import('@/views/caseStudy/CasePage.vue')
         },
@@ -59,9 +69,19 @@ const router = createRouter({
           component: () => import('@/views/rolePlay/ChooseRole.vue')
         },
         {
-          path: '/rolePage',
+          path: '/:role/rolePage',
           name: 'rolePage',
           component: () => import('@/views/rolePlay/RolePage.vue')
+        },
+        {
+          path: '/aiChat',
+          name: 'aiChat',
+          component: () => import('@/views/AI/aiChat.vue')
+        },
+        {
+          path: '/chatHistory',
+          name: 'chatHistory',
+          component: () => import('@/views/AI/chatHistory.vue')
         }
       ]
     },
@@ -89,12 +109,7 @@ const router = createRouter({
       }, // 定义判断的具体路由
       children: [
         {
-          path: '/admin/adminUserInfo',
-          name: 'adminUserInfo',
-          component: () => import('@/views/adminUser/adminUserInfo.vue')
-        },
-        {
-          path: '/admin/users',
+          path: '/admin/',
           name: 'users',
           component: () => import('@/views/userManage/UserIndex.vue')
         },

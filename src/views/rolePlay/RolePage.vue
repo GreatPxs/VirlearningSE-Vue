@@ -1,79 +1,97 @@
 <script setup lang="ts">
-import { useRouter } from 'vue-router'
+import { useRouter, useRoute } from 'vue-router'
+import { getRoomByRole } from '@/api/rolePage/getRoomByRole'
 
+const route = useRoute()
 const router = useRouter()
+
+//角色名称
+const roleInfo = ref({
+  roleName: '',
+  roleIcon: '',
+  flowChart: ''
+})
+onBeforeMount(() => {
+  roleInfo.value.roleName = route.params.role.toString()
+  console.log(roleInfo.value.roleName)
+
+  if (roleInfo.value.roleName === '前台') {
+    roleInfo.value.roleIcon = getImg('reception.svg')
+    roleInfo.value.flowChart = getImg('qiantai_role.png')
+  } else if (roleInfo.value.roleName === '医助') {
+    roleInfo.value.roleIcon = getImg('assistance.svg')
+    roleInfo.value.flowChart = getImg('yizhu_role.png')
+  } else if (roleInfo.value.roleName === '兽医') {
+    roleInfo.value.roleIcon = getImg('veterinary.svg')
+    roleInfo.value.flowChart = getImg('shouyi_role.png')
+  } else {
+    router.push({ name: 'chooseRole' })
+  }
+})
+onMounted(() => {
+  getRoomInfoByRole()
+})
 
 const getImg = (name) => {
   return `/src/assets/${name}`
 }
 
-const roleInfo = reactive({
-  roleName: '兽医',
-  roleIcon: getImg('veterinary.svg'),
-  flowChart: getImg('overview.png'),
-  responsibility: [
-    {
-      roomName: '诊室',
-      usage:
-        '包括诊室的布局介绍；对宠物进行临床基本检查（视、听、触、嗅等）、疾病诊断；与宠物主人交流并根据情况开具处方。',
-      roomImg: getImg('overview.png')
-    },
-    {
-      roomName: '免疫室',
-      usage: '包括为健康宠物接种疫苗的流程，对常见并发症的处理流程，对常见免疫相关问题的解答等。',
-      roomImg: getImg('overview.png')
-    },
-    {
-      roomName: '化验室',
-      usage:
-        '包括对送检样本的预处理，对相应样本进行血常规、血液生化、电解质、血气、血凝指标、激素指标、尿常规、微生物学检查、药敏、皮肤刮片、粪便检查、传染病检查等检查操作流程。',
-      roomImg: getImg('overview.png')
-    },
-    {
-      roomName: '影像室',
-      usage:
-        '包括X线检查、B超检查以及CT、MRI检查。如X线检查：X光机的结构功能介绍、全身各部位的摆位、拍摄条件的选择、拍摄流程、洗片的操作流程。B超检查：扫查探头的选择、全身各个部位扫查的摆位、腹部扫查流程。',
-      roomImg: getImg('overview.png')
-    },
-    {
-      roomName: '专科检查室',
-      usage:
-        '包括对眼科、骨科、神经科、心脏科等专科疾病的检查，如眼科（检眼镜检查、眼压检查、裂隙灯检查、眼底检查、泪液分泌量检查等）、心脏科检查（心脏听诊、心电图检查等）、神经学检查（步态检查、各种反射检查等）等。',
-      roomImg: getImg('overview.png')
+const deptInfo = ref([
+  {
+    roomName: '诊室',
+    usage:
+      '包括诊室的布局介绍；对宠物进行临床基本检查（视、听、触、嗅等）、疾病诊断；与宠物主人交流并根据情况开具处方。',
+    roomImg: getImg('overview.png')
+  },
+  {
+    roomName: '免疫室',
+    usage: '包括为健康宠物接种疫苗的流程，对常见并发症的处理流程，对常见免疫相关问题的解答等。',
+    roomImg: getImg('overview.png')
+  },
+  {
+    roomName: '化验室',
+    usage:
+      '包括对送检样本的预处理，对相应样本进行血常规、血液生化、电解质、血气、血凝指标、激素指标、尿常规、微生物学检查、药敏、皮肤刮片、粪便检查、传染病检查等检查操作流程。',
+    roomImg: getImg('overview.png')
+  },
+  {
+    roomName: '影像室',
+    usage:
+      '包括X线检查、B超检查以及CT、MRI检查。如X线检查：X光机的结构功能介绍、全身各部位的摆位、拍摄条件的选择、拍摄流程、洗片的操作流程。B超检查：扫查探头的选择、全身各个部位扫查的摆位、腹部扫查流程。',
+    roomImg: getImg('overview.png')
+  },
+  {
+    roomName: '专科检查室',
+    usage:
+      '包括对眼科、骨科、神经科、心脏科等专科疾病的检查，如眼科（检眼镜检查、眼压检查、裂隙灯检查、眼底检查、泪液分泌量检查等）、心脏科检查（心脏听诊、心电图检查等）、神经学检查（步态检查、各种反射检查等）等。',
+    roomImg: getImg('overview.png')
+  }
+])
+
+const getRoomInfoByRole = async () => {
+  const data = await getRoomByRole(roleInfo.value.roleName).then((res) => {
+    console.log(res)
+    //获取失败
+    if (res.data.resultCode !== 200) {
+      ElMessage.error('获取角色所在科室信息失败')
+
+      //打印数据
+      console.log(res.data)
+
+      throw new Error('获取角色所在科室信息失败')
     }
-  ],
-  operation: [
-    {
-      roleName: '兽医',
-      roomName: '诊室',
-      usage:
-        '包括诊室的布局介绍；对宠物进行临床基本检查（视、听、触、嗅等）、疾病诊断；与宠物主人交流并根据情况开具处方。'
-    },
-    {
-      roleName: '兽医',
-      roomName: '免疫室',
-      usage: '包括为健康宠物接种疫苗的流程，对常见并发症的处理流程，对常见免疫相关问题的解答等。'
-    },
-    {
-      roleName: '兽医',
-      roomName: '化验室',
-      usage:
-        '包括对送检样本的预处理，对相应样本进行血常规、血液生化、电解质、血气、血凝指标、激素指标、尿常规、微生物学检查、药敏、皮肤刮片、粪便检查、传染病检查等检查操作流程。'
-    },
-    {
-      roleName: '兽医',
-      roomName: '影像室',
-      usage:
-        '包括X线检查、B超检查以及CT、MRI检查。如X线检查：X光机的结构功能介绍、全身各部位的摆位、拍摄条件的选择、拍摄流程、洗片的操作流程。B超检查：扫查探头的选择、全身各个部位扫查的摆位、腹部扫查流程。'
-    },
-    {
-      roleName: '兽医',
-      roomName: '专科检查室',
-      usage:
-        '包括对眼科、骨科、神经科、心脏科等专科疾病的检查，如眼科（检眼镜检查、眼压检查、裂隙灯检查、眼底检查、泪液分泌量检查等）、心脏科检查（心脏听诊、心电图检查等）、神经学检查（步态检查、各种反射检查等）等。'
-    }
-  ]
-})
+    //获取成功
+
+    console.log(res.data)
+    return res.data
+  })
+
+  deptInfo.value = data.data
+}
+function printroom(obj) {
+  console.log(obj)
+  console.log(roleInfo.value.roleName)
+}
 
 const currentSection = ref(1)
 </script>
@@ -105,12 +123,12 @@ const currentSection = ref(1)
 
         <div class="responsibility" v-show="currentSection === 2">
           <el-scrollbar>
-            <el-table :data="roleInfo.responsibility" border style="width: 100%">
-              <el-table-column prop="roomName" label="科室" width="180" />
-              <el-table-column prop="usage" label="岗位职责" />
-              <el-table-column prop="roomImg" label="科室照片" width="180">
+            <el-table :data="deptInfo" border style="width: 100%">
+              <el-table-column prop="name" label="科室" width="130" />
+              <el-table-column prop="dep_inf" label="岗位职责" />
+              <el-table-column prop="fileurl" label="科室照片" width="180">
                 <template #default="scope">
-                  <el-image style="width: 155px" :src="scope.row.roomImg" fit="fill"> </el-image>
+                  <el-image style="width: 155px" :src="scope.row.fileurl" fit="fill"> </el-image>
                 </template>
               </el-table-column>
             </el-table>
@@ -119,13 +137,24 @@ const currentSection = ref(1)
 
         <div class="operation" v-show="currentSection === 3">
           <el-scrollbar>
-            <el-table :data="roleInfo.operation" border style="width: 100%">
-              <el-table-column prop="roleName" label="角色" width="120" />
-              <el-table-column prop="roomName" label="科室" width="150" />
-              <el-table-column prop="usage" label="职责" />
-              <el-table-column label="操作" align="center" v-slot="{}" width="150">
-                <!-- 绑定点击跳转函数 @click="$router.push({ name: 'course-edit', params: { courseId: row.id } })" -->
-                <el-button type="primary">进入科室</el-button>
+            <el-table :data="deptInfo" border style="width: 100%">
+              <el-table-column prop="name" label="科室" width="130" />
+              <el-table-column prop="dep_inf" label="岗位职责" />
+              <el-table-column label="操作" align="center" width="150">
+                <template #default="scope">
+                  <el-button
+                    type="primary"
+                    @click="
+                      router.push({
+                        name: 'guideroom',
+                        query: { name: scope.row.name, role: roleInfo.roleName }
+                      })
+                    "
+                    >进入科室</el-button
+                  >
+                </template>
+                <!-- @click="router.push({ name: 'guideroom', query: { name: scope.row.name } })" -->
+                <!--  @click="$router.push({ name: 'guideroom',query:{name:deptInfo.} })" -->
               </el-table-column>
             </el-table>
           </el-scrollbar>
@@ -139,8 +168,8 @@ const currentSection = ref(1)
 .header {
   display: flex;
   align-items: center;
-
-  margin-bottom: 30px;
+  margin-top: 8px;
+  margin-bottom: 5px;
 
   img {
     width: 50px;

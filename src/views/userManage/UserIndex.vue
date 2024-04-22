@@ -19,14 +19,7 @@ const searchCondition = reactive({
 })
 
 //测试数据
-const records = ref([
-  {
-    userId: 1,
-    nickName: 'xxx',
-    loginName: '1111111111',
-    lockedFlag: 0
-  }
-])
+const records = ref([])
 
 //页查询
 const listCurrentPage = ref(1)
@@ -46,8 +39,6 @@ const getUsersListPage = async (queryCondition) => {
     //获取成功
 
     console.log(res.data)
-    listCurrentPage.value = queryCondition.currentPage
-    listPageSize.value = queryCondition.pageSize
     return res.data
   })
 
@@ -55,6 +46,15 @@ const getUsersListPage = async (queryCondition) => {
   total.value = data.data.totalCount
   listCurrentPage.value = data.data.currPage
   listPageSize.value = data.data.pageSize
+}
+
+//刷新页面
+const handleRefresh = () => {
+  getUsersListPage({
+    pageNumber: 1,
+    pageSize: listPageSize.value
+  })
+  listCurrentPage.value = 1
 }
 
 //搜索查询
@@ -70,22 +70,27 @@ const getUsersInfoByAccount = async () => {
     return res.data
   })
 
-  //搜索成功
   console.log(data)
-  ElMessage.success('搜索成功')
-  records.value = records.value.splice(0, 1)
-  records.value[0] = {
-    userId: data.data.userId,
-    nickName: data.data.nickName,
-    loginName: data.data.loginName,
-    lockedFlag: data.data.lockedFlag
+  //搜索成功
+  if (data.data !== null) {
+    ElMessage.success('搜索成功')
+    records.value = records.value.splice(0, 1)
+    records.value[0] = {
+      userId: data.data.userId,
+      filrurl: data.data.fileurl,
+      nickName: data.data.nickName,
+      loginName: data.data.loginName,
+      lockedFlag: data.data.lockedFlag
+    }
+    listCurrentPage.value = 1
+    total.value = 1
+  } else {
+    records.value = []
+    listCurrentPage.value = 1
+    total.value = 0
   }
-  listCurrentPage.value = 1
-  listPageSize.value = 1
-  total.value = 1
 
   searchCondition.account = ''
-
   console.log(records.value)
 }
 
@@ -120,14 +125,14 @@ const handleChange = async (act: 0 | 1, userId: number) => {
             <el-input v-model="searchCondition.account" placeholder="请输入账号" clearable />
           </el-form-item>
 
-          <!-- 绑定点击函数 @click="queryUsers({ currentPage: 1 })" -->
           <el-form-item>
             <el-button type="primary" @click="getUsersInfoByAccount">查询</el-button>
           </el-form-item>
         </el-form>
+        <el-icon :size="40" class="refresh" @click="handleRefresh"><IEpRefresh /></el-icon>
       </div>
     </template>
-    <!--table需要绑定查询结果 :data="queriedResult.records" -->
+
     <el-table border style="width: 100%" :data="records">
       <el-table-column prop="userId" label="用户ID" width="180" align="center" />
       <el-table-column label="头像" width="180" align="center" v-slot="{ row }">
@@ -190,5 +195,9 @@ const handleChange = async (act: 0 | 1, userId: number) => {
   display: flex;
   justify-content: center;
   margin-top: 17px;
+}
+
+.refresh:hover {
+  color: #409eff;
 }
 </style>

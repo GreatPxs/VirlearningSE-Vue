@@ -38,6 +38,8 @@ const sexOption = [
 //测试数据
 const record = ref([])
 
+//是否为搜索查询
+const conditionSearch = ref(0)
 //页查询
 const listCurrentPage = ref(1)
 const listPageSize = ref(10)
@@ -68,7 +70,6 @@ const getRoleListPage = async (queryCondition) => {
 const searchCondition = reactive({
   name: ''
 })
-
 //搜索查询
 const getRoleInfoByName = async () => {
   const data = await getRoleByName(searchCondition.name).then((res) => {
@@ -83,6 +84,7 @@ const getRoleInfoByName = async () => {
   })
 
   //搜索成功
+  conditionSearch.value = 1
   console.log(data)
   ElMessage.success('搜索成功')
   record.value = data.data
@@ -92,6 +94,16 @@ const getRoleInfoByName = async () => {
   searchCondition.name = ''
 
   console.log(record.value)
+}
+
+//刷新页面
+const handleRefresh = () => {
+  getRoleListPage({
+    pageNumber: 1,
+    pageSize: listPageSize.value
+  })
+  conditionSearch.value = 0
+  listCurrentPage.value = 1
 }
 
 //科室类别数据
@@ -246,20 +258,19 @@ const deleteRoleById = async (id) => {
     <el-card class="box-card">
       <template #header>
         <div class="card-header">
+          <el-icon :size="40" class="refresh" @click="handleRefresh"><IEpRefresh /></el-icon>
           <el-form :inline="true" :form="searchCondition" class="demo-form-inline">
-            <el-form-item label="姓名">
+            <el-form-item label="姓名" class="searchInput">
               <el-input v-model="searchCondition.name" clearable placeholder="姓名" />
             </el-form-item>
 
             <el-form-item>
-              <!-- 绑定点击查询函数 @click="() => queryCourses({ currentPage: 1 }) -->
               <el-button type="primary" @click="getRoleInfoByName">查询</el-button>
             </el-form-item>
           </el-form>
-          <el-button type="primary" @click="toAdd"> 新增员工 </el-button>
+          <el-button type="primary" @click="toAdd" class="addButton"> 新增员工 </el-button>
         </div>
       </template>
-      <!-- tabel需要绑定数据 :data="queriedResult.records",以下records为测试数据 -->
       <el-table :data="record" border style="width: 100%">
         <!-- prop绑定属性，如第一行 -->
         <el-table-column prop="id" label="员工编号" align="center" />
@@ -270,7 +281,6 @@ const deleteRoleById = async (id) => {
         <el-table-column prop="age" label="年龄" width="180" align="center" />
 
         <el-table-column label="操作" align="center" v-slot="{ row }">
-          <!-- 绑定点击跳转函数 @click="$router.push({ name: 'course-edit', params: { courseId: row.id } })" -->
           <el-button
             type="primary"
             @click="toModify(row.id, row.name, row.dep_name, row.role, row.sex, row.age)"
@@ -311,6 +321,7 @@ const deleteRoleById = async (id) => {
       </el-dialog>
 
       <el-pagination
+        v-show="conditionSearch === 0"
         :page-sizes="[1, 5, 10, 20, 50]"
         :background="true"
         v-model:current-page="listCurrentPage"
@@ -339,7 +350,7 @@ const deleteRoleById = async (id) => {
 }
 
 .item {
-  margin-bottom: 18px;
+  margin-bottom: 14px;
 }
 
 .box-card {
@@ -355,5 +366,25 @@ const deleteRoleById = async (id) => {
   justify-content: center;
   align-items: center;
   margin-top: 20px;
+}
+
+.demo-form-inline {
+  .el-form-item {
+    margin: 0px;
+  }
+
+  .searchInput {
+    margin-right: 25px;
+  }
+}
+.refresh {
+  margin-right: 40px;
+}
+.refresh:hover {
+  color: #409eff;
+}
+
+.addButton {
+  margin-left: 700px;
 }
 </style>

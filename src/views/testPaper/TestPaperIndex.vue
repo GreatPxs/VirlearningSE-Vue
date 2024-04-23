@@ -203,14 +203,12 @@ const deletePaperById = async (id) => {
         <el-button type="primary" @click="toAdd" class="addButton"> 新增试卷 </el-button>
       </div>
     </template>
-    <!--table需要绑定查询结果 :data="queriedResult.records" -->
     <el-table border style="width: 100%" :data="records">
       <el-table-column prop="paperId" label="试卷ID" align="center" />
       <el-table-column prop="name" label="试卷名称" align="center" />
       <el-table-column prop="totalScore" label="总分" align="center" />
       <el-table-column prop="totalNum" label="题目数" align="center" />
       <el-table-column label="试题" align="center" v-slot="{ row }" width="180px">
-        <!-- 绑定点击跳转函数 @click="$router.push({ name: 'course-edit', params: { courseId: row.id } })" -->
         <el-button
           type="info"
           :icon="DocumentAdd"
@@ -220,7 +218,6 @@ const deletePaperById = async (id) => {
         </el-button>
       </el-table-column>
       <el-table-column label="操作" align="center" v-slot="{ row }" width="180px">
-        <!-- 绑定点击跳转函数 @click="$router.push({ name: 'course-edit', params: { courseId: row.id } })" -->
         <el-button type="primary" @click="toModify(row.paperId, row.name)">编辑</el-button>
         <el-button type="danger" @click="deletePaperById(row.paperId)">删除</el-button>
       </el-table-column>

@@ -4,7 +4,7 @@ export const addExamUser = (examId, userId) => {
   console.log(
     `/exam/insertExamUser?examId=` +
       examId +
-      `&name&paperId=&startTime&endTime&userId=` +
+      `&name&paperId=&startTime&endTime&limitTime&userId=` +
       userId +
       `&fileurl&nickName&loginName&passwordMd5&introduceSign&isDeleted&lockedFlag&createTime`
   )
@@ -13,7 +13,7 @@ export const addExamUser = (examId, userId) => {
     url:
       `/exam/insertExamUser?examId=` +
       examId +
-      `&name&paperId=&startTime&endTime&userId=` +
+      `&name&paperId=&startTime&endTime&limitTime&userId=` +
       userId +
       `&fileurl&nickName&loginName&passwordMd5&introduceSign&isDeleted&lockedFlag&createTime`
   })

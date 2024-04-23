@@ -98,7 +98,12 @@ const toRegister = () => {
           </el-form-item>
 
           <el-form-item label="密码">
-            <el-input type="text" v-model="form.password" placeholder="请输入密码" />
+            <el-input
+              type="password"
+              v-model="form.password"
+              placeholder="请输入密码"
+              show-password
+            />
           </el-form-item>
 
           <el-form-item>

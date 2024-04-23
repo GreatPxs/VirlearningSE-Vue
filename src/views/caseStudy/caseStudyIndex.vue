@@ -69,9 +69,28 @@ const types5 = ['绝育', '剖腹产', '瞬膜腺增生物切除', '眼球摘除
 
 //免疫
 const types6 = ['犬', '猫免疫程序']
+
+//搜索条件
+const queryCondition = ref({
+  cname: ''
+})
 </script>
 
 <template>
+  <div class="card-header">
+    <el-form :inline="true" class="demo-form-inline" :model="queryCondition">
+      <el-form-item label="病例名" class="searchInput">
+        <el-input v-model="queryCondition.cname" placeholder="输入病例名直接搜索" clearable />
+      </el-form-item>
+      <el-form-item>
+        <el-button
+          type="primary"
+          @click="$router.push({ name: 'caseSearchList', params: { cname: queryCondition.cname } })"
+          >查询</el-button
+        >
+      </el-form-item>
+    </el-form>
+  </div>
   <el-container class="card">
     <el-main class="content">
       <!-- 传染病 -->
@@ -177,6 +196,12 @@ const types6 = ['犬', '猫免疫程序']
 </template>
 
 <style lang="scss" scoped>
+.card-header {
+  .el-form {
+    margin-left: 40px;
+  }
+}
+
 hr {
   margin-top: 10px;
   margin-bottom: 5px;
@@ -202,6 +227,7 @@ a {
   .navigation {
     position: fixed;
     right: 50px;
+    top: 80px;
 
     .nav-link {
       padding: 10px;

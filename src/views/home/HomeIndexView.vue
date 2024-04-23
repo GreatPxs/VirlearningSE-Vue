@@ -18,8 +18,8 @@ const router = useRouter()
       </div>
     </div>
 
-    <div class="row" @click="router.push({ name: 'caseStudy' })">
-      <div>
+    <div class="row">
+      <div @click="router.push({ name: 'chooseRole' })">
         <img src="@/assets/casestudy.png" alt="" />
         <p>病例学习</p>
       </div>
@@ -60,6 +60,7 @@ const router = useRouter()
       left: 50%;
       transform: translateX(-50%);
       top: 170px;
+      font-size: 20px;
     }
   }
 

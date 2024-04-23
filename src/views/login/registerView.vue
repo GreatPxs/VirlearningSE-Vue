@@ -21,6 +21,24 @@ const onRegister = async () => {
   //开始请求,置为true
   isLoading.value = true
 
+  //判断手机号是否正确
+  const regex_phone = /^1[3-9]\d{9}$/
+  if (!regex_phone.test(form.loginName)) {
+    ElMessage.error('手机号格式错误')
+    //校验失败,置为false
+    isLoading.value = false
+    throw Error
+  }
+
+  //判断密码是否正确
+  const regex_password = /^(?=.*[0-9])(?=.*[a-zA-Z])(.{8,20})$/
+  if (!regex_password.test(form.password)) {
+    ElMessage.error('密码格式错误')
+    //校验失败,置为false
+    isLoading.value = false
+    throw Error
+  }
+
   //判断重复密码是否与密码相同
   if (form.confirmedPassword !== form.password) {
     ElMessage.error('重复密码错误')
@@ -30,7 +48,7 @@ const onRegister = async () => {
   }
 
   //请求注册接口
-  const data = await register(form).then((res) => {
+  const data = await register(form).then(async (res) => {
     //注册失败
     if (res.data.resultCode === 500) {
       ElMessage.error('注册信息有误')
@@ -56,6 +74,7 @@ const onRegister = async () => {
 </script>
 
 <template>
+  <img src="@/assets/register_back.svg" class="back" @click="$router.push({ name: 'login' })" />
   <div class="login">
     <div class="showPage">
       <div class="welcome">
@@ -66,15 +85,20 @@ const onRegister = async () => {
           <div class="first-row">
             <p>账户注册</p>
           </div>
-          <el-form-item label="手机号" label-width="79px">
+          <el-form-item label="手机号" label-width="79px" :required="true">
             <el-input type="text" v-model="form.loginName" placeholder="请输入手机号" />
           </el-form-item>
 
-          <el-form-item label="密码" label-width="79px">
-            <el-input type="text" v-model="form.password" placeholder="数字、字母,长度8~20位" />
+          <el-form-item label="密码" label-width="79px" :required="true">
+            <el-input
+              type="password"
+              v-model="form.password"
+              placeholder="请输入8~20位数字或字母"
+              show-password
+            />
           </el-form-item>
 
-          <el-form-item label="确认密码" label-width="79px">
+          <el-form-item label="确认密码" label-width="79px" :required="true">
             <el-input type="text" v-model="form.confirmedPassword" placeholder="重复密码" />
           </el-form-item>
 
@@ -171,5 +195,17 @@ const onRegister = async () => {
       }
     }
   }
+}
+
+.back {
+  width: 60px;
+  height: 60px;
+  position: fixed;
+  left: 50px;
+  top: 50px;
+}
+
+.back:hover {
+  transform: scale(1.5);
 }
 </style>

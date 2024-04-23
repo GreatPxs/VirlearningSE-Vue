@@ -1,6 +1,7 @@
 import { fileURLToPath, URL } from 'node:url'
 import { defineConfig } from 'vite'
 import vue from '@vitejs/plugin-vue'
+import postcssPxtoRem from 'postcss-pxtorem'
 
 //导入AutoImport、Components
 import AutoImport from 'unplugin-auto-import/vite'
@@ -75,6 +76,10 @@ export default defineConfig({
         changeOrigin: true
       },
       '/chat': {
+        target: 'http://114.55.135.87:28018',
+        changeOrigin: true
+      },
+      '/chatLocal': {
         target: 'http://114.55.135.87:28018',
         changeOrigin: true
       },

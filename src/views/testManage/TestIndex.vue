@@ -13,6 +13,8 @@ onMounted(() => {
     pageNumber: listCurrentPage.value,
     pageSize: listPageSize.value
   })
+
+  // 等待一小段时间，然后重新渲染el-table
 })
 
 const date = ref(null)
@@ -24,7 +26,8 @@ const form = ref({
   paperId: 0,
   name: '',
   startTime: '',
-  endTime: ''
+  endTime: '',
+  limitTime: 10
 })
 //0为添加, 1为修改
 const addOrEdit = ref(0)
@@ -44,15 +47,16 @@ const handleEndDateTimeChange = (value) => {
   // 将日期对象转换为字符串格式
   form.value.endTime = value ? value.format('yyyy-MM-dd HH:mm:ss') : ''
 }
-//待编辑药物id
+//待编辑考试id
 const editId = ref(0)
-//点击编辑,获取编辑药物信息
-const toModify = async (examId, name, startTime, endTime) => {
+//点击编辑,获取编辑考试信息
+const toModify = async (examId, name, startTime, endTime, limitTime) => {
   addOrEdit.value = 1
   editId.value = examId
   form.value.name = name
   form.value.startTime = startTime
   form.value.endTime = endTime
+  form.value.limitTime = limitTime / 60
   dialogFormVisible.value = true
 }
 //点击新增,初始化
@@ -61,6 +65,7 @@ const toAdd = async () => {
   form.value.name = ''
   form.value.startTime = date.value ? date.value.format('yyyy-MM-dd HH:mm:ss') : ''
   form.value.endTime = date.value ? date.value.format('yyyy-MM-dd HH:mm:ss') : ''
+  form.value.limitTime = 10
   dialogFormVisible.value = true
 }
 //添加or编辑提交
@@ -276,8 +281,11 @@ const handleRefresh = () => {
       <el-table-column prop="examId" label="考试ID" align="center" />
       <el-table-column prop="paperId" label="试卷ID" align="center" />
       <el-table-column prop="name" label="考试名称" align="center" />
-      <el-table-column prop="startTime" label="开始时间" align="center" />
-      <el-table-column prop="endTime" label="结束时间" align="center" />
+      <el-table-column label="考试时长" align="center" v-slot="{ row }" width="180px">
+        <p>{{ row.limitTime / 60 }}分钟</p>
+      </el-table-column>
+      <el-table-column prop="startTime" label="开始日期" width="180" align="center" />
+      <el-table-column prop="endTime" label="结束日期" width="180" align="center" />
       <el-table-column label="考生" align="center" v-slot="{ row }" width="180px">
         <el-button
           type="info"
@@ -290,7 +298,7 @@ const handleRefresh = () => {
       <el-table-column label="操作" align="center" v-slot="{ row }" width="180px">
         <el-button
           type="primary"
-          @click="toModify(row.examId, row.name, row.startTime, row.endTime)"
+          @click="toModify(row.examId, row.name, row.startTime, row.endTime, row.limitTime)"
           >编辑</el-button
         >
         <el-button type="danger" @click="deleteTestById(row.examId)">删除</el-button>
@@ -298,9 +306,13 @@ const handleRefresh = () => {
     </el-table>
 
     <el-dialog v-model="dialogFormVisible" :title="title" center>
-      <el-form :model="form" label-width="100px">
+      <el-form :model="form" label-width="120px">
         <el-form-item label="考试名称">
           <el-input v-model="form.name" autocomplete="off" />
+        </el-form-item>
+
+        <el-form-item label="考试时长(分钟)">
+          <el-input-number v-model="form.limitTime" :min="10" :max="120" />
         </el-form-item>
 
         <!-- 绑定 @change="handleChange" -->

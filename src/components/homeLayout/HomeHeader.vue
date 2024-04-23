@@ -3,12 +3,11 @@ import { isCollapseInHome } from './isCollapseInHome'
 import { useRouter } from 'vue-router'
 import { logout } from '@/api/users/logout.js'
 import { useTokenAndRoleStore } from '@/stores/tokenAndRole'
-import { useUserInfoStore } from '@/stores/userInfo'
+import { computed } from 'vue'
 
 const router = useRouter()
-const userInfoToken = useUserInfoStore()
-const nickName = ref(userInfoToken.nickName)
-const avatar = ref(userInfoToken.avatar)
+const nickName = computed(() => window.localStorage.getItem('nickName'))
+const avatar = computed(() => window.localStorage.getItem('avatar'))
 
 //跳转至用户信息页面
 const toUserInfo = () => {

@@ -22,6 +22,7 @@ const currentStep = ref(0)
 //病例信息
 const caseData = ref({
   name: '',
+  cname: '',
   animal: '',
   jzword: '',
   jzphoto: '',
@@ -83,7 +84,17 @@ const activeIndex = reactive(['1', '1', '1', '1', '1'])
     <!-- 疾病名称 -->
     <div v-show="currentStep === 0">
       <div>
-        <el-card style="max-width: 480px">
+        <el-card style="max-width: 480px" class="infoCard">
+          <template #header>
+            <div class="card-header">
+              <img src="@/assets/caseName.svg" />
+              <span>病例名称</span>
+            </div>
+          </template>
+          <p>{{ caseData.cname }}</p>
+        </el-card>
+
+        <el-card style="max-width: 480px" class="infoCard">
           <template #header>
             <div class="card-header">
               <img src="@/assets/caseName.svg" />
@@ -93,7 +104,7 @@ const activeIndex = reactive(['1', '1', '1', '1', '1'])
           <p>{{ caseData.name }}</p>
         </el-card>
 
-        <el-card style="max-width: 480px">
+        <el-card style="max-width: 480px" class="infoCard">
           <template #header>
             <div class="card-header">
               <img src="@/assets/animal.svg" />
@@ -242,8 +253,8 @@ const activeIndex = reactive(['1', '1', '1', '1', '1'])
   margin-top: 17px;
 }
 
-.el-card {
-  margin-bottom: 70px;
+.infoCard {
+  margin-bottom: 20px;
 }
 
 .card-header {

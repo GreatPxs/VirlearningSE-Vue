@@ -280,7 +280,7 @@ const deleteRoleById = async (id) => {
         <el-table-column prop="sex" label="性别" width="180" align="center" />
         <el-table-column prop="age" label="年龄" width="180" align="center" />
 
-        <el-table-column label="操作" align="center" v-slot="{ row }">
+        <el-table-column label="操作" align="center" v-slot="{ row }" width="180px">
           <el-button
             type="primary"
             @click="toModify(row.id, row.name, row.dep_name, row.role, row.sex, row.age)"

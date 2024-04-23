@@ -1,12 +1,12 @@
 import request from '@/utils/request.js'
 
-export const selectCase = (queryCondition, pageCondition) => {
+export const selectCaseWithCname = (queryCondition, pageCondition) => {
   console.log(
-    `/Case/selectCase?symptom&animal=` +
-      queryCondition.animal +
+    `/Case/selectCase?symptom&animal` +
       `&name=` +
       queryCondition.name +
-      `&cname` +
+      `&cname=` +
+      queryCondition.cname +
       `&pageNoStr=` +
       pageCondition.pageNumber +
       `&pageSizeStr=` +
@@ -15,11 +15,11 @@ export const selectCase = (queryCondition, pageCondition) => {
   return request({
     method: 'GET',
     url:
-      `/Case/selectCase?symptom&animal=` +
-      queryCondition.animal +
+      `/Case/selectCase?symptom&animal` +
       `&name=` +
       queryCondition.name +
-      `&cname` +
+      `&cname=` +
+      queryCondition.cname +
       `&pageNoStr=` +
       pageCondition.pageNumber +
       `&pageSizeStr=` +

@@ -162,6 +162,7 @@ const animalOptions = [
 const form = ref({
   name: '',
   animal: '',
+  cname: '',
   jzword: '',
   jzphoto: '',
   jzvideo: '',
@@ -379,6 +380,15 @@ const beforezlPhotoUpload: UploadProps['beforeUpload'] = (rawFile) => {
     <el-form :model="form" label-width="120" size="large" ref="formRef">
       <!-- 疾病名称 -->
       <div v-show="currentStep === 0">
+        <el-form-item label="病例名称">
+          <el-input
+            v-model="form.cname"
+            style="width: 400px"
+            :autosize="{ minRows: 2, maxRows: 4 }"
+            type="textarea"
+            placeholder="请输入病例名"
+          />
+        </el-form-item>
         <el-form-item label="疾病名称">
           <el-cascader
             :options="diseaseOptions"

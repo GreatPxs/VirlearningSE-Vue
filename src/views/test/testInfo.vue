@@ -98,11 +98,12 @@ const getUserExamHistoryList = async (queryCondition) => {
 const activeIndex = ref('1')
 
 //参加考试
-const participateIn = (examId, paperId, name, startTime, endTime) => {
+const participateIn = (examId, paperId, name, startTime, endTime, limitTime) => {
   //判断考试是否开始
   const now = new Date().valueOf()
   const begin = new Date(startTime).valueOf()
   const end = new Date(endTime).valueOf()
+  const endByLimitTime = new Date(now + limitTime * 1000).valueOf()
   console.log(`now-${now}`)
   console.log(`begin-${begin}`)
   console.log(`end-${end}`)
@@ -123,7 +124,12 @@ const participateIn = (examId, paperId, name, startTime, endTime) => {
   }
 
   window.localStorage.setItem('begin', begin.toString())
-  window.localStorage.setItem('end', end.toString())
+  // window.localStorage.setItem('end', end.toString())
+  if (end < endByLimitTime) {
+    window.localStorage.setItem('end', end.toString())
+  } else {
+    window.localStorage.setItem('end', endByLimitTime.toString())
+  }
   window.localStorage.setItem('name', name)
   window.localStorage.setItem('startTime', startTime)
   window.localStorage.setItem('endTime', endTime)
@@ -160,12 +166,24 @@ const checkTest = (examId, paperId, name, startTime, endTime) => {
     <el-table :data="records" border style="width: 100%">
       <el-table-column prop="examId" label="考试ID" width="180" align="center" />
       <el-table-column prop="name" label="考试名称" width="180" align="center" />
+      <el-table-column label="考试时长" align="center" v-slot="{ row }" width="180px">
+        <p>{{ row.limitTime / 60 }}分钟</p>
+      </el-table-column>
       <el-table-column prop="startTime" label="开始时间" align="center" />
       <el-table-column prop="endTime" label="结束时间" align="center" />
       <el-table-column label="操作" align="center" v-slot="{ row }" width="180px">
         <el-button
           type="primary"
-          @click="participateIn(row.examId, row.paperId, row.name, row.startTime, row.endTime)"
+          @click="
+            participateIn(
+              row.examId,
+              row.paperId,
+              row.name,
+              row.startTime,
+              row.endTime,
+              row.limitTime
+            )
+          "
           >进入考试</el-button
         >
       </el-table-column>

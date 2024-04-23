@@ -4,7 +4,6 @@ import { useTokenAndRoleStore } from '@/stores/tokenAndRole'
 import { useRouter } from 'vue-router'
 
 import md5 from 'md5'
-import { changeUserInfo } from '@/api/users/changeUserInfo'
 import { useUserInfoStore } from '@/stores/userInfo'
 import { updatePassword } from '@/api/adminUser/updatePassword'
 //导入侧边栏折叠状态
@@ -13,6 +12,7 @@ import { isCollapse } from './collapse'
 const router = useRouter()
 
 const userInfoToken = useUserInfoStore()
+const loginName = computed(() => window.localStorage.getItem('loginName'))
 
 //暂用表格form数据
 const form = reactive({
@@ -24,6 +24,18 @@ const dialogFormVisible = ref(false)
 const onSubmit = async () => {
   let oldPasswordMd5 = md5(form.oldPassword)
   let newPasswordMd5 = md5(form.newPassword)
+  if (form.newPassword.length < 2 || form.newPassword.length > 20) {
+    ElMessage.error('新密码长度在2位到20位之间')
+    throw Error
+  }
+
+  const specialCharRegex = /[!@#$%个&*( ),.?":{}|<>]/
+
+  if (specialCharRegex.test(form.newPassword)) {
+    ElMessage.error('新密码不能含特殊字符')
+    throw Error
+  }
+
   const data = await updatePassword(oldPasswordMd5, newPasswordMd5).then((res) => {
     //修改失败
     if (res.data.resultCode !== 200) {
@@ -40,7 +52,6 @@ const onSubmit = async () => {
   dialogFormVisible.value = false
 }
 
-const nickName = window.localStorage.getItem('nickName')
 //退出处理事件
 const handleLogout = async () => {
   // 退出-弹窗确认  点确认:返回成功promise  点取消:返回失败promise
@@ -79,7 +90,8 @@ const handleLogout = async () => {
       />
       <template #dropdown>
         <el-dropdown-menu>
-          <el-dropdown-item @click="dialogFormVisible = true">修改密码</el-dropdown-item>
+          <el-dropdown-item>{{ loginName }}</el-dropdown-item>
+          <el-dropdown-item divided @click="dialogFormVisible = true">修改密码</el-dropdown-item>
           <el-dropdown-item divided @click="handleLogout">退出</el-dropdown-item>
         </el-dropdown-menu>
       </template>

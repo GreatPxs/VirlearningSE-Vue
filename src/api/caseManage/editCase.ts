@@ -8,6 +8,8 @@ export const editCase = (form) => {
       form.name +
       `&symptom&animal=` +
       form.animal +
+      `&cname=` +
+      form.cname +
       `&cure_method&uploadUser&jzword=` +
       form.jzword +
       `&jzphoto=` +
@@ -43,6 +45,8 @@ export const editCase = (form) => {
       form.name +
       `&symptom&animal=` +
       form.animal +
+      `&cname=` +
+      form.cname +
       `&cure_method&uploadUser&jzword=` +
       form.jzword +
       `&jzphoto=` +

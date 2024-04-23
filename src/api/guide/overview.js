@@ -1,12 +1,12 @@
 import * as Three from 'three'
 import model from './model.js'
 import { OrbitControls } from 'three/examples/jsm/controls/OrbitControls.js'
-import { GUI } from 'three/examples/jsm/libs/lil-gui.module.min.js'
+// import { GUI } from 'three/examples/jsm/libs/lil-gui.module.min.js'
 import { EffectComposer } from 'three/examples/jsm/postprocessing/EffectComposer.js'
 import { RenderPass } from 'three/examples/jsm/postprocessing/RenderPass.js'
 import { OutlinePass } from 'three/examples/jsm/postprocessing/OutlinePass.js'
 import { CSS2DRenderer, CSS2DObject } from 'three/examples/jsm/renderers/CSS2DRenderer.js'
-import { CSS3DRenderer, CSS3DObject } from 'three/examples/jsm/renderers/CSS3DRenderer.js'
+
 //创建场景
 const scene = new Three.Scene()
 scene.add(model)
@@ -146,7 +146,7 @@ function createDiv(name) {
 //const camFolder = gui.addFolder('相机坐标')
 gui.add(directionalLight, 'intensity', 1, 10).name('光照强度')
  */
-function clearnModel() {
+/* function clearnModel() {
   if (scene !== null && scene.children.length > 3) {
     scene.children = []
     composer.removePass(outlinePass)
@@ -162,7 +162,7 @@ function clearnModel() {
     })
     render()
   }
-}
+} */
 function cleanCSS2DTags() {
   scene.traverse((one) => {
     if (one.isCSS2DObject) {

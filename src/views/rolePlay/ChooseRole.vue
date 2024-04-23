@@ -4,7 +4,7 @@ import { useRouter } from 'vue-router'
 const router = useRouter()
 
 const getImg = (name) => {
-  return `/src/assets/${name}.svg`
+  return new URL(`../../assets/${name}.svg`, import.meta.url).href
 }
 
 const roles = reactive([

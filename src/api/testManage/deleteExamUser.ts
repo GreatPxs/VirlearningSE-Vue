@@ -4,7 +4,7 @@ export const deleteExamUser = (examId, userId) => {
   console.log(
     `/exam/deleteExamUser?examId=` +
       examId +
-      `&name&paperId=&startTime&endTime&userId=` +
+      `&name&paperId=&startTime&endTime&limitTime&userId=` +
       userId +
       `&fileurl&nickName&loginName&passwordMd5&introduceSign&isDeleted&lockedFlag&createTime`
   )
@@ -13,7 +13,7 @@ export const deleteExamUser = (examId, userId) => {
     url:
       `/exam/deleteExamUser?examId=` +
       examId +
-      `&name&paperId=&startTime&endTime&userId=` +
+      `&name&paperId=&startTime&endTime&limitTime&userId=` +
       userId +
       `&fileurl&nickName&loginName&passwordMd5&introduceSign&isDeleted&lockedFlag&createTime`
   })

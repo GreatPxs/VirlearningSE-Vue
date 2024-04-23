@@ -51,6 +51,23 @@ const getHistory = async () => {
 
   isLoading.value = false
 }
+
+//去除特殊符号
+const deleteUselessCode = (str) => {
+  let ans = ''
+  for (let i = 0; i < str.length; i++) {
+    if (str[i] === '*' || str[i] === '^') continue
+    else if (str[i] === '[') {
+      for (let j = i + 1; j < str.length; j++) {
+        if (str[j] === ']') {
+          i = j
+          break
+        }
+      }
+    } else ans += str[i]
+  }
+  return ans
+}
 </script>
 
 <template>
@@ -99,7 +116,7 @@ const getHistory = async () => {
             <div class="userMessage">{{ message.t_question }}</div>
           </div>
           <div class="pack">
-            <div class="aiMessage">{{ message.answer }}</div>
+            <div class="aiMessage">{{ deleteUselessCode(message.answer) }}</div>
           </div>
         </div>
       </el-scrollbar>
@@ -127,6 +144,10 @@ img {
 
 .return {
   margin-left: 30px;
+}
+
+.return:hover {
+  transform: scale(1.2);
 }
 
 .timeForm {

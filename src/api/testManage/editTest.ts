@@ -9,7 +9,9 @@ export const editTest = (examId, form) => {
       `&paperId&startTime=` +
       form.startTime +
       `&endTime=` +
-      form.endTime
+      form.endTime +
+      `&limitTime=` +
+      form.limitTime * 60
   )
   return request({
     method: 'GET',
@@ -21,6 +23,8 @@ export const editTest = (examId, form) => {
       `&paperId&startTime=` +
       form.startTime +
       `&endTime=` +
-      form.endTime
+      form.endTime +
+      `&limitTime=` +
+      form.limitTime * 60
   })
 }

@@ -54,6 +54,11 @@ const router = createRouter({
           component: () => import('@/views/caseStudy/caseStudyIndex.vue')
         },
         {
+          path: '/:cname/caseSearchList',
+          name: 'caseSearchList',
+          component: () => import('@/views/caseStudy/caseSearchList.vue')
+        },
+        {
           path: '/:name/caseList',
           name: 'caseList',
           component: () => import('@/views/caseStudy/caseList.vue')

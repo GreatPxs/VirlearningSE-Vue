@@ -190,6 +190,7 @@ const deleteCaseById = async (id) => {
       <el-table :data="record" border style="width: 100%">
         <!-- prop绑定属性，如第一行 -->
         <el-table-column prop="id" label="编号" width="180" align="center" />
+        <el-table-column prop="cname" label="病例名称" align="center" />
         <el-table-column prop="name" label="疾病名称" align="center" />
         <el-table-column prop="animal" label="宠物种类" align="center" />
         <el-table-column prop="jzphoto" label="接诊照片" align="center">
@@ -203,7 +204,6 @@ const deleteCaseById = async (id) => {
         </el-table-column>
 
         <el-table-column label="操作" align="center" v-slot="{ row }">
-          <!-- 绑定点击跳转函数 @click="$router.push({ name: 'course-edit', params: { courseId: row.id } })" -->
           <el-button
             type="primary"
             @click="$router.push({ name: 'case-edit', params: { id: row.id } })"

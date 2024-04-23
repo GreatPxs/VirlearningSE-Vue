@@ -33,7 +33,7 @@ onMounted(() => {
 })
 
 const getImg = (name) => {
-  return `/src/assets/${name}`
+  return new URL(`../../assets/${name}`, import.meta.url).href
 }
 
 const deptInfo = ref([
@@ -179,6 +179,10 @@ const currentSection = ref(1)
 
   .return {
     margin-right: 80px;
+  }
+
+  .return:hover {
+    transform: scale(1.2);
   }
 
   .title {

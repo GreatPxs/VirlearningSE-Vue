@@ -48,10 +48,38 @@ const handleAvatarUploadSuccess: UploadProps['onSuccess'] = (response, uploadFil
 
 //提交修改的用户信息
 const onSubmit = async () => {
-  if (form.password === '') {
+  if (form.password !== '' || form.password !== null) {
     passwordMd5.value = md5(form.password)
-  } else {
-    passwordMd5.value = md5(form.password)
+  }
+
+  //昵称判断
+  if (form.nickName === '' || form.nickName === null) {
+    ElMessage.error('昵称不能为空')
+    throw Error
+  }
+
+  if (form.nickName.length >= 16) {
+    ElMessage.error('昵称长度不超过16')
+    throw Error
+  }
+
+  const specialCharRegex = /[!@#$%个&*( ),.?":{}|<>]/
+
+  if (specialCharRegex.test(form.nickName)) {
+    ElMessage.error('昵称不能含特殊字符')
+    throw Error
+  }
+
+  //判断密码是否正确
+  const isOk = ref(false)
+  const regex_password = /^(?=.*[0-9])(?=.*[a-zA-Z])(.{8,20})$/
+  if (form.password === '' || form.password === null) isOk.value = true
+
+  if (!isOk.value) {
+    if (!regex_password.test(form.password)) {
+      ElMessage.error('密码格式错误')
+      throw Error
+    }
   }
 
   const data = await changeUserInfo(form.nickName, passwordMd5.value, '').then((res) => {
@@ -68,6 +96,9 @@ const onSubmit = async () => {
   userInfoToken.saveNickName(form.nickName)
   userInfoToken.savepasswordMd5(passwordMd5.value)
   ElMessage.success('修改成功')
+
+  //刷新页面
+  history.go(0)
 }
 </script>
 
@@ -99,7 +130,7 @@ const onSubmit = async () => {
         </el-form-item>
 
         <el-form-item label="昵称">
-          <el-input type="text" v-model="form.nickName" />
+          <el-input type="text" v-model="form.nickName" placeholder="长度不超16,不含特殊符号" />
         </el-form-item>
 
         <el-form-item label="密码">
@@ -121,7 +152,7 @@ const onSubmit = async () => {
 <style lang="scss" scoped>
 .user-info-page {
   display: flex;
-  height: 747px;
+  height: 670px;
   flex-direction: column;
   align-items: center;
   justify-content: center;
@@ -133,7 +164,7 @@ const onSubmit = async () => {
   border-radius: 10px;
   width: 400px;
   height: 400px;
-  margin-bottom: 80px;
+  margin-bottom: 20px;
 
   display: flex;
   justify-content: center;

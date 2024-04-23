@@ -5,6 +5,20 @@ import { calculateScore } from '@/api/test/calculateScore'
 
 const isLoading = ref(false)
 
+//获取当前时间字符串
+function getCurrentDateTime() {
+  let date = new Date() // 获取当前日期和时间
+
+  let year = date.getFullYear() // 获取年份（四位数）
+  let month = (date.getMonth() + 1).toString().padStart(2, '0') // 获取月份并确保是两位数
+  let day = date.getDate().toString().padStart(2, '0') // 获取日并确保是两位数
+  let hours = date.getHours().toString().padStart(2, '0') // 获取小时并确保是两位数
+  let minutes = date.getMinutes().toString().padStart(2, '0') // 获取分钟并确保是两位数
+  let seconds = date.getSeconds().toString().padStart(2, '0') // 获取秒并确保是两位数
+
+  return `${year}-${month}-${day} ${hours}:${minutes}:${seconds}`
+}
+
 const route = useRoute()
 const router = useRouter()
 //用户ID
@@ -96,7 +110,7 @@ const onSubmit = async () => {
   isLoading.value = true
   const userAnswer = checkList.value.join('')
 
-  const data = await calculateScore(examId.value, userAnswer).then((res) => {
+  const data = await calculateScore(examId.value, userAnswer, getCurrentDateTime()).then((res) => {
     //获取失败
     if (res.data.state !== 200) {
       ElMessage.error('试卷上传失败')

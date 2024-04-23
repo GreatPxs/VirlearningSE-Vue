@@ -8,11 +8,33 @@
     >
     <div class="roomcanvas" ref="roomTarget"></div>
     <el-button-group class="feature_group" v-show="featureShow">
-      <el-button id="feature">功能说明</el-button>
-      <el-button id="procedure">操作流程</el-button>
-      <el-button id="animation">演示动画</el-button>
+      <el-button id="feature" @click="featureDialogVisible = true">功能说明</el-button>
+      <el-button id="procedure" @click="procedureDialogVisible = true">操作流程</el-button>
+      <el-button id="animation" @click="animationDialogVisible = true">演示动画</el-button>
     </el-button-group>
-
+    <el-dialog
+      v-model="featureDialogVisible"
+      title="功能说明"
+      width="200"
+      center
+      align-center
+      draggable
+    >
+      <span>功能说明</span>
+    </el-dialog>
+    <el-dialog
+      v-model="procedureDialogVisible"
+      title="操作流程"
+      width="200"
+      center
+      align-center
+      draggable
+    >
+      <span>操作流程</span>
+    </el-dialog>
+    <el-dialog v-model="animationDialogVisible" title="演示动画" width="800" center draggable>
+      <span>演示动画</span>
+    </el-dialog>
     <el-select
       class="rolechoose"
       v-model="value"
@@ -45,6 +67,9 @@ import { RenderPass } from 'three/examples/jsm/postprocessing/RenderPass.js'
 import { OutlinePass } from 'three/examples/jsm/postprocessing/OutlinePass.js'
 import { CSS2DRenderer, CSS2DObject } from 'three/examples/jsm/renderers/CSS2DRenderer.js'
 
+const featureDialogVisible = ref(false)
+const animationDialogVisible = ref(false)
+const procedureDialogVisible = ref(false)
 const isDisabled = ref(false)
 const exitToOverview = ref(true)
 const returnToRoleChoose = ref(false)
@@ -140,9 +165,9 @@ renderer.domElement.addEventListener('click', (event) => {
       console.log('inner', innerObj.value)
       featureShow.value = true
       outlinePass.selectedObjects = [obj]
-      if (innerObj.value == obj.name) {
+      /* if (innerObj.value == obj.name) {
         // console.log('already choose')
-      }
+      } */
       let dom = createDiv(obj.name)
       let css2dobject = new CSS2DObject(dom)
       const v3 = new Three.Vector3()

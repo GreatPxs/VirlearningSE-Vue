@@ -7,7 +7,7 @@ const router = useRouter()
 <template>
   <div class="main">
     <div class="row firstLine">
-      <div>
+      <div @click="router.push({ name: 'guide' })">
         <img src="@/assets/room.png" alt="" />
         <p>医院导览</p>
       </div>

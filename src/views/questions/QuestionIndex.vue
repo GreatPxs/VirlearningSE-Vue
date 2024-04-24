@@ -193,7 +193,7 @@ const onSubmit = async () => {
       return res.data
     })
 
-    ElMessage.success('添加药物成功')
+    ElMessage.success('添加题目成功')
     dialogFormVisible.value = false
 
     //添加后,重新获取列表(待写)

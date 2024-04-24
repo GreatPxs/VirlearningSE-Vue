@@ -66,6 +66,8 @@ const selectCaseInfo = async (pageCondition) => {
   listPageSize.value = pageCondition.pageSize
   total.value = data.data.count
 
+  searchCondition.value.animal = ''
+  searchCondition.value.name = ''
   console.log(record.value)
 }
 //页查询

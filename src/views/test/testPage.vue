@@ -2,6 +2,7 @@
 import { useRoute, useRouter } from 'vue-router'
 import { getPaperInfo } from '@/api/paperManage/getPaperInfo'
 import { calculateScore } from '@/api/test/calculateScore'
+import { getExamScore } from '@/api/test/getExamScore'
 
 const isLoading = ref(false)
 
@@ -27,6 +28,8 @@ const userId = ref(0)
 const examId = ref(0)
 //试卷ID
 const paperId = ref(0)
+//考试分数
+const score = ref(0)
 //标题头消息
 const headerInfo = ref([
   {
@@ -110,7 +113,7 @@ const onSubmit = async () => {
   isLoading.value = true
   const userAnswer = checkList.value.join('')
 
-  const data = await calculateScore(examId.value, userAnswer, getCurrentDateTime()).then((res) => {
+  await calculateScore(examId.value, userAnswer, getCurrentDateTime()).then((res) => {
     //获取失败
     if (res.data.state !== 200) {
       ElMessage.error('试卷上传失败')
@@ -123,16 +126,34 @@ const onSubmit = async () => {
     //获取成功
 
     console.log(res.data)
+  })
+
+  const scoreData = await getExamScore(examId.value, userId.value).then((res) => {
+    //获取失败
+    if (res.data.state !== 200) {
+      ElMessage.error('获取用户分数失败')
+
+      //打印数据
+      console.log(res.data)
+
+      throw new Error('获取用户分数失败')
+    }
+    //获取成功
+
+    console.log(res.data)
     return res.data
   })
+
+  score.value = scoreData.data
+  console.log('score:' + score.value)
+  //告知用户考卷已提交
+  ElMessage.success('试卷提交成功。用户成绩为: ' + score.value)
 }
 
 //确认提交
 const confirmButtonSubmit = () => {
   onSubmit()
 
-  //告知用户考卷已提交
-  ElMessage.success('试卷提交成功')
   clearInterval(intervalId)
 
   //跳转至考试列表页面
@@ -172,7 +193,7 @@ function updateCountdown() {
     onSubmit() //提交试卷
 
     //告知用户
-    ElMessage.success('考试结束,系统自动提交考卷')
+    // ElMessage.success('考试结束,系统自动提交考卷' + score.value)
 
     clearInterval(intervalId)
     //跳转至考试列表页面

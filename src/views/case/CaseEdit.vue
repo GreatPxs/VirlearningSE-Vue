@@ -194,7 +194,7 @@ const onSubmit = async () => {
   })
 
   console.log(data)
-  ElMessage.success('修改科室成功')
+  ElMessage.success('修改病例成功')
   router.push({ name: 'caseIndex' })
 }
 

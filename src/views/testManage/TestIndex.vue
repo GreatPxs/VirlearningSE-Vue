@@ -168,8 +168,8 @@ const getPaperListPage = async (queryCondition) => {
 //考卷单选
 const addPaper = () => {
   getPaperListPage({
-    pageNumber: listCurrentPage.value,
-    pageSize: listPageSize.value
+    pageNumber: listPaperCurrentPage.value,
+    pageSize: listPaperPageSize.value
   })
   dialogFormVisible.value = false
   dialogPaperVisible.value = true
@@ -384,7 +384,7 @@ const handleRefresh = () => {
         @size-change="(pageSize) => getPaperListPage({ pageSize: pageSize, pageNumber: 1 })"
         @current-change="
           (currentPage: number) =>
-            getPaperListPage({ pageSize: listPageSize, pageNumber: currentPage })
+            getPaperListPage({ pageSize: listPaperPageSize, pageNumber: currentPage })
         "
       />
     </el-dialog>

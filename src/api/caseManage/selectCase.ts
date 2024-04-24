@@ -13,7 +13,7 @@ export const selectCase = (queryCondition, pageCondition) => {
       pageCondition.pageSize
   )
   return request({
-    method: 'GET',
+    method: 'POST',
     url:
       `/Case/selectCase?symptom&animal=` +
       queryCondition.animal +

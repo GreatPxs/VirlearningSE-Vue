@@ -35,7 +35,7 @@ export const addCase = (form) => {
       `&isDelete`
   )
   return request({
-    method: 'GET',
+    method: 'POST',
     url:
       `/Case/addCase?case_id&name=` +
       form.name +

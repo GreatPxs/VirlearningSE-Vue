@@ -9,8 +9,8 @@ const circleUrl = 'https://cube.elemecdn.com/3/7c/3ea6beec64369c2642b92c6726f1ep
 
 onMounted(() => {
   getExamUserList({
-    pageNumber: listCurrentPage.value,
-    pageSize: listPageSize.value
+    pageNumber: listSelectedCurrentPage.value,
+    pageSize: listSelectedPageSize.value
   })
 
   getNoExamUserList({
@@ -181,6 +181,11 @@ const addUserById = async (id) => {
       v-model:current-page="listSelectedCurrentPage"
       v-model:page-size="listSelectedPageSize"
       :total="selectedTotal || 0"
+      @size-change="(pageSize) => getExamUserList({ pageSize: pageSize, pageNumber: 1 })"
+      @current-change="
+        (currentPage: number) =>
+          getExamUserList({ pageSize: listSelectedPageSize, pageNumber: currentPage })
+      "
     />
   </el-card>
 
@@ -207,6 +212,11 @@ const addUserById = async (id) => {
       v-model:current-page="listCurrentPage"
       v-model:page-size="listPageSize"
       :total="total || 0"
+      @size-change="(pageSize) => getNoExamUserList({ pageSize: pageSize, pageNumber: 1 })"
+      @current-change="
+        (currentPage: number) =>
+          getNoExamUserList({ pageSize: listPageSize, pageNumber: currentPage })
+      "
     />
   </el-card>
 </template>

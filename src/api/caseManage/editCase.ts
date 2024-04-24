@@ -37,7 +37,7 @@ export const editCase = (form) => {
       `&isDelete=`
   )
   return request({
-    method: 'GET',
+    method: 'POST',
     url:
       `/Case/updateIdCase?case_id=` +
       form.case_id +

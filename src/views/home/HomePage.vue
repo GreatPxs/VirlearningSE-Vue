@@ -18,7 +18,6 @@ const avatar = userInfoToken.avatar
       <el-main class="main">
         <RouterView></RouterView>
       </el-main>
-      <!-- <RouterView></RouterView> -->
     </el-container>
   </el-container>
 </template>

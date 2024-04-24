@@ -87,7 +87,7 @@ const activeIndex = reactive(['1', '1', '1', '1', '1'])
         <el-card style="max-width: 480px" class="infoCard">
           <template #header>
             <div class="card-header">
-              <img src="@/assets/caseName.svg" />
+              <img src="@/assets/caseDoc.svg" />
               <span>病例名称</span>
             </div>
           </template>

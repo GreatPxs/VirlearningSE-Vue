@@ -3,7 +3,10 @@
     <el-button id="exit" @click="$router.push({ name: 'guide' })" v-show="exitToOverview"
       >退出</el-button
     >
-    <el-button id="return" @click="$router.push({ name: 'chooseRole' })" v-show="returnToRoleChoose"
+    <el-button
+      id="return"
+      @click="$router.push({ name: 'rolePage', params: { role: role } })"
+      v-show="returnToRoleChoose"
       >返回</el-button
     >
     <div class="roomcanvas" ref="roomTarget"></div>

@@ -57,6 +57,6 @@ const deviceList = [
     information: '前台用档案柜',
     operation: '档案柜操作流程',
     animation: '动画路径'
-  },
+  }
 ]
 export default deviceList

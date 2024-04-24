@@ -7,7 +7,7 @@ const model = new Three.Group()
 /* filePath = modelList.find(name == '导览').filePath
 console.log(filePath) */
 
-loader.load('/public/导览.glb', function (gltf) {
+loader.load('/导览.glb', function (gltf) {
   //console.log('gltf对象场景属性', gltf.scene)
   model.add(gltf.scene)
   // console.log(model)

@@ -7,7 +7,7 @@
       >返回</el-button
     >
     <div class="roomcanvas" ref="roomTarget"></div>
-    <el-button-group class="feature_group">
+    <el-button-group class="feature_group" v-show="featureShow">
       <el-button id="feature">功能说明</el-button>
       <el-button id="procedure">操作流程</el-button>
       <el-button id="animation">演示动画</el-button>
@@ -18,7 +18,7 @@
       v-model="value"
       placeholder="选择职业"
       size="large"
-      :disabled="true"
+      :disabled="isDisabled"
     >
       <el-option
         v-for="item in options"
@@ -37,6 +37,7 @@ import { useRoute, useRouter } from 'vue-router'
 import * as Three from 'three'
 // import baseModel from '@/api/guide/baseModel.js'
 import modelList from '@/api/guide/modelList.js'
+import deviceList from '@/api/guide/deviceList.js'
 import { GLTFLoader } from 'three/examples/jsm/loaders/GLTFLoader.js'
 import { OrbitControls } from 'three/examples/jsm/controls/OrbitControls.js'
 import { EffectComposer } from 'three/examples/jsm/postprocessing/EffectComposer.js'
@@ -44,8 +45,10 @@ import { RenderPass } from 'three/examples/jsm/postprocessing/RenderPass.js'
 import { OutlinePass } from 'three/examples/jsm/postprocessing/OutlinePass.js'
 import { CSS2DRenderer, CSS2DObject } from 'three/examples/jsm/renderers/CSS2DRenderer.js'
 
+const isDisabled = ref(false)
 const exitToOverview = ref(true)
 const returnToRoleChoose = ref(false)
+const featureShow = ref(false)
 const roomTarget = ref(null)
 const route = useRoute()
 //模型名
@@ -106,7 +109,7 @@ css2renderer.domElement.style.top = 0
 css2renderer.domElement.style.pointerEvents = 'none'
 document.body.appendChild(css2renderer.domElement)
 //点击事件
-var chooseObj = ref(null)
+var innerObj = ref(null)
 renderer.domElement.addEventListener('click', (event) => {
   scene.traverse((one) => {
     if (one.isCSS2DObject) {
@@ -122,11 +125,8 @@ renderer.domElement.addEventListener('click', (event) => {
   const intersects = raycaster.intersectObjects(model.children)
   console.log('返回对象', intersects)
   if (intersects.length > 0) {
-    //intersects[0].object.material.color.set(0xff0000)
     let obj = intersects[0].object
     console.log(obj.parent)
-    chooseObj.value = obj.name
-    // console.log('inside', chooseObj.value)
     if (
       obj.name != 'floor' &&
       obj.parent.name != 'Scene' &&
@@ -136,8 +136,11 @@ renderer.domElement.addEventListener('click', (event) => {
       !obj.parent.name.includes('地面')
     ) {
       obj = obj.parent
+      innerObj.value = obj.name
+      console.log('inner', innerObj.value)
+      featureShow.value = true
       outlinePass.selectedObjects = [obj]
-      if (chooseObj.value == obj.name) {
+      if (innerObj.value == obj.name) {
         // console.log('already choose')
       }
       let dom = createDiv(obj.name)
@@ -151,9 +154,10 @@ renderer.domElement.addEventListener('click', (event) => {
       // console.log('floor') /* empty */
     }
   } else {
+    featureShow.value = false
     outlinePass.selectedObjects = []
-    chooseObj.value = null
-    console.log(chooseObj.value)
+    innerObj.value = null
+    console.log(innerObj.value)
   }
 })
 onBeforeMount(() => {
@@ -164,6 +168,7 @@ onBeforeMount(() => {
   if (role !== undefined) {
     exitToOverview.value = false
     returnToRoleChoose.value = true
+    isDisabled.value = true
   }
   for (let c of modelList) {
     if (c.name === name.replace(/[0-9]+/g, '')) {
@@ -173,9 +178,6 @@ onBeforeMount(() => {
       light_position.value = c.lightPosition
       minDistance.value = c.minDistance
       maxDistance.value = c.maxDistance
-      // console.log(light_position.value)
-      // console.log(camera_position.value)
-      // console.log(camera_lookAt.value)
       break
     }
   }
@@ -183,12 +185,6 @@ onBeforeMount(() => {
   scene.add(axesHelper)
   //添加环境光
   scene.add(ambient)
-  //spotLight.position.set(light_position.value[0], light_position.value[1], light_position.value[2])
-  /* spotLight.target.position.set(
-    camera_lookAt.value[0],
-    camera_lookAt.value[1],
-    camera_lookAt.value[2]
-  ) */
   directionalLight.position.set(
     light_position.value[0],
     light_position.value[1],
@@ -289,6 +285,9 @@ const options = [
     label: '前台'
   }
 ]
+// function nameJudge(name){
+
+// }
 const handleChange = (value) => {
   console.log(value)
 }

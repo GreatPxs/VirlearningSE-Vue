@@ -1,12 +1,14 @@
 import * as Three from 'three'
 import model from './model.js'
 import { OrbitControls } from 'three/examples/jsm/controls/OrbitControls.js'
+import dictionary from './dictionary.js'
 // import { GUI } from 'three/examples/jsm/libs/lil-gui.module.min.js'
 import { EffectComposer } from 'three/examples/jsm/postprocessing/EffectComposer.js'
 import { RenderPass } from 'three/examples/jsm/postprocessing/RenderPass.js'
 import { OutlinePass } from 'three/examples/jsm/postprocessing/OutlinePass.js'
 import { CSS2DRenderer, CSS2DObject } from 'three/examples/jsm/renderers/CSS2DRenderer.js'
 
+// console.log(dictionary)
 //创建场景
 const scene = new Three.Scene()
 scene.add(model)
@@ -108,13 +110,17 @@ renderer.domElement.addEventListener('click', (event) => {
   if (intersects.length > 0) {
     //intersects[0].object.material.color.set(0xff0000)
     let obj = intersects[0].object
-    chooseObj.value = obj.name
-    console.log('inside', chooseObj.value)
-    outlinePass.selectedObjects = [obj]
+
     if (obj.name != 'floor') {
-      if (chooseObj.value == obj.name) {
-        // console.log('already choose')
+      // console.log(dictionary)
+      for (let c of dictionary) {
+        if (c.name == obj.name.replace(/[0-9]+/g, '')) {
+          chooseObj.value = c.name_e
+          break
+        }
       }
+      console.log('inside', chooseObj.value)
+      outlinePass.selectedObjects = [obj]
       let dom = createDiv(obj.name)
       let css2dobject = new CSS2DObject(dom)
       const v3 = new Three.Vector3()

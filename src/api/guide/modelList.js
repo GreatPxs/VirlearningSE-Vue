@@ -1,9 +1,9 @@
 const modelList = [
   {
-    name: '导览',
+    name: 'overview',
     fileType: 'glb',
     id: 0,
-    filePath: '/public/导览.glb',
+    filePath: 'overview.glb',
     lightPosition: [80, 50, 30],
     cameraPosition: [0, 80, 0],
     cameraLookAt: [0, 0, -5],
@@ -11,10 +11,10 @@ const modelList = [
     maxDistance: 100
   },
   {
-    name: '手术室',
+    name: 'operation',
     fileType: 'glb',
     id: 1,
-    filePath: '/public/手术室.glb',
+    filePath: 'operation.glb',
     lightPosition: [80, 50, 30],
     cameraPosition: [-5, 6, -5],
     cameraLookAt: [0.5, -0.25, 0.5],
@@ -22,10 +22,10 @@ const modelList = [
     maxDistance: 20
   },
   {
-    name: '诊室',
+    name: 'consultation',
     fileType: 'glb',
     id: 2,
-    filePath: '/public/诊室.glb',
+    filePath: 'consultation.glb',
     lightPosition: [-8, 10, 0],
     cameraPosition: [-7, 5, 0],
     cameraLookAt: [1.5, -0.25, 0],
@@ -33,10 +33,10 @@ const modelList = [
     maxDistance: 10
   },
   {
-    name: '档案室',
+    name: 'documentation',
     fileType: 'glb',
     id: 4,
-    filePath: '/public/档案室.glb',
+    filePath: 'documentation.glb',
     lightPosition: [80, 50, 30],
     cameraPosition: [0, 80, 0],
     cameraLookAt: [0, 0, -5],
@@ -44,21 +44,21 @@ const modelList = [
     maxDistance: 100
   },
   {
-    name: '药房',
+    name: 'pharmacy',
     fileType: 'glb',
     id: 5,
-    filePath: '/public/药房.glb',
-    lightPosition: [80, 50, 30],
-    cameraPosition: [0, 80, 0],
+    filePath: 'pharmacy.glb',
+    lightPosition: [0.5, 5, 8.5],
+    cameraPosition: [0, 3.5, 7.5],
     cameraLookAt: [0, 0, -5],
-    minDistance: 0.01,
-    maxDistance: 100
+    minDistance: 10,
+    maxDistance: 20
   },
   {
-    name: '前台',
+    name: 'frontdesk',
     fileType: 'glb',
     id: 6,
-    filePath: '/public/前台.glb',
+    filePath: 'frontdesk.glb',
     lightPosition: [80, 50, 30],
     cameraPosition: [0, 80, 0],
     cameraLookAt: [0, 0, -5],
@@ -66,10 +66,10 @@ const modelList = [
     maxDistance: 100
   },
   {
-    name: '化验室',
+    name: 'laboratory',
     fileType: 'glb',
     id: 7,
-    filePath: '/public/化验室.glb',
+    filePath: 'laboratory.glb',
     lightPosition: [80, 50, 30],
     cameraPosition: [0, 80, 0],
     cameraLookAt: [0, 0, -5],
@@ -77,10 +77,10 @@ const modelList = [
     maxDistance: 100
   },
   {
-    name: '手术准备室',
+    name: 'preparation',
     fileType: 'glb',
     id: 8,
-    filePath: '/public/手术准备室.glb',
+    filePath: 'preparation.glb',
     lightPosition: [80, 50, 30],
     cameraPosition: [0, 80, 0],
     cameraLookAt: [0, 0, -5],
@@ -88,10 +88,10 @@ const modelList = [
     maxDistance: 100
   },
   {
-    name: '影像室',
+    name: 'imaging',
     fileType: 'glb',
     id: 9,
-    filePath: '/public/影像室.glb',
+    filePath: 'imaging.glb',
     lightPosition: [80, 50, 30],
     cameraPosition: [0, 80, 0],
     cameraLookAt: [0, 0, -5],
@@ -99,10 +99,10 @@ const modelList = [
     maxDistance: 100
   },
   {
-    name: '专科检查室',
+    name: 'speciality',
     fileType: 'glb',
     id: 10,
-    filePath: '/public/专科检查室.glb',
+    filePath: 'speciality.glb',
     lightPosition: [80, 50, 30],
     cameraPosition: [0, 80, 0],
     cameraLookAt: [0, 0, -5],
@@ -110,10 +110,10 @@ const modelList = [
     maxDistance: 100
   },
   {
-    name: '注射室',
+    name: 'injection',
     fileType: 'glb',
     id: 11,
-    filePath: '/public/注射室.glb',
+    filePath: 'injection.glb',
     lightPosition: [80, 50, 30],
     cameraPosition: [0, 80, 0],
     cameraLookAt: [0, 0, -5],
@@ -121,21 +121,10 @@ const modelList = [
     maxDistance: 100
   },
   {
-    name: '手术准备室',
-    fileType: 'glb',
-    id: 12,
-    filePath: '/public/手术准备室.glb',
-    lightPosition: [80, 50, 30],
-    cameraPosition: [0, 80, 0],
-    cameraLookAt: [0, 0, -5],
-    minDistance: 0.01,
-    maxDistance: 100
-  },
-  {
-    name: '病理剖检室',
+    name: 'dissecting',
     fileType: 'glb',
     id: 13,
-    filePath: '/public/病理剖检室.glb',
+    filePath: 'dissecting.glb',
     lightPosition: [80, 50, 30],
     cameraPosition: [0, 80, 0],
     cameraLookAt: [0, 0, -5],
@@ -143,10 +132,10 @@ const modelList = [
     maxDistance: 100
   },
   {
-    name: '住院管理部',
+    name: 'impatient_management',
     fileType: 'glb',
     id: 14,
-    filePath: '/public/住院管理部.glb',
+    filePath: 'impatient_management.glb',
     lightPosition: [80, 50, 30],
     cameraPosition: [0, 80, 0],
     cameraLookAt: [0, 0, -5],
@@ -154,10 +143,10 @@ const modelList = [
     maxDistance: 100
   },
   {
-    name: '住院部',
+    name: 'impatient',
     fileType: 'glb',
     id: 15,
-    filePath: '/public/住院部.glb',
+    filePath: 'impatient.glb',
     lightPosition: [80, 50, 30],
     cameraPosition: [0, 80, 0],
     cameraLookAt: [0, 0, -5],
@@ -165,10 +154,10 @@ const modelList = [
     maxDistance: 100
   },
   {
-    name: '处置室',
+    name: 'treatment',
     fileType: 'glb',
     id: 16,
-    filePath: '/public/处置室.glb',
+    filePath: 'treatment.glb',
     lightPosition: [80, 50, 30],
     cameraPosition: [0, 80, 0],
     cameraLookAt: [0, 0, -5],
@@ -176,10 +165,10 @@ const modelList = [
     maxDistance: 100
   },
   {
-    name: '免疫室',
+    name: 'immunology',
     fileType: 'glb',
     id: 17,
-    filePath: '/public/免疫室.glb',
+    filePath: 'immunology.glb',
     lightPosition: [80, 50, 30],
     cameraPosition: [0, 80, 0],
     cameraLookAt: [0, 0, -5],
@@ -187,5 +176,4 @@ const modelList = [
     maxDistance: 100
   }
 ]
-
 export default modelList

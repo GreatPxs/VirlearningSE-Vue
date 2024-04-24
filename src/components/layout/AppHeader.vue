@@ -103,19 +103,21 @@ const handleLogout = async () => {
       <el-form-item label="原密码">
         <el-input
           v-model="form.oldPassword"
-          type="text"
+          type="password"
           autocomplete="off"
           placeholder="********************************"
           size="default"
+          show-password
         />
       </el-form-item>
       <el-form-item label="新密码">
         <el-input
           v-model="form.newPassword"
-          type="text"
+          type="password"
           autocomplete="off"
           placeholder="********************************"
           size="default"
+          show-password
         />
       </el-form-item>
     </el-form>

@@ -135,9 +135,10 @@ const onSubmit = async () => {
 
         <el-form-item label="密码">
           <el-input
-            type="text"
+            type="password"
             v-model="form.password"
             placeholder="********************************"
+            show-password
           />
         </el-form-item>
 

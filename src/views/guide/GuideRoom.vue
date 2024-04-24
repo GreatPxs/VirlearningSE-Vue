@@ -18,25 +18,25 @@
     <el-dialog
       v-model="featureDialogVisible"
       title="功能说明"
-      width="200"
+      custom-class="content-dialog"
       center
       align-center
       draggable
     >
-      <span>功能说明</span>
+      <span>{{ deviceObj.feature }}</span>
     </el-dialog>
     <el-dialog
       v-model="procedureDialogVisible"
       title="操作流程"
-      width="200"
+      custom-class="content-dialog"
       center
       align-center
       draggable
     >
-      <span>操作流程</span>
+      <span>{{ deviceObj.procedure }}</span>
     </el-dialog>
     <el-dialog v-model="animationDialogVisible" title="演示动画" width="800" center draggable>
-      <span>演示动画</span>
+      <span>{{ deviceObj.animation }}</span>
     </el-dialog>
     <el-select
       class="rolechoose"
@@ -82,7 +82,13 @@ const route = useRoute()
 //模型名
 const { name, role } = route.query
 const value = ref(role)
-
+const unavailable = {
+  name: 'NON',
+  role: 'NON',
+  feature: '请先选择角色',
+  procedure: '请先选择角色',
+  animation: '请先选择角色'
+}
 //模型参数
 const camera_position = ref(null)
 const camera_lookAt = ref(null)
@@ -137,7 +143,7 @@ css2renderer.domElement.style.top = 0
 css2renderer.domElement.style.pointerEvents = 'none'
 document.body.appendChild(css2renderer.domElement)
 //点击事件
-var innerObj = ref(null)
+var deviceObj = ref(null)
 renderer.domElement.addEventListener('click', (event) => {
   scene.traverse((one) => {
     if (one.isCSS2DObject) {
@@ -151,7 +157,7 @@ renderer.domElement.addEventListener('click', (event) => {
   const raycaster = new Three.Raycaster()
   raycaster.setFromCamera(new Three.Vector2(x, y), camera)
   const intersects = raycaster.intersectObjects(model.children)
-  console.log('返回对象', intersects)
+  // console.log('返回对象', intersects)
   if (intersects.length > 0) {
     let obj = intersects[0].object
     console.log(obj.parent)
@@ -166,8 +172,9 @@ renderer.domElement.addEventListener('click', (event) => {
       !obj.parent.name.includes('实验桌')
     ) {
       obj = obj.parent
-      innerObj.value = obj.name.replace(/[0-9]+/g, '')
-      console.log('inner', innerObj.value)
+      console.log(value.value)
+      deviceObj.value = findDevice(obj.name.replace(/[0-9]+/g, ''), value.value)
+      console.log('inner', deviceObj.value)
       featureShow.value = true
       outlinePass.selectedObjects = [obj]
       /* if (innerObj.value == obj.name) {
@@ -186,8 +193,28 @@ renderer.domElement.addEventListener('click', (event) => {
   } else {
     featureShow.value = false
     outlinePass.selectedObjects = []
-    innerObj.value = null
-    console.log(innerObj.value)
+    deviceObj.value = null
+    console.log(deviceObj.value)
+  }
+})
+//设备对应
+function findDevice(name, role) {
+  if (role == undefined) {
+    return unavailable
+  }
+  for (let c of deviceList) {
+    // console.log(c)
+    if (c.name === name && c.role === role) return c
+  }
+}
+
+watch(value, (newValue, oldValue) => {
+  if (newValue != oldValue) {
+    console.log(value.value)
+    if (deviceObj.value !== null) {
+      deviceObj.value = findDevice(deviceObj.value.name, newValue)
+      console.log(deviceObj.value)
+    }
   }
 })
 onBeforeMount(() => {
@@ -337,6 +364,10 @@ const handleChange = (value) => {
   right: 5%;
   width: 140px;
   height: 32px;
+}
+.content-dialog {
+  width: fit-content !important;
+  max-width: 100% !important;
 }
 .feature_group {
   position: absolute;

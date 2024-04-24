@@ -169,11 +169,11 @@ const modelList = [
     fileType: 'glb',
     id: 15,
     filePath: 'immunology.glb',
-    lightPosition: [80, 50, 30],
-    cameraPosition: [0, 80, 0],
-    cameraLookAt: [0, 0, -5],
-    minDistance: 0.01,
-    maxDistance: 100
+    lightPosition: [0, 3, 10],
+    cameraPosition: [0, 2.5, 10],
+    cameraLookAt: [0, 0, -1.5],
+    minDistance: 7,
+    maxDistance: 12
   }
 ]
 export default modelList

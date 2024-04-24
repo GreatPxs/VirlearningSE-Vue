@@ -161,17 +161,19 @@ renderer.domElement.addEventListener('click', (event) => {
       obj.parent.name != '' &&
       !obj.parent.name.includes('墙') &&
       !obj.parent.name.includes('天花板') &&
-      !obj.parent.name.includes('地面')
+      !obj.parent.name.includes('地面') &&
+      !obj.parent.name.includes('椅') &&
+      !obj.parent.name.includes('实验桌')
     ) {
       obj = obj.parent
-      innerObj.value = obj.name
+      innerObj.value = obj.name.replace(/[0-9]+/g, '')
       console.log('inner', innerObj.value)
       featureShow.value = true
       outlinePass.selectedObjects = [obj]
       /* if (innerObj.value == obj.name) {
         // console.log('already choose')
       } */
-      let dom = createDiv(obj.name)
+      let dom = createDiv(obj.name.replace(/[0-9]+/g, ''))
       let css2dobject = new CSS2DObject(dom)
       const v3 = new Three.Vector3()
       obj.getWorldPosition(v3)

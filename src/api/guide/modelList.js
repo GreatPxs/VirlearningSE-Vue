@@ -35,7 +35,7 @@ const modelList = [
   {
     name: 'documentation',
     fileType: 'glb',
-    id: 4,
+    id: 3,
     filePath: 'documentation.glb',
     lightPosition: [80, 50, 30],
     cameraPosition: [0, 80, 0],
@@ -46,7 +46,7 @@ const modelList = [
   {
     name: 'pharmacy',
     fileType: 'glb',
-    id: 5,
+    id: 4,
     filePath: 'pharmacy.glb',
     lightPosition: [0.5, 5, 8.5],
     cameraPosition: [0, 3.5, 7.5],
@@ -57,7 +57,7 @@ const modelList = [
   {
     name: 'frontdesk',
     fileType: 'glb',
-    id: 6,
+    id: 5,
     filePath: 'frontdesk.glb',
     lightPosition: [80, 50, 30],
     cameraPosition: [0, 80, 0],
@@ -68,18 +68,18 @@ const modelList = [
   {
     name: 'laboratory',
     fileType: 'glb',
-    id: 7,
+    id: 6,
     filePath: 'laboratory.glb',
-    lightPosition: [80, 50, 30],
-    cameraPosition: [0, 80, 0],
-    cameraLookAt: [0, 0, -5],
-    minDistance: 0.01,
-    maxDistance: 100
+    lightPosition: [-5, 5, 0.5],
+    cameraPosition: [-8.5, 3.5, 0],
+    cameraLookAt: [5, 0, 0],
+    minDistance: 10,
+    maxDistance: 20
   },
   {
     name: 'preparation',
     fileType: 'glb',
-    id: 8,
+    id: 7,
     filePath: 'preparation.glb',
     lightPosition: [80, 50, 30],
     cameraPosition: [0, 80, 0],
@@ -90,7 +90,7 @@ const modelList = [
   {
     name: 'imaging',
     fileType: 'glb',
-    id: 9,
+    id: 8,
     filePath: 'imaging.glb',
     lightPosition: [80, 50, 30],
     cameraPosition: [0, 80, 0],
@@ -101,7 +101,7 @@ const modelList = [
   {
     name: 'speciality',
     fileType: 'glb',
-    id: 10,
+    id: 9,
     filePath: 'speciality.glb',
     lightPosition: [80, 50, 30],
     cameraPosition: [0, 80, 0],
@@ -112,7 +112,7 @@ const modelList = [
   {
     name: 'injection',
     fileType: 'glb',
-    id: 11,
+    id: 10,
     filePath: 'injection.glb',
     lightPosition: [80, 50, 30],
     cameraPosition: [0, 80, 0],
@@ -123,7 +123,7 @@ const modelList = [
   {
     name: 'dissecting',
     fileType: 'glb',
-    id: 13,
+    id: 11,
     filePath: 'dissecting.glb',
     lightPosition: [80, 50, 30],
     cameraPosition: [0, 80, 0],
@@ -134,7 +134,7 @@ const modelList = [
   {
     name: 'impatient_management',
     fileType: 'glb',
-    id: 14,
+    id: 12,
     filePath: 'impatient_management.glb',
     lightPosition: [80, 50, 30],
     cameraPosition: [0, 80, 0],
@@ -145,7 +145,7 @@ const modelList = [
   {
     name: 'impatient',
     fileType: 'glb',
-    id: 15,
+    id: 13,
     filePath: 'impatient.glb',
     lightPosition: [80, 50, 30],
     cameraPosition: [0, 80, 0],
@@ -156,7 +156,7 @@ const modelList = [
   {
     name: 'treatment',
     fileType: 'glb',
-    id: 16,
+    id: 14,
     filePath: 'treatment.glb',
     lightPosition: [80, 50, 30],
     cameraPosition: [0, 80, 0],
@@ -167,7 +167,7 @@ const modelList = [
   {
     name: 'immunology',
     fileType: 'glb',
-    id: 17,
+    id: 15,
     filePath: 'immunology.glb',
     lightPosition: [80, 50, 30],
     cameraPosition: [0, 80, 0],

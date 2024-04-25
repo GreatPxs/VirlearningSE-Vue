@@ -15,7 +15,7 @@ export const editDevice = (id, name, feature, photo, video) => {
       `&dep`
   )
   return request({
-    method: 'GET',
+    method: 'POST',
     url:
       `/device/update?id=` +
       id +

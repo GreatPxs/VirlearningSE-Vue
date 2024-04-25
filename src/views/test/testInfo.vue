@@ -163,7 +163,7 @@ const checkTest = (examId, paperId, name, startTime, endTime) => {
     <el-tab-pane label="已参加考试" name="2"></el-tab-pane>
   </el-tabs>
   <el-card class="box-card" v-show="activeIndex === '1'">
-    <el-table :data="records" border style="width: 100%">
+    <el-table :data="records" border style="width: 100%" empty-text="暂时无考试">
       <el-table-column prop="examId" label="考试ID" width="180" align="center" />
       <el-table-column prop="name" label="考试名称" width="180" align="center" />
       <el-table-column label="考试时长" align="center" v-slot="{ row }" width="180px">

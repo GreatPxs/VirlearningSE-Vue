@@ -3,6 +3,9 @@ import { useRoute } from 'vue-router'
 import { getPaperInfo } from '@/api/paperManage/getPaperInfo'
 import { getExamScore } from '@/api/test/getExamScore'
 import { getExamAnswer } from '@/api/test/getExamAnswer'
+import { getPaperQuestionScoreList } from '@/api/paperManage/getPaperQuestionScoreList'
+import { getPaperTotalNum } from '@/api/paperManage/getPaperTotalNum'
+import { getPaperTotalScore } from '@/api/paperManage/getPaperTotalScore'
 
 const route = useRoute()
 //用户ID
@@ -11,15 +14,86 @@ const userId = ref(0)
 const examId = ref(0)
 //试卷ID
 const paperId = ref(0)
+//题目分数数组
+const questionScoreList = ref([])
 //标题头消息
 const headerInfo = ref([
   {
     name: '',
     startTime: '',
     endTime: '',
-    score: 0
+    score: 0,
+    totalNum: 0,
+    totalScore: 0
   }
 ])
+
+//获取题目分数数组
+const getPaperQuestionScore = async () => {
+  const data = await getPaperQuestionScoreList(paperId.value).then((res) => {
+    //获取失败
+    if (res.data.state !== 200) {
+      ElMessage.error('获取试卷题目分数失败')
+
+      //打印数据
+      console.log(res.data)
+
+      throw new Error('获取试卷题目分数失败')
+    }
+    //获取成功
+
+    console.log(res.data)
+    return res.data
+  })
+
+  questionScoreList.value = data.data
+  console.log(questionScoreList.value)
+}
+
+//获取考试总分
+const getTotalScore = async () => {
+  const data = await getPaperTotalScore(paperId.value).then((res) => {
+    //获取失败
+    if (res.data.state !== 200) {
+      ElMessage.error('获取试卷总分失败')
+
+      //打印数据
+      console.log(res.data)
+
+      throw new Error('获取试卷总分失败')
+    }
+    //获取成功
+
+    console.log(res.data)
+    return res.data
+  })
+
+  headerInfo.value[0].totalScore = data.data
+  console.log(headerInfo.value[0].totalScore)
+}
+
+//获取考试总分
+const getTotalNum = async () => {
+  const data = await getPaperTotalNum(paperId.value).then((res) => {
+    //获取失败
+    if (res.data.state !== 200) {
+      ElMessage.error('获取试卷题目总数失败')
+
+      //打印数据
+      console.log(res.data)
+
+      throw new Error('获取试卷题目总数失败')
+    }
+    //获取成功
+
+    console.log(res.data)
+    return res.data
+  })
+
+  headerInfo.value[0].totalNum = data.data
+  console.log(headerInfo.value[0].totalNum)
+}
+
 onBeforeMount(() => {
   userId.value = parseInt(window.localStorage.getItem('userId'))
   examId.value = parseInt(route.params.examId.toString())
@@ -32,6 +106,9 @@ onBeforeMount(() => {
   getPaperInfoList()
   getUserExamScore()
   getUserExamAnswer()
+  getPaperQuestionScore()
+  getTotalScore()
+  getTotalNum()
 
   //初始化答案数组
   checkList.value = new Array(questions.value.length).fill('E')
@@ -114,6 +191,8 @@ const getUserExamAnswer = async () => {
     <el-table :data="headerInfo" border style="width: 100%" class="header">
       <el-table-column prop="name" label="测试名" align="center" />
       <el-table-column prop="score" label="得分" align="center" />
+      <el-table-column prop="totalScore" label="总分" align="center" />
+      <el-table-column prop="totalNum" label="题目数" align="center" />
       <el-table-column prop="startTime" label="开始时间" align="center" />
       <el-table-column prop="endTime" label="结束时间" align="center" />
     </el-table>
@@ -122,7 +201,7 @@ const getUserExamAnswer = async () => {
       <div class="questionTitle">
         <div class="number">{{ index + 1 }}</div>
         <div class="questionName">{{ `${question.description}` }}</div>
-        <div>{{ `(${question.type})` }}</div>
+        <div>{{ `(${questionScoreList[index]}分 类型:${question.type})` }}</div>
       </div>
 
       <div class="options">
@@ -146,6 +225,10 @@ const getUserExamAnswer = async () => {
 img {
   width: 30px;
   height: s30px;
+}
+
+img:hover {
+  transform: scale(1.2);
 }
 
 .header {

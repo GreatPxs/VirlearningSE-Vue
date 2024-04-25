@@ -69,7 +69,7 @@ import { EffectComposer } from 'three/examples/jsm/postprocessing/EffectComposer
 import { RenderPass } from 'three/examples/jsm/postprocessing/RenderPass.js'
 import { OutlinePass } from 'three/examples/jsm/postprocessing/OutlinePass.js'
 import { CSS2DRenderer, CSS2DObject } from 'three/examples/jsm/renderers/CSS2DRenderer.js'
-
+import { getDeviceByName } from '@/api/device/getDeviceByName'
 const featureDialogVisible = ref(false)
 const animationDialogVisible = ref(false)
 const procedureDialogVisible = ref(false)
@@ -79,6 +79,20 @@ const returnToRoleChoose = ref(false)
 const featureShow = ref(false)
 const roomTarget = ref(null)
 const route = useRoute()
+const record = ref(null)
+
+const getDeviceInfoByName = async (name) => {
+  const data = await getDeviceByName(name).then((res) => {
+    if (res.data.state !== 200) {
+      ElMessage.error('搜索失败')
+      console.log(res.data)
+      throw new Error('搜索失败')
+    }
+    return res.data
+  })
+  console.log(data)
+  record.value = data.data[0]
+}
 //模型名
 const { name, role } = route.query
 const value = ref(role)
@@ -174,8 +188,11 @@ renderer.domElement.addEventListener('click', (event) => {
     ) {
       obj = obj.parent
       console.log(value.value)
+      console.log('typeof: ', typeof obj.name.replace(/[0-9]+/g, ''))
+      getDeviceInfoByName(obj.name.replace(/[0-9]+/g, ''))
+      console.log('inside: ' + record.value)
       deviceObj.value = findDevice(obj.name.replace(/[0-9]+/g, ''), value.value)
-      console.log('inner', deviceObj.value)
+      // console.log('inner', deviceObj.value)
       featureShow.value = true
       outlinePass.selectedObjects = [obj]
       /* if (innerObj.value == obj.name) {

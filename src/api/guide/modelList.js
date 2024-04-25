@@ -92,11 +92,11 @@ const modelList = [
     fileType: 'glb',
     id: 8,
     filePath: 'imaging.glb',
-    lightPosition: [80, 50, 30],
-    cameraPosition: [0, 80, 0],
-    cameraLookAt: [0, 0, -5],
-    minDistance: 0.01,
-    maxDistance: 100
+    lightPosition: [0.25, 3.5, 4.5],
+    cameraPosition: [0, 2.75, 4.55],
+    cameraLookAt: [0, 0, -0.25],
+    minDistance: 14,
+    maxDistance: 20
   },
   {
     name: 'speciality',

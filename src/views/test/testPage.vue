@@ -3,6 +3,9 @@ import { useRoute, useRouter } from 'vue-router'
 import { getPaperInfo } from '@/api/paperManage/getPaperInfo'
 import { calculateScore } from '@/api/test/calculateScore'
 import { getExamScore } from '@/api/test/getExamScore'
+import { getPaperQuestionScoreList } from '@/api/paperManage/getPaperQuestionScoreList'
+import { getPaperTotalNum } from '@/api/paperManage/getPaperTotalNum'
+import { getPaperTotalScore } from '@/api/paperManage/getPaperTotalScore'
 
 const isLoading = ref(false)
 
@@ -20,6 +23,72 @@ function getCurrentDateTime() {
   return `${year}-${month}-${day} ${hours}:${minutes}:${seconds}`
 }
 
+//获取题目分数数组
+const getPaperQuestionScore = async () => {
+  const data = await getPaperQuestionScoreList(paperId.value).then((res) => {
+    //获取失败
+    if (res.data.state !== 200) {
+      ElMessage.error('获取试卷题目分数失败')
+
+      //打印数据
+      console.log(res.data)
+
+      throw new Error('获取试卷题目分数失败')
+    }
+    //获取成功
+
+    console.log(res.data)
+    return res.data
+  })
+
+  questionScoreList.value = data.data
+  console.log(questionScoreList.value)
+}
+
+//获取考试总分
+const getTotalScore = async () => {
+  const data = await getPaperTotalScore(paperId.value).then((res) => {
+    //获取失败
+    if (res.data.state !== 200) {
+      ElMessage.error('获取试卷总分失败')
+
+      //打印数据
+      console.log(res.data)
+
+      throw new Error('获取试卷总分失败')
+    }
+    //获取成功
+
+    console.log(res.data)
+    return res.data
+  })
+
+  headerInfo.value[0].totalScore = data.data
+  console.log(headerInfo.value[0].totalScore)
+}
+
+//获取考试总分
+const getTotalNum = async () => {
+  const data = await getPaperTotalNum(paperId.value).then((res) => {
+    //获取失败
+    if (res.data.state !== 200) {
+      ElMessage.error('获取试卷题目总数失败')
+
+      //打印数据
+      console.log(res.data)
+
+      throw new Error('获取试卷题目总数失败')
+    }
+    //获取成功
+
+    console.log(res.data)
+    return res.data
+  })
+
+  headerInfo.value[0].totalNum = data.data
+  console.log(headerInfo.value[0].totalNum)
+}
+
 const route = useRoute()
 const router = useRouter()
 //用户ID
@@ -30,12 +99,16 @@ const examId = ref(0)
 const paperId = ref(0)
 //考试分数
 const score = ref(0)
+//题目分数数组
+const questionScoreList = ref([])
 //标题头消息
 const headerInfo = ref([
   {
     name: '测试一',
     startTime: '2024-3-15 15:30',
-    endTime: '2024-3-15 16:30'
+    endTime: '2024-3-15 16:30',
+    totalScore: 0,
+    totalNum: 0
   }
 ])
 onBeforeMount(() => {
@@ -50,6 +123,9 @@ onBeforeMount(() => {
   console.log(`endTime ${headerInfo.value[0].endTime}`)
 
   getPaperInfoList()
+  getPaperQuestionScore()
+  getTotalScore()
+  getTotalNum()
 
   //初始化答案数组
   checkList.value = new Array(questions.value.length).fill('E')
@@ -147,7 +223,7 @@ const onSubmit = async () => {
   score.value = scoreData.data
   console.log('score:' + score.value)
   //告知用户考卷已提交
-  ElMessage.success('试卷提交成功。用户成绩为: ' + score.value)
+  ElMessage.success('试卷提交成功。用户成绩为: ' + score.value + '分')
 }
 
 //确认提交
@@ -221,6 +297,8 @@ const handleRadioChange = (selectedValue, event, id) => {
       <el-table-column prop="name" label="测试名" align="center" />
       <el-table-column prop="startTime" label="开始时间" align="center" />
       <el-table-column prop="endTime" label="结束时间" align="center" />
+      <el-table-column prop="totalNum" label="题目数" align="center" />
+      <el-table-column prop="totalScore" label="总分" align="center" />
     </el-table>
 
     <el-card style="width: 300px" class="timer">
@@ -240,7 +318,7 @@ const handleRadioChange = (selectedValue, event, id) => {
       <div class="questionTitle">
         <div class="number">{{ index + 1 }}</div>
         <div class="questionName">{{ `${question.description}` }}</div>
-        <div>{{ `(${question.type})` }}</div>
+        <div>{{ `(${questionScoreList[index]}分)` }}</div>
       </div>
 
       <el-radio-group

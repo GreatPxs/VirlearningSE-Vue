@@ -126,10 +126,10 @@ const modelList = [
     id: 11,
     filePath: 'dissecting.glb',
     lightPosition: [80, 50, 30],
-    cameraPosition: [0, 80, 0],
-    cameraLookAt: [0, 0, -5],
-    minDistance: 0.01,
-    maxDistance: 100
+    cameraPosition: [0, 3.55, 10.5],
+    cameraLookAt: [0, 0, -1.75],
+    minDistance: 7,
+    maxDistance: 15
   },
   {
     name: 'impatient_management',

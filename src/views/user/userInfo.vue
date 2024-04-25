@@ -30,8 +30,13 @@ const form = reactive({
 const formRef = ref<FormInstance>()
 
 const beforeAvatarUpload: UploadProps['beforeUpload'] = (rawFile) => {
-  if (rawFile.type !== 'image/jpeg') {
-    ElMessage.error('照片必须为JPG格式!')
+  if (
+    rawFile.type !== 'image/jpeg' &&
+    rawFile.type !== 'image/jpg' &&
+    rawFile.type !== 'image/png' &&
+    rawFile.type !== 'image/webp'
+  ) {
+    ElMessage.error('照片必须为JPG、JPEG、PNG、WEBP格式!')
     return false
   } else if (rawFile.size / 1024 / 1024 > 2) {
     ElMessage.error('照片不超过2MB!')

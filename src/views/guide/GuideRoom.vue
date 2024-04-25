@@ -409,7 +409,7 @@ const handleChange = (value) => {
   top: 75%;
   right: 5%;
 }
-.photo{
+.photo {
   width: 100%;
 }
 .video {

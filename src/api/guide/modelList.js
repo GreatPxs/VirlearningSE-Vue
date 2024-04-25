@@ -73,8 +73,8 @@ const modelList = [
     lightPosition: [-5, 5, 0.5],
     cameraPosition: [-8.5, 3.5, 0],
     cameraLookAt: [5, 0, 0],
-    minDistance: 10,
-    maxDistance: 20
+    minDistance: 17,
+    maxDistance: 27
   },
   {
     name: 'preparation',
@@ -114,11 +114,11 @@ const modelList = [
     fileType: 'glb',
     id: 10,
     filePath: 'injection.glb',
-    lightPosition: [80, 50, 30],
-    cameraPosition: [0, 80, 0],
-    cameraLookAt: [0, 0, -5],
-    minDistance: 0.01,
-    maxDistance: 100
+    lightPosition: [0, 3, 5],
+    cameraPosition: [0, 2.5, 10],
+    cameraLookAt: [0, 0, -1.5],
+    minDistance: 7,
+    maxDistance: 12
   },
   {
     name: 'dissecting',
@@ -158,18 +158,18 @@ const modelList = [
     fileType: 'glb',
     id: 14,
     filePath: 'treatment.glb',
-    lightPosition: [80, 50, 30],
-    cameraPosition: [0, 80, 0],
-    cameraLookAt: [0, 0, -5],
-    minDistance: 0.01,
-    maxDistance: 100
+    lightPosition: [0, 3, 5],
+    cameraPosition: [0, 2.5, 10],
+    cameraLookAt: [0, 0, -1.5],
+    minDistance: 7,
+    maxDistance: 12
   },
   {
     name: 'immunology',
     fileType: 'glb',
     id: 15,
     filePath: 'immunology.glb',
-    lightPosition: [0, 3, 10],
+    lightPosition: [0.5, 3, 3],
     cameraPosition: [0, 2.5, 10],
     cameraLookAt: [0, 0, -1.5],
     minDistance: 7,

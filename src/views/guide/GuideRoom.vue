@@ -100,7 +100,7 @@ const path = ref(null)
 //场景
 const scene = new Three.Scene()
 //环境光
-const ambient = new Three.AmbientLight(0xffffff, 1.0)
+const ambient = new Three.AmbientLight(0xffffff, 1.5)
 //const spotLight = new Three.SpotLight(0xffffff, 1.0)
 const directionalLight = new Three.DirectionalLight(0xffffff, 1.5)
 

@@ -110,8 +110,10 @@ renderer.domElement.addEventListener('click', (event) => {
   if (intersects.length > 0) {
     //intersects[0].object.material.color.set(0xff0000)
     let obj = intersects[0].object
-
-    if (obj.name != 'floor') {
+    // if (obj.name.includes('Text')){
+    //   obj = intersects[1].object
+    // }
+    if (obj.name != 'floor'&& !obj.name.includes('Text')) {
       // console.log(dictionary)
       for (let c of dictionary) {
         if (c.name == obj.name.replace(/[0-9]+/g, '')) {

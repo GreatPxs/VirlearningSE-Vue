@@ -15,10 +15,10 @@ const modelList = [
     fileType: 'glb',
     id: 1,
     filePath: 'operation.glb',
-    lightPosition: [80, 50, 30],
-    cameraPosition: [-5, 6, -5],
-    cameraLookAt: [0.5, -0.25, 0.5],
-    minDistance: 7,
+    lightPosition: [10, 27, 30],
+    cameraPosition: [+0.25, 3.75, +8.5],
+    cameraLookAt: [+0.05, -0.25, -0.5],
+    minDistance: 13,
     maxDistance: 20
   },
   {
@@ -38,9 +38,9 @@ const modelList = [
     id: 3,
     filePath: 'documentation.glb',
     lightPosition: [0, 12, 10],
-    cameraPosition: [0, 3.75, 4.55],
+    cameraPosition: [0, 7.25, 4.55],
     cameraLookAt: [0, -0.32, -1.5],
-    minDistance: 7,
+    minDistance: 12,
     maxDistance: 15
   },
   {

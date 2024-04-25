@@ -19,7 +19,7 @@ export const editDevice = (id, name, feature, photo, video) => {
     url:
       `/device/update?id=` +
       id +
-      `&isdeleted&name=` +
+      `&isdeleted=0&name=` +
       name +
       `&feature=` +
       feature +

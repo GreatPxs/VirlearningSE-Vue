@@ -5,7 +5,7 @@ export const addDevice = (form) => {
     method: 'GET',
 
     url:
-      `/device/add?id&isdeleted&name=` +
+      `/device/add?id=0&isdeleted=0&name=` +
       form.name +
       `&feature=` +
       form.feature +

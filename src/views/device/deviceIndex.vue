@@ -3,10 +3,11 @@ import { addDevice } from '@/api/device/addDevice'
 import { deleteDevice } from '@/api/device/deleteDevice'
 import { editDevice } from '@/api/device/editDevice'
 import { getDeviceList } from '@/api/device/getDeviceList'
-import type { UploadProps } from 'element-plus'
+import type { UploadInstance, UploadProps } from 'element-plus'
 
 //文件上传URL
 const uploadAction = 'http://114.55.135.87:28018/upload'
+const uploadVideo = ref<UploadInstance>()
 //照片处理
 const handlePhotoSuccess: UploadProps['onSuccess'] = (response, uploadFile) => {
   form.photo = response.data
@@ -183,6 +184,7 @@ const onSubmit = async () => {
     dialogFormVisible.value = false
   }
 
+  uploadVideo.value!.clearFiles()
   getDeviceListPage({ pageNumber: listCurrentPage.value, pageSize: listPageSize.value })
 }
 
@@ -244,7 +246,7 @@ const deleteDeviceById = async (id) => {
         <el-table-column label="操作" align="center" v-slot="{ row }">
           <el-button
             type="primary"
-            @click="toModify(row.id, row.drugName, row.specifications, row.unit, row.drugNote)"
+            @click="toModify(row.id, row.name, row.feature, row.photo, row.video)"
             >编辑</el-button
           >
           <el-button type="danger" @click="deleteDeviceById(row.id)">删除</el-button>
@@ -276,6 +278,7 @@ const deleteDeviceById = async (id) => {
 
           <el-form-item label="演示动画">
             <el-upload
+              ref="uploadVideo"
               :action="uploadAction"
               :on-success="handleVideoSuccess"
               :before-upload="beforeVideoUpload"

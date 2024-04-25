@@ -205,7 +205,7 @@ const deleteDeviceById = async (id) => {
   console.log(data)
   ElMessage.success('删除成功')
 
-  //删除成功后,需要重新获取药物列表
+  //删除成功后,需要重新获取设备列表
   getDeviceListPage({
     pageNumber: listCurrentPage.value,
     pageSize: listPageSize.value

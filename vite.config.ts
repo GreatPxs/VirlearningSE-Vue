@@ -86,6 +86,10 @@ export default defineConfig({
       '/getchat': {
         target: 'http://114.55.135.87:28018',
         changeOrigin: true
+      },
+      '/device': {
+        target: 'http://114.55.135.87:28018',
+        changeOrigin: true
       }
     },
     port: 28018,

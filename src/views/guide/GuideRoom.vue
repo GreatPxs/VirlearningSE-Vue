@@ -18,25 +18,39 @@
     <el-dialog
       v-model="featureDialogVisible"
       title="功能说明"
+      width="320"
       custom-class="content-dialog"
       center
       align-center
       draggable
     >
-      <span>{{ deviceObj.feature }}</span>
+      <span>{{ record.feature }}</span>
     </el-dialog>
     <el-dialog
       v-model="procedureDialogVisible"
       title="操作流程"
+      width="250"
       custom-class="content-dialog"
       center
       align-center
       draggable
     >
-      <span>{{ deviceObj.procedure }}</span>
+      <!-- <span>{{ record.photo }}</span> -->
+      <div class="photo-box">
+        <img class="photo" :src="record.photo" />
+      </div>
     </el-dialog>
-    <el-dialog v-model="animationDialogVisible" title="演示动画" width="800" center draggable>
-      <span>{{ deviceObj.animation }}</span>
+    <el-dialog
+      v-model="animationDialogVisible"
+      title="演示动画"
+      center
+      custom-class="content-dialog"
+      draggable
+    >
+      <!-- <span>{{ record.video }}</span> -->
+      <div class="video-box">
+        <video class="video" :src="record.video" controls></video>
+      </div>
     </el-dialog>
     <el-select
       class="rolechoose"
@@ -90,8 +104,9 @@ const getDeviceInfoByName = async (name) => {
     }
     return res.data
   })
-  console.log(data)
+  // console.log(data.data[0])
   record.value = data.data[0]
+  console.log(record.value)
 }
 //模型名
 const { name, role } = route.query
@@ -188,10 +203,12 @@ renderer.domElement.addEventListener('click', (event) => {
     ) {
       obj = obj.parent
       console.log(value.value)
-      console.log('typeof: ', typeof obj.name.replace(/[0-9]+/g, ''))
+      // console.log('typeof: ', typeof obj.name.replace(/[0-9]+/g, ''))
       getDeviceInfoByName(obj.name.replace(/[0-9]+/g, ''))
       console.log('inside: ' + record.value)
-      deviceObj.value = findDevice(obj.name.replace(/[0-9]+/g, ''), value.value)
+      // console.log(record.value)
+
+      // deviceObj.value = findDevice(obj.name.replace(/[0-9]+/g, ''), value.value)
       // console.log('inner', deviceObj.value)
       featureShow.value = true
       outlinePass.selectedObjects = [obj]
@@ -229,10 +246,10 @@ function findDevice(name, role) {
 watch(value, (newValue, oldValue) => {
   if (newValue != oldValue) {
     console.log(value.value)
-    if (deviceObj.value !== null) {
-      deviceObj.value = findDevice(deviceObj.value.name, newValue)
-      console.log(deviceObj.value)
-    }
+    // if (deviceObj.value !== null) {
+    //   deviceObj.value = findDevice(deviceObj.value.name, newValue)
+    //   console.log(deviceObj.value)
+    // }
   }
 })
 onBeforeMount(() => {
@@ -391,5 +408,11 @@ const handleChange = (value) => {
   position: absolute;
   top: 75%;
   right: 5%;
+}
+.photo{
+  width: 100%;
+}
+.video {
+  width: 100%;
 }
 </style>

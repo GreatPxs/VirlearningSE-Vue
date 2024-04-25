@@ -1,7 +1,7 @@
 <script setup lang="ts">
 import { useRouter, useRoute } from 'vue-router'
 import { getRoomByRole } from '@/api/rolePage/getRoomByRole'
-
+import dictionary from '@/api/guide/dictionary.js'
 const route = useRoute()
 const router = useRouter()
 
@@ -11,6 +11,13 @@ const roleInfo = ref({
   roleIcon: '',
   flowChart: ''
 })
+function findName(name) {
+  for (let c of dictionary) {
+    if (c.name == name.replace(/[0-9]+/g, '')) {
+      return c.name_e
+    }
+  }
+}
 onBeforeMount(() => {
   roleInfo.value.roleName = route.params.role.toString()
   console.log(roleInfo.value.roleName)
@@ -147,7 +154,7 @@ const currentSection = ref(1)
                     @click="
                       router.push({
                         name: 'guideroom',
-                        query: { name: scope.row.name, role: roleInfo.roleName }
+                        query: { name: findName(scope.row.name), role: roleInfo.roleName }
                       })
                     "
                     >进入科室</el-button

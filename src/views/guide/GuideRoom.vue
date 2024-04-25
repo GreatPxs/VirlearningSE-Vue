@@ -224,11 +224,13 @@ renderer.domElement.addEventListener('click', (event) => {
       render()
     } else {
       // console.log('floor') /* empty */
+      featureShow.value = false
+      outlinePass.selectedObjects = []
     }
   } else {
     featureShow.value = false
     outlinePass.selectedObjects = []
-    deviceObj.value = null
+    // deviceObj.value = null
     console.log(deviceObj.value)
   }
 })

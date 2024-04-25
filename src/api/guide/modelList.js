@@ -135,10 +135,10 @@ const modelList = [
     name: 'impatient_management',
     fileType: 'glb',
     id: 12,
-    filePath: 'impatient_management.glb',
-    lightPosition: [80, 50, 30],
-    cameraPosition: [0, 80, 0],
-    cameraLookAt: [0, 0, -5],
+    filePath: 'impatient.glb',
+    lightPosition: [10, 5, 0.5],
+    cameraPosition: [2.2, 3.75, -2.8],
+    cameraLookAt: [2.2, 0, 5],
     minDistance: 0.01,
     maxDistance: 100
   },
@@ -147,11 +147,11 @@ const modelList = [
     fileType: 'glb',
     id: 13,
     filePath: 'impatient.glb',
-    lightPosition: [80, 50, 30],
-    cameraPosition: [0, 80, 0],
-    cameraLookAt: [0, 0, -5],
-    minDistance: 0.01,
-    maxDistance: 100
+    lightPosition: [10, 20, 0.5],
+    cameraPosition: [7, 20.5, 0],
+    cameraLookAt: [-1.8, 0, 0],
+    minDistance: 7,
+    maxDistance: 25
   },
   {
     name: 'treatment',

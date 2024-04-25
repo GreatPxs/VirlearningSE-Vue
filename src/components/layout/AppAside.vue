@@ -38,6 +38,9 @@ const router = useRouter()
           <el-menu-item @click="router.push({ name: 'drugIndex' })">
             <span>药物管理</span>
           </el-menu-item>
+          <el-menu-item @click="router.push({ name: 'deviceIndex' })">
+            <span>设备管理</span>
+          </el-menu-item>
         </el-sub-menu>
 
         <el-sub-menu index="6">

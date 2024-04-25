@@ -5,6 +5,9 @@ import { modifyPaper } from '@/api/paperManage/modifyPaper'
 import { deletePaper } from '@/api/paperManage/deletePaper'
 import { getPaperByName } from '@/api/paperManage/getPaperByName'
 import { getPaperList } from '@/api/paperManage/getPaperList'
+import { useRouter } from 'vue-router'
+
+const router = useRouter()
 
 onMounted(() => {
   getPaperListPage({
@@ -212,7 +215,7 @@ const deletePaperById = async (id) => {
         <el-button
           type="info"
           :icon="DocumentAdd"
-          @click="this.$router.push({ name: 'paperQuestion', params: { id: row.paperId } })"
+          @click="router.push({ name: 'paperQuestion', params: { id: row.paperId } })"
         >
           选择试题
         </el-button>

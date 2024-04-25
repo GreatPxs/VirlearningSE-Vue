@@ -164,6 +164,11 @@ const router = createRouter({
           component: () => import('@/views/drug/drugIndex.vue')
         },
         {
+          path: '/admin/device',
+          name: 'deviceIndex',
+          component: () => import('@/views/device/deviceIndex.vue')
+        },
+        {
           path: '/admin/room',
           name: 'roomIndex',
           component: () => import('@/views/room/roomIndex.vue')

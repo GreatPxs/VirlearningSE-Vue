@@ -245,6 +245,9 @@ function findDevice(name, role) {
   }
 }
 
+function handleClose(className) {
+  className.value.pause()
+}
 watch(value, (newValue, oldValue) => {
   if (newValue != oldValue) {
     console.log(value.value)
@@ -276,7 +279,7 @@ onBeforeMount(() => {
     }
   }
   //添加坐标系
-  // scene.add(axesHelper)
+  scene.add(axesHelper)
   //添加环境光
   scene.add(ambient)
   directionalLight.position.set(

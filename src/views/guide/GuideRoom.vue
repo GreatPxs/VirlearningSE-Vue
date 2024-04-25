@@ -199,7 +199,7 @@ renderer.domElement.addEventListener('click', (event) => {
       !obj.parent.name.includes('地面') &&
       !obj.parent.name.includes('椅') &&
       !obj.parent.name.includes('实验桌') &&
-      !obj.parent.name.includes('大门')
+      !obj.parent.name.includes('门')
     ) {
       obj = obj.parent
       console.log(value.value)

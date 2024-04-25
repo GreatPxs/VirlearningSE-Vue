@@ -38,9 +38,9 @@ const modelList = [
     id: 3,
     filePath: 'documentation.glb',
     lightPosition: [0, 12, 10],
-    cameraPosition: [0, 3.75, 4.55],
+    cameraPosition: [0, 7.25, 4.55],
     cameraLookAt: [0, -0.32, -1.5],
-    minDistance: 7,
+    minDistance: 12,
     maxDistance: 15
   },
   {

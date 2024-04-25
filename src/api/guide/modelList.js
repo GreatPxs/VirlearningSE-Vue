@@ -37,11 +37,11 @@ const modelList = [
     fileType: 'glb',
     id: 3,
     filePath: 'documentation.glb',
-    lightPosition: [80, 50, 30],
-    cameraPosition: [0, 80, 0],
-    cameraLookAt: [0, 0, -5],
-    minDistance: 0.01,
-    maxDistance: 100
+    lightPosition: [0, 12, 10],
+    cameraPosition: [0, 3.75, 4.55],
+    cameraLookAt: [0, -0.32, -1.5],
+    minDistance: 7,
+    maxDistance: 15
   },
   {
     name: 'pharmacy',
@@ -59,11 +59,11 @@ const modelList = [
     fileType: 'glb',
     id: 5,
     filePath: 'frontdesk.glb',
-    lightPosition: [80, 50, 30],
-    cameraPosition: [0, 80, 0],
-    cameraLookAt: [0, 0, -5],
-    minDistance: 0.01,
-    maxDistance: 100
+    lightPosition: [-5, 1.5, 0],
+    cameraPosition: [-9, 2.5, 0],
+    cameraLookAt: [3, -1.1, 0],
+    minDistance: 15,
+    maxDistance: 20
   },
   {
     name: 'laboratory',
@@ -81,11 +81,11 @@ const modelList = [
     fileType: 'glb',
     id: 7,
     filePath: 'preparation.glb',
-    lightPosition: [80, 50, 30],
-    cameraPosition: [0, 80, 0],
-    cameraLookAt: [0, 0, -5],
-    minDistance: 0.01,
-    maxDistance: 100
+    lightPosition: [0, 3, 5],
+    cameraPosition: [0, 2.5, 10],
+    cameraLookAt: [0, 0, -1.5],
+    minDistance: 7,
+    maxDistance: 12
   },
   {
     name: 'imaging',
@@ -103,11 +103,11 @@ const modelList = [
     fileType: 'glb',
     id: 9,
     filePath: 'speciality.glb',
-    lightPosition: [80, 50, 30],
-    cameraPosition: [0, 80, 0],
-    cameraLookAt: [0, 0, -5],
-    minDistance: 0.01,
-    maxDistance: 100
+    lightPosition: [-8, 10, 0],
+    cameraPosition: [-7, 5, 0],
+    cameraLookAt: [1.5, -0.25, 0],
+    minDistance: 7,
+    maxDistance: 10
   },
   {
     name: 'injection',

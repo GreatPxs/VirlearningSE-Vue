@@ -168,7 +168,7 @@ const onSubmit = async () => {
       form.video
     ).then((res) => {
       //编辑失败
-      if (res.data.state !== 200) {
+      if (res.data.resultCode !== 200) {
         ElMessage.error('编辑失败')
         throw new Error('编辑失败')
       }

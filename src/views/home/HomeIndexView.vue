@@ -19,7 +19,7 @@ const router = useRouter()
     </div>
 
     <div class="row">
-      <div @click="router.push({ name: 'chooseRole' })">
+      <div @click="router.push({ name: 'caseStudy' })">
         <img src="@/assets/casestudy.png" alt="" />
         <p>病例学习</p>
       </div>

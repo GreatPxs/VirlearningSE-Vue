@@ -31,14 +31,14 @@ const getHistory = async () => {
   const data = await getChatHistory(form.value).then((res) => {
     //获取失败
     if (res.data.resultCode !== 200) {
-      ElMessage.error('获取AI对话记录失败')
+      ElMessage.error('这段日期无AI对话记录')
 
       //打印数据
       console.log(res.data)
 
       isLoading.value = false
 
-      throw new Error('获取AI对话记录失败')
+      throw new Error('这段日期无AI对话记录')
     }
     //获取成功
 

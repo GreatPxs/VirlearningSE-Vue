@@ -165,6 +165,7 @@ const clickOut = () => {
     type: 'warning'
   })
     .then(() => {
+      clearInterval(intervalId)
       //跳转至考试列表页面
       router.push({ name: 'testInfo' })
     })
